@@ -32,32 +32,32 @@
                       @forelse($rotatorD as $rotator)
                         <tr>
                           <td data-toggle="collapse" data-target="#table-<?php echo $rotator->id;?>" class="accordion-toggle">
-                            <span onClick="rotatorPhId({{ $rotator->id }})">
+                            <span onClick="rotatorPhId({{ $rotator->id }})" class="badge badge-info">
                               <i class="ti-eye" data-toggle="tooltip" title="Show Data"></i>
                           </span>
                           </td>
                           <td>{{ $rotator->rotatorname }}</td>
                           <td>{{ $rotator->id }}</td>
                           <td>{{ $rotator->mode }}</td>
-                          <td>7   1 / 6</td>
-                          <td>3   3 / 0</td>
+                          <td>7 <label class="text-success">1</label> / <label class="text-danger">6</label></td>
+                          <td>3 <label class="text-success">3</label> / <label class="text-danger">0</label></td>
                           <td>
                           <?php if($rotator->status ==0){?>
-                              Active
+                              <label class="badge badge-success">Active</label>
                               <?php } else { ?>
-                                Paused
+                               <label class="badge badge-danger">Paused</label>
                                 <?php  } ?>
                                   
                               </td>   
                           <td>{{ $rotator->test_number }}</td>
                           <td>
-                            <a href="#" onClick="rotatorId({{ $rotator->id }})">
+                            <a href="#" onClick="rotatorId({{ $rotator->id }})" class="badge badge-success">
                               <i class="ti-mobile" data-toggle="modal" data-target="#phoneModal"></i>
                             </a>
-                            <a href="#" class="rotatorsetting" attrid="{{ $rotator->id  }}" attrname="{{ $rotator->rotatorname }}" attstatus="{{ $rotator->status }}" attrtestnumber="{{ $rotator->test_number }}">
+                            <a href="#" class="rotatorsetting badge badge-warning" attrid="{{ $rotator->id  }}" attrname="{{ $rotator->rotatorname }}" attstatus="{{ $rotator->status }}" attrtestnumber="{{ $rotator->test_number }}">
                               <i class="ti-pencil-alt" data-toggle="modal" data-target="#RotatorSettingseModal"></i>
                             </a> 
-                            <a href='deleterotator/{{ $rotator->id }}' onclick="return confirm('Are you sure?')">
+                            <a href='deleterotator/{{ $rotator->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')">
                               <i class="ti-trash" data-toggle="tooltip" title="Delete Rotator"></i>
                             </a>
                           </td>
@@ -86,10 +86,10 @@
                                 </tr>
                               </thead>
                               <tbody>
-                              @foreach($rotator->getroltetalList as $rowdata)
+                              @foreach($rotator->getrotatorList as $rowdata)
                                 <tr >
                                   <td data-toggle="collapse"  class="accordion-toggle" data-target="#table2-{{ $rowdata->id }}">
-                                    <a href="#">
+                                    <a href="#" class="badge badge-info">
                                       <i class="ti-eye"></i>
                                     </a>
                                   </td>
@@ -98,19 +98,24 @@
                                   <td>0</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
                                   <td>0</td>
-                                  <td>{{ $rowdata->max_weekly_leads}}</td>
+                                  <td>{{ $rowdata->max_weekly_leads }}</td>
                                   <td>0</td>
-                                  <td>{{ $rowdata->max_limit_leads}}</td>
+                                  <td>{{ $rowdata->max_limit_leads }}</td>
                                   <td>900</td>
-                                  <td><i class="ti-check"></i></td>
-                                  <!-- <td><i class="ti-close"></i></td> -->
+                                  <td>
+                                  <?php if($rowdata->status == 0) { ?>
+                                    <label class="badge badge-success"><i class="ti-check"></i></label>
+                                  <?php } else { ?>
+                                    <label class="badge badge-danger"><i class="ti-close"></i></label>
+                                  <?php } ?>
+                                  </td>
                                   <td>{{ $rowdata->floor_label }}</td>
                                   <td><a href="{{ URL::to('unexportedlead') }}">0</a></td>
                                   <td>
-                                    <a href="{{ URL::to('report') }}">
+                                    <a href="{{ URL::to('report') }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
                                     </a> 
-                                    <a href="#">
+                                    <a href="deletephone/{{ $rowdata->id }}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
                                       <i class="ti-trash"></i>
                                     </a>
                                   </td>
@@ -120,7 +125,8 @@
                                     <div class=" row accordian-body collapse" id="table2-{{ $rowdata->id }}"> 
                                     <div class="col-sm-2"></div>
                                     <div class="col-sm-6">
-                                      <form class="forms-sample">
+                                      <form class="forms-sample" method="post" action="{{ 'rotatorlist' }}/{{ $rowdata->id }}">
+                                      @csrf()
                                         <div class="modal-header">
                                           <h5 class="modal-title" id="exampleModalLabel">Phone Settings <br/><span style="font-size:11px;">Date Created: {{ $rowdata->created_at }}</span></h5>
                                           <button type="reset" class="btn btn-danger" aria-label="Reset">Reset Number</button>
@@ -132,13 +138,14 @@
                                               <label for="exampleInputUsername1">Label</label>
                                               <input type="text" name="floor_label" value="{{ $rowdata->floor_label }}" class="form-control" id="exampleInputUsername1" placeholder="NYC Floor">
                                               </div>
+                                              <input type="hidden" name="id" value="{{ $rowdata->id }}">
                                             </div>
                                             <div class="col-sm-6">
                                               <div class="form-group">
                                                 <label for="exampleInputUsername1">Status</label>
-                                                <select class="form-control" id="exampleFormControlSelect2">
-                                                  <option>Active</option>
-                                                  <option>Paused</option>
+                                                <select class="form-control" name="status" id="exampleFormControlSelect2">
+                                                  <option value="0" <?php if($rowdata->status == 0){ ?> selected <?php } ?> >Active</option>
+                                                  <option value="1" <?php if($rowdata->status == 1){ ?> selected <?php } ?> >Paused</option>
                                                 </select>  
                                               </div>
                                             </div>
@@ -171,20 +178,20 @@
                                             <div class="col-sm-6">
                                               <div class="form-check form-check-flat form-check-primary">
                                                 <label class="form-check-label">
-                                                  <input type="checkbox" name="test_number" value="{{ $rowdata->test_number }}" class="form-check-input">Test Number
+                                                  <input type="checkbox" name="test_number" <?php if( $rowdata->test_number == '1231231234'){ ?>checked<?php } ?> value="1231231234" class="form-check-input">Test Number
                                                 <i class="input-helper"></i></label>
                                               </div>
                                             </div>
                                             <div class="col-sm-6">
                                               <div class="form-group">
                                                 <label for="exampleInputUsername1">Notifications Email</label>
-                                                <input type="notification_email" name="eamil" value="{{ $rowdata->notification_email }}" class="form-control" placeholder="Notifications Email">
+                                                <input type="email" name="notification_email" value="{{ $rowdata->notification_email }}" class="form-control" placeholder="Notifications Email">
                                               </div>
                                             </div>
                                           </div>
                                         </div>  
                                         <div class="modal-footer">
-                                          <button type="button" class="btn btn-primary">Save</button>
+                                          <input type="submit" class="btn btn-primary" value="Update">
                                         </div>
                                       </form>
                                     </dive>
@@ -211,17 +218,6 @@
                         {{ $rotatorD->links() }}
                     </div>
                     </div>
-                    
-                   
-                    <!-- <div class="template-demo">
-                      <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary">Previous</button>
-                        <button type="button" class="btn btn-primary">1</button>
-                        <button type="button" class="btn btn-primary">2</button>
-                        <button type="button" class="btn btn-primary">3</button>
-                        <button type="button" class="btn btn-primary">Next</button>
-                      </div>
-                    </div> -->
                   </div>
                 </div>
               </div>
@@ -234,7 +230,7 @@
 <div class="modal fade" id="phoneModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="forms-sample" method="post" action="{{ 'rotatorlist' }}">
+      <form class="forms-sample" method="post" action="{{ 'addphonesetting' }}">
         @csrf()
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Add Phone Number</h5>
@@ -263,11 +259,11 @@
             </div>
             </div>
           </div>
-          <div class="form-group" id="phone">
+          <div class="form-group" id="phones">
             <label for="exampleInputUsername1">Phone Numbers</label>
             <input type="text" name="phone_number" class="form-control" id="exampleInputUsername1" placeholder="1-(555)-555-5555">
           </div>
-          <div class="form-group hide" id="integration">
+          <div class="form-group hide" id="integrations">
             <label for="exampleInputUsername1">Select Integration</label>
             <Select class="form-control" name="integration">
               <option value="">Select</option>
@@ -330,7 +326,6 @@
           </div>
         </div>  
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <input type="submit" class="btn btn-primary" value="Submit">
         </div>
       </form> 
@@ -341,7 +336,7 @@
 <div class="modal fade" id="RotatorSettingseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form class="forms-sample" method="post" action="rotatorlist">
+      <form class="forms-sample" method="post" action="rotatoredit">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Rotator Settings</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -349,27 +344,26 @@
           </button>
         </div>
         <div class="modal-body">
-          <input type="text" class="rotatorid">
+          @csrf()
+          <input type="hidden" name="id" class="rotatorid">
           <div class="form-group">
             <label for="exampleInputUsername1">Rotator Name</label>
             <input type="text" name="rotatorname" class="form-control rotatorname" id="exampleInputUsername1" placeholder="Rotator Name">
           </div>
           <div class="form-group">
               <label for="exampleInputUsername1">Rotator Status</label>
-              <select class="form-control rotatorstatus" name="status" id="exampleFormControlSelect2">
-                <option>Select</option>
-                <option>Active</option>
-                <option>Paused</option>
+              <select name="status" class="form-control rotatorstatus" id="exampleFormControlSelect2">
+                <option value="0">Active</option>
+                <option value="1">Paused</option>
               </select>  
           </div>
           <div class="form-group">
             <label for="exampleInputUsername1">Lead Test Match</label>
-            <input type="text" name="lead_test_match" class="form-control testmatch" id="exampleInputUsername1" placeholder="">
+            <input type="text" name="test_number" class="form-control testmatch" id="exampleInputUsername1">
           </div>
         </div>  
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Submit">
+          <input type="submit" class="btn btn-primary" value="Update">
         </div>
       </form> 
     </div>
@@ -384,12 +378,12 @@
 
 <script>
 function onButtonClick(){
-  document.getElementById('phone').style.display ='block';
-  document.getElementById('integration').style.display ='none';
+  document.getElementById('phones').style.display ='block';
+  document.getElementById('integrations').style.display ='none';
 }
 function onButtonClick1(){
-  document.getElementById('integration').style.display = 'block';
-  document.getElementById('phone').style.display ='none';
+  document.getElementById('integrations').style.display = 'block';
+  document.getElementById('phones').style.display ='none';
 }
 
 // $(document).ready(function(){
@@ -397,7 +391,6 @@ function onButtonClick1(){
 //     $('[data-toggle="popover"]').popover();   
 //     placement : 'top'
 // });
-
 function rotatorId(id)
   {
     $("#phone").val(id);
@@ -405,16 +398,14 @@ function rotatorId(id)
    
   }
 
-  $(document).ready(function(){
-    $(".rotatorsetting").click(function() {
-      $(".rotatorid").val($(this).attr('attrid'));
-      $(".rotatorname").val($(this).attr('attrname'));
-      $(".rotatorstatus").val($(this).attr('attstatus'));
-      $(".testmatch").val($(this).attr('attrtestnumber'));
-    })
-  });
-
-
+$(document).ready(function(){
+  $(".rotatorsetting").click(function() {
+    $(".rotatorid").val($(this).attr('attrid'));
+    $(".rotatorname").val($(this).attr('attrname'));
+    $(".rotatorstatus").val($(this).attr('attstatus'));
+    $(".testmatch").val($(this).attr('attrtestnumber'));
+  })
+});
 
 </script>
 

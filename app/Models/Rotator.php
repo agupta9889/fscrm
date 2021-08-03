@@ -9,7 +9,7 @@ use App\Models\Phonesetting;
 class Rotator extends Model
 {
     use HasFactory;
-    public function getroltetalList()
+    public function getrotatorList()
     {
         return $this->hasMany('App\Models\Phonesetting','rotator_id','id');
     }

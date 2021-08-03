@@ -156,7 +156,19 @@ class AdminController extends Controller
         $data['rotatorD'] = Rotator::paginate(5);
         return view('rotatorlist', $data);
     }
-    
+    // ----------------  [ Update Phone Settings Page ] ------------
+    public function rotatorDataEdit(Request $request) 
+    {
+        $updateID = $request->id;
+        $data['rotatorname'] = $request->rotatorname;
+        $data['status'] = $request->status;
+        $data['test_number'] = $request->test_number;
+        
+        DB::table('rotators')->where('id',$updateID)->update($data);
+        Session::flash('message', 'Rotator Record Updated Successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('rotatorlist');
+    }
     // ----------------  [ Add Phones Page ] ------------
     public function addPhone(Request $request)
     {
@@ -175,6 +187,31 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('rotatorlist');
        
+    }
+    // ----------------  [ Update Phone Settings Page ] ------------
+    public function editphone(Request $request) 
+    {
+        $updateID = $request->id;
+        $data['floor_label'] = $request->floor_label;
+        $data['status'] = $request->status;
+        $data['phone_number'] = $request->phone_number;
+        $data['max_daily_leads'] = $request->max_daily_leads;
+        $data['max_weekly_leads'] = $request->max_weekly_leads;
+        $data['max_limit_leads'] = $request->max_limit_leads;
+        $data['test_number'] = $request->test_number;
+        $data['notification_email'] = $request->notification_email;
+        DB::table('phone_settings')->where('id',$updateID)->update($data);
+        Session::flash('message', 'Phone Record Updated Successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('rotatorlist');
+    }
+    // ----------------  [ Delete Phone Records Section ] ------------
+    public function deletePhoneRecord($id) 
+    {
+        DB::delete('delete from phone_settings where id = ?',[$id]);
+        Session::flash('message', 'Phone Record Deleted Successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('rotatorlist');
     }
     // ----------------  [ Delete Rotator Row Section ] ------------
     public function deleteRotatorRecord($id) 

@@ -42,8 +42,8 @@
                           </td>
                           <td>{{ $user->created_at}}</td>
                           <td>
-                            <a href='edituser/{{$user->id}}'><i class="ti-pencil" data-toggle="tooltip" title="Edit User"></i></a> 
-                            <a href='delete/{{ $user->id }}' onclick="return confirm('Are you sure?')"><i class="ti-trash" data-toggle="tooltip" title="Delete User"></i></a>
+                            <a href='edituser/{{$user->id}}' class="badge badge-warning"><i class="ti-pencil" data-toggle="tooltip" title="Edit User"></i></a> 
+                            <a href='delete/{{ $user->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')"><i class="ti-trash" data-toggle="tooltip" title="Delete User"></i></a>
                           </td>
                           </td>
                         </tr>

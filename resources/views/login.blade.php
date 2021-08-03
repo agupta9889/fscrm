@@ -34,7 +34,7 @@
               <form class="pt-3" method="POST" action="{{ url('login') }}" >
               {{@csrf_field()}}
                 @if(Session::has('success'))
-                    <div class="alert alert-success">
+                    <div class="alert alert-danger">
                         {{ Session::get('success') }}
                         @php
                             Session::forget('success');
@@ -43,11 +43,9 @@
                 @endif
                 <div class="form-group">
                   <input type="email" name="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email ID" value="{{ old('email') }}" />
-                  {!! $errors->first('email', '<small class="text-danger">:message</small>') !!}
                 </div>
                 <div class="form-group">
                   <input type="password" name="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password" value="{{ old('password') }}" />
-                  {!! $errors->first('password', '<small class="text-danger">:message</small>') !!}
                 </div>
                 <div class="mt-3">
                   <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">LOG IN</button>

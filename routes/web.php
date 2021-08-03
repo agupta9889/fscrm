@@ -34,9 +34,11 @@ Route::group(['middleware' => 'userAuth'], function () {
    Route::get('/addrotator', 'AdminController@addRotator');
    Route::post('/addrotator', 'AdminController@insertRotator');
    Route::get('/rotatorlist', 'AdminController@rotatorDetails');
-   Route::post('/rotatorlist', 'AdminController@addPhone');
+   Route::post('/rotatoredit', 'AdminController@rotatorDataEdit');
+   Route::post('/addphonesetting', 'AdminController@addPhone');
+   Route::post('/rotatorlist/{id}', 'AdminController@editphone');
+   Route::get('/deletephone/{id}', 'AdminController@deletePhoneRecord');
    Route::get('deleterotator/{id}','AdminController@deleteRotatorRecord');
-   //Route::post('/rotatorlist/{id}', 'AdminController@editRotator');
    Route::get('/unexportedlead', 'AdminController@unexpLead');
    Route::get('/exportlead', 'AdminController@exportsLead');
    Route::get('/report', 'AdminController@leadReport');

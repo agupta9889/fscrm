@@ -54,7 +54,7 @@
                       <input type="text" name="assign_number" class="form-control" id="exampleInputUsername1" value="{{$user[0]->assigned_number }}">
                     <p class="card-description">Enter "all" for all numbers. This will only work with rotator numbers, for API numbers edit the integration.</p>
                     </div>
-                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button type="submit" class="btn btn-primary mr-2">Update</button>
                   </form>
                 </div>
               </div>

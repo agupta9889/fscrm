@@ -20,7 +20,17 @@
   <link rel="stylesheet" href="{{asset('/assets/css/vertical-layout-light/style.css')}}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{{asset('/assets/images/fs_favicon.png')}}" />
- 
+  <script>
+  function copyToClipboard(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+    alert('API Key Copied!');
+  }
+  </script>
+
 </head>
 <body>
   <div class="container-scroller">
@@ -57,7 +67,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
               <p class="mb-0 font-weight-normal float-left dropdown-header">Settings</p>
-              <a class="dropdown-item preview-item">
+              <!-- <a class="dropdown-item preview-item">
                 <div class="preview-thumbnail">
                   <div class="preview-icon bg-success">
                     <i class="ti-info-alt mx-0"></i>
@@ -66,7 +76,7 @@
                 <div class="preview-item-content">
                   <h6 class="preview-subject font-weight-normal">Integrations</h6>
                 </div>
-              </a>
+              </a> -->
               <a class="dropdown-item preview-item">
                 <div class="preview-thumbnail">
                   <div class="preview-icon bg-warning">
@@ -75,9 +85,8 @@
                 </div>
                 <div class="preview-item-content">
                   <h6 class="preview-subject font-weight-normal">API Key</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                  ee755b33b27b94ecb0b896edb8d9b691
-                  </p>
+                  <p class="font-weight-light small-text mb-0 text-muted" id="apicopy">ee755b33b27b94ecb0b896edb8d9b691</p>
+                  <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('#apicopy')">Copy to clipboard</button>
                 </div>
               </a>
             </div>
@@ -92,10 +101,20 @@
                 <i class="ti-user text-primary"></i>
                 {{ $user->fname }} {{ $user->lname }}
               </a>
-              <a href="{{ URL::to('logout') }}" class="dropdown-item">
+              <!-- <a href="{{ URL::to('logout') }}" class="dropdown-item">
                 <i class="ti-power-off text-primary"></i>
                 Logout
-              </a>
+              </a> -->
+              <!-- Authentication -->
+              <form method="POST" action="{{ route('logout') }}">
+                  @csrf
+                  <a href="{{ route('logout') }}" class="dropdown-item"
+                            onclick="event.preventDefault();
+                                  this.closest('form').submit();">
+                                  <i class="ti-power-off text-primary"></i>
+                      {{ __('Log Out') }}
+                  </a>
+              </form>
             </div>
           </li>
         </ul>
@@ -109,12 +128,15 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
+          @can('Dashboard')
           <li class="nav-item ">
             <a class="nav-link" href="{{ URL::to('dashboard') }}">
               <i class="icon-grid menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
+          @endcan
+          @can('user')
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="icon-head menu-icon"></i>
@@ -128,7 +150,8 @@
               </ul>
             </div>
           </li>
-          <li class="nav-item">
+          @endcan
+          <!-- <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <i class="icon-layout menu-icon"></i>
               <span class="menu-title">Rotators</span>
@@ -140,7 +163,29 @@
                 <li class="nav-item"> <a class="nav-link" href="{{ URL::to('rotatorlist') }}">Rotator List</a></li>
               </ul>
             </div>
+          </li> -->
+          @can('integration')
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#apisection" aria-expanded="false" aria-controls="ui-basic">
+              <i class="icon-contract menu-icon"></i>
+              <span class="menu-title">API Integrations</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="apisection">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ URL::to('addintegration') }}">Add Integration </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ URL::to('integrationdoc') }}">Integration Doc</a></li>
+              </ul>
+            </div>
           </li>
-          
+          @endcan
+          @can('role')
+          <li class="nav-item ">
+            <a class="nav-link" href="{{ URL::to('roles') }}">
+              <i class="ti-check-box menu-icon"></i>
+              <span class="menu-title">Manage Roles</span>
+            </a>
+          </li>
+          @endcan
         </ul>
       </nav>

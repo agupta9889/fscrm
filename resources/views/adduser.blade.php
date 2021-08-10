@@ -29,28 +29,38 @@
                       <label for="exampleInputPassword1">Password</label>
                       <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Role</label>
+                    <div class="form-group">
+                        <label for="exampleInputUsername1">Role</label>
+                        {!! Form::select('role', $role,[], array('class' => 'form-control')) !!}
+                        <!-- <div class="col-sm-3">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="role" value="1" required>
+                            Admin
+                            <i class="input-helper"></i></label>
+                        </div>
+                        </div>
                         <div class="col-sm-5">
                         <div class="form-check">
                             <label class="form-check-label">
-                            <input type="radio" class="form-check-input" onclick="onButtonClick()" name="role" value="1" required>
+                            <input type="radio" class="form-check-input" onclick="onButtonClick()" name="role" value="2" required>
                             Coaching Manager
                             <i class="input-helper"></i></label>
                         </div>
                         </div>
-                        <div class="col-sm-5">
+                        <div class="col-sm-4">
                         <div class="form-check">
                             <label class="form-check-label">
-                            <input type="radio" class="form-check-input" onclick="onButtonClick1()" name="role" value="2" required>
+                            <input type="radio" class="form-check-input" onclick="onButtonClick1()" name="role" value="3" required>
                             Company Manager
                             <i class="input-helper"></i></label>
                         </div>
-                        </div>
+                        </div> -->
+                        
                     </div>
                     <div class="form-group hide" id="textInput">
                       <label for="exampleInputUsername1">Assigned Numbers (comma separated):</label>
-                      <input type="text" name="assign_number" class="form-control" id="exampleInputUsername1">
+                      <input type="text" name="phone" class="form-control" id="exampleInputUsername1">
                       <p class="card-description">Enter "all" for all numbers. This will only work with rotator numbers, for API numbers edit the integration.</p>
                     </div>
                     <button type="submit" class="btn btn-primary mr-2">Submit</button>

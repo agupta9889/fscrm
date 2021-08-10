@@ -402,7 +402,7 @@ $(document).ready(function(){
   $(".rotatorsetting").click(function() {
     $(".rotatorid").val($(this).attr('attrid'));
     $(".rotatorname").val($(this).attr('attrname'));
-    $(".rotatorstatus").val($(this).attr('attstatus'));
+    $(".rotatorstatus").val($(this).attr('attstatus')).attr('selected','selected');
     $(".testmatch").val($(this).attr('attrtestnumber'));
   })
 });

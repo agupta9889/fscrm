@@ -32,15 +32,9 @@
                           <td>{{ $user->fname }} {{$user->lname }}</td>
                           <td>{{ $user->email}}</td>
                           <td>
-                            <?php if($user->role ==1){?>
-                              Coaching Manager
-                              <?php } else if($user->role ==2) {?>
-                                Company  Manager
-                                <?php } else {?>
-                                  Owner
-                                  <?php } ?>
+                          {{ $user->role}}
                           </td>
-                          <td>{{ $user->created_at}}</td>
+                          <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                           <td>
                             <a href='edituser/{{$user->id}}' class="badge badge-warning"><i class="ti-pencil" data-toggle="tooltip" title="Edit User"></i></a> 
                             <a href='delete/{{ $user->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')"><i class="ti-trash" data-toggle="tooltip" title="Delete User"></i></a>

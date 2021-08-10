@@ -15,25 +15,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'AdminController@login');
-Route::get('/login', 'AdminController@login');
-Route::post('/login', 'AdminController@userPostLogin');
-Route::get('/forgot', 'AdminController@forgotPassword');
-//Route::post('forgot', 'AdminController@submitForgetPassword'); 
-Route::get('/resetpassword', 'AdminController@showResetPasswordForm'); 
-Route::post('resetpassword', 'AdminController@submitResetPasswordForm'); 
-
-Route::group(['middleware' => 'userAuth'], function () {
+Route::group(['middleware' => 'auth'], function () {
    Route::get('/dashboard', 'AdminController@dashboard');
-   Route::get('/logout', 'AdminController@doLogout');
    Route::post('/adduser', 'AdminController@registration');
    Route::get('/adduser', 'AdminController@addRegistration');
    Route::get('/userlist', 'AdminController@userDetails');
    Route::get('/edituser/{id}', 'AdminController@updShowUser');
-   Route::post('/edituser/{id}', 'AdminController@editUser');
+   Route::post('/updateuser', 'AdminController@updateUserRecord');
    Route::get('delete/{id}','AdminController@destroy');
-   Route::get('/addrotator', 'AdminController@addRotator');
+   //Route::get('/addrotator', 'AdminController@addRotator');
    Route::post('/addrotator', 'AdminController@insertRotator');
-   Route::get('/rotatorlist', 'AdminController@rotatorDetails');
+   //Route::get('/rotatorlist', 'AdminController@rotatorDetails');
    Route::post('/rotatoredit', 'AdminController@rotatorDataEdit');
    Route::post('/addphonesetting', 'AdminController@addPhone');
    Route::post('/rotatorlist/{id}', 'AdminController@editphone');
@@ -42,5 +34,8 @@ Route::group(['middleware' => 'userAuth'], function () {
    Route::get('/unexportedlead', 'AdminController@unexpLead');
    Route::get('/exportlead', 'AdminController@exportsLead');
    Route::get('/report', 'AdminController@leadReport');
+   Route::get('/addintegration', 'AdminController@integration');
+   Route::get('/integrationdoc', 'AdminController@integrationDoc');
+   Route::resource('roles', RoleController::class);
     
 });

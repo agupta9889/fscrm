@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use DB;
 use Session;
+use Mail; 
+use Carbon\Carbon; 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Rotator;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
@@ -21,52 +24,28 @@ class AdminController extends Controller
      */
     public function login() 
     {
-        return view('login');
+        return view('auth.login');
     }
     
-    // --------------------- [ User login ] ---------------------
-    public function userPostLogin(Request $request) 
-    {
-        $email = $request->input('email');
-        $password = $request->input('password');
-        // check user using auth function
-        if (Auth::attempt(['email' => $email, 'password' => $password])) #If the Credentials are Right
-        {
-        return redirect::intended('dashboard'); #Your Success Page
-        }
-        else
-        {
-            return back()->withSuccess('Whoops! invalid username or password.'); #Your Failure Page
-        }
-    }
-
-    // ------------------ [ User Logout Section ] ---------------------
-    public function doLogout()
-    {
-        Auth::logout(); // log the user out of our application
-        return Redirect::to('login'); // redirect the user to the login screen
-    }
-
-    // ------------------ [ User Forgot Page ] ---------------------
-    public function forgotPassword() 
-    {
-        return view('forgot');
-    }
-
     // ------------------ [ Load Dashboard Page ] ---------------------
     public function dashboard() 
     {
         // check if user logged in
         if(Auth::check()) {
-            return view('dashboard');
+            
+            $data['rotatorD'] = Rotator::paginate(5);
+            //print_r($data); die;
+            return view('dashboard', $data);
         }
-        return redirect::to("login")->withSuccess('Oopps! You do not have access');
+        
+        return redirect::to("auth.login")->withSuccess('Oopps! You do not have access');
     }
 
     // ------------------ [ Load Add Registration Page ] ---------------
     public function addRegistration() 
     {   
-            return view('adduser');
+        $role = Role::pluck('name','name')->all();    
+        return view('adduser', compact('role'));
         
     }
 
@@ -78,9 +57,11 @@ class AdminController extends Controller
         $email = $request->input('email');
         $pass = Hash::make($request->input('password'));
         $role = $request->input('role');
-        $assign_number = $request->input('assign_number');
-        $data = array('fname'=>$fname, 'lname'=>$lname, 'email'=>$email, 'role'=>$role, 'assigned_number'=>$assign_number, 'password'=>$pass);
-        DB::table('users')->insert($data);
+        $assign_number = $request->input('phone');
+        $data = array('fname'=>$fname, 'lname'=>$lname, 'email'=>$email, 'role'=>$role, 'phone'=>$assign_number, 'password'=>$pass);
+        // $user = DB::table('users')->insert($data);
+        $user = User::create($data);
+        $user->assignRole($request->input('role'));
         Session::flash('message', 'Registered Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('adduser');
@@ -96,33 +77,35 @@ class AdminController extends Controller
     // ----------------  [ Update User Details Page ] ------------
     public function updShowUser($id) 
     {
-        $user = DB::select('select * from users where id = ?',[$id]);
-        return view('edituser',['user'=>$user]);
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->all();
+        return view('edituser',compact('user','roles','userRole'));
     }
 
     // ----------------  [ Update User Details Page ] ------------
-    public function editUser(Request $request) 
+    public function updateUserRecord(Request $request) 
     {
         $updateID = $request->updateID;
         $data['fname'] = $request->first_name;
         $data['lname'] = $request->last_name;
         $data['email'] = $request->email;
         $data['role'] = $request->role;
-        if($request->role == 1) {
-            $data['assigned_number'] = $request->assign_number;
+        if($request->role == 2) {
+            $data['phone'] = $request->assign_number;
         } else {
-            $data['assigned_number'] = NULL;
+            $data['phone'] = NULL;
         }
-        
-        if(DB::table('users')->where('id',$updateID)->update($data)) {
-            $update['password'] = Hash::make($request->input('password'));  
-            if(!empty($request->password)) {
-                DB::table('users')->where('id',$updateID)->update($update);
-            }
-        }
-        Session::flash('message', 'Updated Successfully!'); 
+        $user = User::find($updateID);
+        $user->update($data);
+        //$user = User::where('id',$updateID)->update($data);
+
+        DB::table('model_has_roles')->where('model_id',$updateID)->delete();
+
+        $user->assignRole($request->input('role'));
+        Session::flash('message', 'User Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('edituser/'.$request->updateID);
+        return redirect('userlist');
     }
 
     // ----------------  [ Delete User Row Page ] ------------
@@ -148,13 +131,13 @@ class AdminController extends Controller
         DB::table('rotators')->insert($data);
         Session::flash('message', 'Rotaor Added successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('addrotator');
+        return redirect('dashboard');
     }
     // ----------------  [ Get Rotator Details Page ] ------------
     public function rotatorDetails()
     {
         $data['rotatorD'] = Rotator::paginate(5);
-        return view('rotatorlist', $data);
+        return view('dashboard', $data);
     }
     // ----------------  [ Update Phone Settings Page ] ------------
     public function rotatorDataEdit(Request $request) 
@@ -167,7 +150,7 @@ class AdminController extends Controller
         DB::table('rotators')->where('id',$updateID)->update($data);
         Session::flash('message', 'Rotator Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('rotatorlist');
+        return redirect('dashboard');
     }
     // ----------------  [ Add Phones Page ] ------------
     public function addPhone(Request $request)
@@ -185,7 +168,7 @@ class AdminController extends Controller
         DB::table('phone_settings')->insert($data);
         Session::flash('message', 'Phone Record Added Successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('rotatorlist');
+        return redirect('dashboard');
        
     }
     // ----------------  [ Update Phone Settings Page ] ------------
@@ -203,7 +186,7 @@ class AdminController extends Controller
         DB::table('phone_settings')->where('id',$updateID)->update($data);
         Session::flash('message', 'Phone Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('rotatorlist');
+        return redirect('dashboard');
     }
     // ----------------  [ Delete Phone Records Section ] ------------
     public function deletePhoneRecord($id) 
@@ -211,7 +194,7 @@ class AdminController extends Controller
         DB::delete('delete from phone_settings where id = ?',[$id]);
         Session::flash('message', 'Phone Record Deleted Successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('rotatorlist');
+        return redirect('dashboard');
     }
     // ----------------  [ Delete Rotator Row Section ] ------------
     public function deleteRotatorRecord($id) 
@@ -220,7 +203,7 @@ class AdminController extends Controller
         DB::delete('delete from phone_settings where rotator_id = ?',[$id]);
         Session::flash('message', 'Rotator Record Deleted Successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect('rotatorlist');
+        return redirect('dashboard');
     }
     // ----------------  [ Get Unexported Lead Page ] ------------
     public function unexpLead()
@@ -237,5 +220,15 @@ class AdminController extends Controller
     {
         return view('report');
     }
-
+    // ----------------  [ Get API Integration Page ] ------------
+    public function integration()
+    {
+        
+        return view('addintegration');
+    }
+    // ----------------  [ Get API Integration Page ] ------------
+    public function integrationDoc()
+    {
+        return view('integrationdoc');
+    }
 }

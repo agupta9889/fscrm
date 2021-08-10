@@ -17,9 +17,6 @@ class UserController extends Controller
         echo 'submit' + $request;
     }
 
-    public function test() {
-        echo "hi"; die;
-    }
 
     /**
      * Show the form for creating a new resource.

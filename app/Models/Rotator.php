@@ -14,8 +14,5 @@ class Rotator extends Model
         return $this->hasMany('App\Models\Phonesetting','rotator_id','id');
     }
 
-    public function activephonecall()
-    {
-        return $this->Phonesetting::where('status', 0)->get();
-    }
+    
 }

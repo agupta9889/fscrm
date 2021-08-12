@@ -43,8 +43,8 @@
                         </tr>
                         @empty
                         <tr>
-                              <th>No Records Found!</th>
-                            </tr>
+                          <th>No Records Found!</th>
+                        </tr>
                         @endforelse
                       </tbody>
                     </table>
@@ -54,16 +54,7 @@
                         {!! $userD->links() !!}
                     </div>
                     </div>
-                    <!-- <div class="template-demo">
-                      <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary">Previous</button>
-                        <button type="button" class="btn btn-primary">1</button>
-                        <button type="button" class="btn btn-primary">2</button>
-                        <button type="button" class="btn btn-primary">3</button>
-                        <button type="button" class="btn btn-primary">Next</button>
-                      </div>
-                    </div> -->
-                  </div>
+                   </div>
                 </div>
               </div>
             </div>

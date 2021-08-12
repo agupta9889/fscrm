@@ -101,10 +101,6 @@
                 <i class="ti-user text-primary"></i>
                 {{ $user->fname }} {{ $user->lname }}
               </a>
-              <!-- <a href="{{ URL::to('logout') }}" class="dropdown-item">
-                <i class="ti-power-off text-primary"></i>
-                Logout
-              </a> -->
               <!-- Authentication -->
               <form method="POST" action="{{ route('logout') }}">
                   @csrf
@@ -136,7 +132,7 @@
             </a>
           </li>
           @endcan
-          @can('user')
+          @can('user-list')
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="icon-head menu-icon"></i>
@@ -179,7 +175,7 @@
             </div>
           </li>
           @endcan
-          @can('role')
+          @can('role-list')
           <li class="nav-item ">
             <a class="nav-link" href="{{ URL::to('roles') }}">
               <i class="ti-check-box menu-icon"></i>

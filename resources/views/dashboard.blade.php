@@ -34,7 +34,6 @@
               <div class="card tale-bg">
                 <div class="card-people mt-auto">
                   <img src="{{asset('assets/images/dashboard/people.svg')}}" alt="people">
-                  
                 </div>
               </div>
             </div>
@@ -44,8 +43,7 @@
                   <div class="card card-tale">
                     <div class="card-body">
                       <p class="mb-4">Accepted</p>
-                      
-                      <p class="fs-30 mb-2">444</p>
+                      <p class="fs-30 mb-2">0</p>
                     </div>
                   </div>
                 </div>
@@ -53,7 +51,7 @@
                   <div class="card card-dark-blue">
                     <div class="card-body">
                       <p class="mb-4">Rejected</p>
-                      <p class="fs-30 mb-2">61344</p>
+                      <p class="fs-30 mb-2">0</p>
                     </div>
                   </div>
                 </div>
@@ -63,7 +61,7 @@
                   <div class="card card-light-blue">
                     <div class="card-body">
                       <p class="mb-4">Active Numbers</p>
-                      <p class="fs-30 mb-2">34040</p>
+                      <p class="fs-30 mb-2">{{ $activecount }}</p>
                     </div>
                   </div>
                 </div>
@@ -71,7 +69,7 @@
                   <div class="card card-light-danger">
                     <div class="card-body">
                       <p class="mb-4">Inactive Numbers</p>
-                      <p class="fs-30 mb-2">47033</p>
+                      <p class="fs-30 mb-2">{{ $inactivecount }}</p>
                     </div>
                   </div>
                 </div>
@@ -121,8 +119,8 @@
                           <td>{{ $rotator->rotatorname }}</td>
                           <td>{{ $rotator->id }}</td>
                           <td>{{ $rotator->mode }}</td>
-                          <td>7 <label class="text-success">1</label> / <label class="text-danger">6</label></td>
-                          <td>3 <label class="text-success">3</label> / <label class="text-danger">0</label></td>
+                          <td> {{ $rotator->getrotatorList->count() }} <label class="text-success">{{ $rotator->getrotatorList->where('status', '0')->count(); }}</label> / <label class="text-danger">{{ $rotator->getrotatorList->where('status', '1')->count(); }}</label></td>
+                          <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
                           <td>
                           <?php if($rotator->status ==0){?>
                               <label class="badge badge-success">Active</label>

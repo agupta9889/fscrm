@@ -31,32 +31,7 @@
                     </div>
                     <div class="form-group">
                         <label for="exampleInputUsername1">Role</label>
-                        {!! Form::select('role', $role,[], array('class' => 'form-control')) !!}
-                        <!-- <div class="col-sm-3">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="role" value="1" required>
-                            Admin
-                            <i class="input-helper"></i></label>
-                        </div>
-                        </div>
-                        <div class="col-sm-5">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                            <input type="radio" class="form-check-input" onclick="onButtonClick()" name="role" value="2" required>
-                            Coaching Manager
-                            <i class="input-helper"></i></label>
-                        </div>
-                        </div>
-                        <div class="col-sm-4">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                            <input type="radio" class="form-check-input" onclick="onButtonClick1()" name="role" value="3" required>
-                            Company Manager
-                            <i class="input-helper"></i></label>
-                        </div>
-                        </div> -->
-                        
+                        {!! Form::select('role', $role,[], array('class' => 'form-control crmrole')) !!}
                     </div>
                     <div class="form-group hide" id="textInput">
                       <label for="exampleInputUsername1">Assigned Numbers (comma separated):</label>
@@ -76,12 +51,19 @@
 @include('layouts.footer')
 
 <script>
-function onButtonClick(){
-  document.getElementById('textInput').style.display ='block';
-}
-function onButtonClick1(){
-  document.getElementById('textInput').style.display = 'none';
-}
+
+  $("select.crmrole").change(function(){
+    
+  var selectedRole = $(this).children("option:selected").val();
+  //alert("You have selected the role - " + selectedRole);
+  if(selectedRole === 'Coaching Manager' ){
+    document.getElementById('textInput').style.display ='block';
+  }
+  else{
+    document.getElementById('textInput').style.display = 'none';
+  }
+  
+});
 
 </script>
 <style>

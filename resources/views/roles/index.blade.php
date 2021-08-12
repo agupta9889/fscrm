@@ -11,9 +11,11 @@
                      <h4 class="card-title">Role Management</h4>
                   </div>
                   <div class="col-md-6">
-                    <a href="{{ route('roles.create') }}" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
-                    Create New Role <i class="ti-control-forward"></i>
-                    </a>
+                    @can('role-create')
+                      <a href="{{ route('roles.create') }}" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
+                      Create New Role <i class="ti-control-forward"></i>
+                      </a>
+                    @endcan
                 </div>
                 </div>
                 <!-- <div class="pull-right">
@@ -42,11 +44,14 @@
                             <td>{{ $role->name }}</td>
                             <td>
                                 <a class="btn btn-info" href="{{ route('roles.show',$role->id) }}">Show</a>
+                                @can('role-edit')
                                 <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Edit</a>
+                                @endcan
+                                @can('role-delete')
                                 {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
                                     {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
                                 {!! Form::close() !!}
-                                
+                                @endcan
                             </td>
                         </tr>
                         @endforeach

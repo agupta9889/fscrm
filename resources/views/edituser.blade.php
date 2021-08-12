@@ -32,9 +32,9 @@
                     </div>
                     <div class="form-group">
                         <label for="exampleInputUsername1">Role</label>
-                        {!! Form::select('role', $roles,$userRole, array('class' => 'form-control','')) !!}
+                        {!! Form::select('role', $roles,$userRole, array('class' => 'form-control crmrole','')) !!}
                     </div>
-                    <div class="form-group <?php if($user->role == 1){?> hide <?php } ?>" id="textInputEd">
+                    <div class="form-group <?php if($user->role == 'Admin'){?> hide <?php } ?>" id="textInputEd">
                       <label for="exampleInputUsername1">Assigned Numbers (comma separated):</label>
                       <input type="text" name="assign_number" class="form-control" id="exampleInputUsername1" value="{{$user->phone }}">
                     <p class="card-description">Enter "all" for all numbers. This will only work with rotator numbers, for API numbers edit the integration.</p>
@@ -51,15 +51,20 @@
         <!-- partial:../../partials/_footer.html -->
 @include('layouts.footer')
 <script>
-  function onButtonClickEd1(){
-    document.getElementById('textInputEd').style.display ='none';
-  }
-  function onButtonClickEd2(){
-    document.getElementById('textInputEd').style.display = 'block';
-  }
-  function onButtonClickEd3(){
-    document.getElementById('textInputEd').style.display = 'none';
-  }
+  
+  $("select.crmrole").change(function(){
+    
+    var selectedRole = $(this).children("option:selected").val();
+    //alert("You have selected the role - " + selectedRole);
+    if(selectedRole === 'Coaching Manager' ){
+      document.getElementById('textInputEd').style.display ='block';
+    }
+    else{
+      document.getElementById('textInputEd').style.display = 'none';
+    }
+    
+  });
+
 </script>
 <style>
   .hide{

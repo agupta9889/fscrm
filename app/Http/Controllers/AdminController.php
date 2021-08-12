@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Rotator;
+use App\Models\Phonesetting;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -34,7 +35,9 @@ class AdminController extends Controller
         if(Auth::check()) {
             
             $data['rotatorD'] = Rotator::paginate(5);
-            //print_r($data); die;
+            $data['activecount'] = Phonesetting::where('status', '0')->count();
+            $data['inactivecount'] = Phonesetting::where('status', '1')->count();
+            
             return view('dashboard', $data);
         }
         
@@ -91,13 +94,24 @@ class AdminController extends Controller
         $data['lname'] = $request->last_name;
         $data['email'] = $request->email;
         $data['role'] = $request->role;
-        if($request->role == 2) {
+        if($request->role === 'Coaching Manager') {
             $data['phone'] = $request->assign_number;
         } else {
             $data['phone'] = NULL;
         }
         $user = User::find($updateID);
-        $user->update($data);
+        
+        if($user->update($data))
+        {
+            $update['password'] = Hash::make($request->input('password'));  
+            if(!empty($request->password)) 
+            {
+                DB::table('users')->where('id',$updateID)->update($update);
+            }
+        }
+
+
+        //@dd($user); die();
         //$user = User::where('id',$updateID)->update($data);
 
         DB::table('model_has_roles')->where('model_id',$updateID)->delete();

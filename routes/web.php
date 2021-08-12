@@ -47,5 +47,8 @@ Route::group(['middleware' => 'auth'], function () {
    Route::get('/addintegration', 'AdminController@integration');
    Route::get('/integrationdoc', 'AdminController@integrationDoc');
    Route::resource('roles', RoleController::class);
+
+   
+   // Route::get('/mail', 'AdminController@sendMail');
     
 });

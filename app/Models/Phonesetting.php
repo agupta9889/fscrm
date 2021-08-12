@@ -9,6 +9,7 @@ class Phonesetting extends Model
 {
     use HasFactory;
     protected $table = 'phone_settings';
+    public $timestamps = false; 
 
     
 }

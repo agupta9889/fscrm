@@ -34,7 +34,7 @@
                         <label for="exampleInputUsername1">Role</label>
                         {!! Form::select('role', $roles,$userRole, array('class' => 'form-control crmrole','')) !!}
                     </div>
-                    <div class="form-group <?php if($user->role == 'Admin'){?> hide <?php } ?>" id="textInputEd">
+                    <div class="form-group <?php if($user->role == 'Coaching Manager'){?> block <?php } else { ?> hide <?php } ?>" id="textInputEd">
                       <label for="exampleInputUsername1">Assigned Numbers (comma separated):</label>
                       <input type="text" name="assign_number" class="form-control" id="exampleInputUsername1" value="{{$user->phone }}">
                     <p class="card-description">Enter "all" for all numbers. This will only work with rotator numbers, for API numbers edit the integration.</p>
@@ -50,9 +50,9 @@
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
 @include('layouts.footer')
+<!---- Edi User Role Selection -- -->
 <script>
-  
-  $("select.crmrole").change(function(){
+$("select.crmrole").change(function(){
     
     var selectedRole = $(this).children("option:selected").val();
     //alert("You have selected the role - " + selectedRole);
@@ -64,10 +64,4 @@
     }
     
   });
-
-</script>
-<style>
-  .hide{
-  display:none;
-}
-</style>
+</script>  

@@ -49,25 +49,3 @@
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
 @include('layouts.footer')
-
-<script>
-
-  $("select.crmrole").change(function(){
-    
-  var selectedRole = $(this).children("option:selected").val();
-  //alert("You have selected the role - " + selectedRole);
-  if(selectedRole === 'Coaching Manager' ){
-    document.getElementById('textInput').style.display ='block';
-  }
-  else{
-    document.getElementById('textInput').style.display = 'none';
-  }
-  
-});
-
-</script>
-<style>
-  .hide{
-  display:none;
-}
-</style>

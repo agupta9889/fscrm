@@ -22,6 +22,8 @@
                       <a class="dropdown-item" href="#">Last 7 Days</a>
                       <a class="dropdown-item" href="#">Last 30 Days</a>
                       <a class="dropdown-item" href="#">This Month</a>
+                      <a class="dropdown-item" href="#">Last Month</a>
+                      <a class="dropdown-item" href="#">Custom Range</a>
                     </div>
                   </div>
                  </div>
@@ -478,50 +480,6 @@
   </div>
 </div>
 <!-----------End--------------->
-        
 @include('layouts.footer')
-<!-----------Popover JS--------------->
-<!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>   -->
 
-<script>
-function onButtonClick(){
-  document.getElementById('phones').style.display ='block';
-  document.getElementById('integrations').style.display ='none';
-}
-function onButtonClick1(){
-  document.getElementById('integrations').style.display = 'block';
-  document.getElementById('phones').style.display ='none';
-}
-
-// $(document).ready(function(){
   
-//     $('[data-toggle="popover"]').popover();   
-//     placement : 'top'
-// });
-function rotatorId(id)
-  {
-    $("#phone").val(id);
-    
-   
-  }
-
-$(document).ready(function(){
-  $(".rotatorsetting").click(function() {
-    $(".rotatorid").val($(this).attr('attrid'));
-    $(".rotatorname").val($(this).attr('attrname'));
-    $(".rotatorstatus").val($(this).attr('attstatus')).attr('selected','selected');
-    $(".testmatch").val($(this).attr('attrtestnumber'));
-  })
-});
-
-</script>
-
-<style>
-  .hide{
-  display:none;
-}
-.hiddenRow {
-    padding: 0 !important;
-}
-</style>

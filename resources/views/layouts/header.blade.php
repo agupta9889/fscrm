@@ -18,18 +18,9 @@
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="{{asset('/assets/css/vertical-layout-light/style.css')}}">
+  <link rel="stylesheet" href="{{asset('/assets/css/custom.css')}}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{{asset('/assets/images/fs_favicon.png')}}" />
-  <script>
-  function copyToClipboard(element) {
-    var $temp = $("<input>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
-    $temp.remove();
-    alert('API Key Copied!');
-  }
-  </script>
 
 </head>
 <body>
@@ -100,6 +91,8 @@
               @php $user = auth()->user(); @endphp
                 <i class="ti-user text-primary"></i>
                 {{ $user->fname }} {{ $user->lname }}
+                <br/>
+                {{ $user->email }}
               </a>
               <!-- Authentication -->
               <form method="POST" action="{{ route('logout') }}">

@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::get('/unexportedlead', 'AdminController@unexpLead');
    Route::get('/exportlead', 'AdminController@exportsLead');
    Route::get('/report', 'AdminController@leadReport');
+   Route::get('/assignednumber', 'AdminController@assignedNumber');
    Route::get('/addintegration', 'AdminController@integration');
    Route::get('/integrationdoc', 'AdminController@integrationDoc');
    Route::resource('roles', RoleController::class);

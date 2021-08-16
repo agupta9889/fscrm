@@ -50,6 +50,7 @@
         </ul>
         
         <ul class="navbar-nav navbar-nav-right">
+          @can('api-key')
           <li class="nav-item dropdown">
             <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
               <!-- <i class="icon-bell mx-0"></i> -->
@@ -82,6 +83,7 @@
               </a>
             </div>
           </li>
+          @endcan
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
               <img src="{{asset('/assets/images/user.png')}}" alt="profile"/>
@@ -106,6 +108,7 @@
               </form>
             </div>
           </li>
+         
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
           <span class="icon-menu"></span>
@@ -173,6 +176,14 @@
             <a class="nav-link" href="{{ URL::to('roles') }}">
               <i class="ti-check-box menu-icon"></i>
               <span class="menu-title">Manage Roles</span>
+            </a>
+          </li>
+          @endcan
+          @can('assigned-number')
+          <li class="nav-item ">
+            <a class="nav-link" href="{{ URL::to('assignednumber') }}">
+              <i class="ti-mobile menu-icon"></i>
+              <span class="menu-title">Assigned Number</span>
             </a>
           </li>
           @endcan

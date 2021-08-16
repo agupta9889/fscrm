@@ -37,7 +37,8 @@ class AdminController extends Controller
             $data['rotatorD'] = Rotator::paginate(5);
             $data['activecount'] = Phonesetting::where('status', '0')->count();
             $data['inactivecount'] = Phonesetting::where('status', '1')->count();
-            
+            // $username = User::where('role','Coaching Manager');
+            // print_r($userlogin); die;
             return view('dashboard', $data);
         }
         
@@ -233,6 +234,12 @@ class AdminController extends Controller
     public function leadReport()
     {
         return view('report');
+    }
+    // ----------------  [ Assigned Number Page ] ------------
+    public function assignedNumber()
+    {
+       //echo ('hello'); die;
+        return view('assignednumber');
     }
     // ----------------  [ Get API Integration Page ] ------------
     public function integration()

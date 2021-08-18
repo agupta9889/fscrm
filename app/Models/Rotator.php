@@ -11,7 +11,7 @@ class Rotator extends Model
     use HasFactory;
     public function getrotatorList()
     {
-        return $this->hasMany('App\Models\Phonesetting','rotator_id','id');
+        return $this->hasMany('App\Models\Phonesetting','rotator_id','id')->orderBy("current_selected", "asc");
     }
 
     

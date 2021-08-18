@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Rotator;
 use App\Models\Phonesetting;
+use App\Models\Salephone;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -37,6 +38,8 @@ class AdminController extends Controller
             $data['rotatorD'] = Rotator::paginate(5);
             $data['activecount'] = Phonesetting::where('status', '0')->count();
             $data['inactivecount'] = Phonesetting::where('status', '1')->count();
+            //$data['sales_number'] = Phonesetting::count('sales_number');
+            //print_r($data['sales_number']);die;
             return view('dashboard', $data);
         }
         
@@ -109,10 +112,6 @@ class AdminController extends Controller
             }
         }
 
-
-        //@dd($user); die();
-        //$user = User::where('id',$updateID)->update($data);
-
         DB::table('model_has_roles')->where('model_id',$updateID)->delete();
 
         $user->assignRole($request->input('role'));
@@ -168,20 +167,32 @@ class AdminController extends Controller
     // ----------------  [ Add Phones Page ] ------------
     public function addPhone(Request $request)
     {
-        $data['rotator_id'] = $request->rotator_id;
-        $data['phone_type'] = $request->phone_type;
-        $data['phone_number'] = $request->phone_number;
-        $data['integration'] = $request->integration;
-        $data['floor_label'] = $request->floor_label;
-        $data['status'] = $request->status;
-        $data['max_daily_leads'] = $request->max_daily_leads;
-        $data['max_weekly_leads'] = $request->max_weekly_leads;
-        $data['max_limit_leads'] = $request->max_limit_leads;
-        $data['test_number'] = $request->test_number;
-        DB::table('phone_settings')->insert($data);
-        Session::flash('message', 'Phone Record Added Successfully!'); 
-        Session::flash('alert-class', 'alert-success');
-        return redirect('dashboard');
+            $rotator_id = $request->rotator_id;
+            $current_selected['current_selected'] = '1';
+            
+            DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
+
+            $data['rotator_id'] = $rotator_id;
+            $data['phone_type'] = $request->phone_type;
+            $data['phone_number'] = $request->phone_number;
+            $data['integration'] = $request->integration;
+            $data['floor_label'] = $request->floor_label;
+            $data['status'] = $request->status;
+            $data['max_daily_leads'] = $request->max_daily_leads;
+            $data['max_weekly_leads'] = $request->max_weekly_leads;
+            $data['max_limit_leads'] = $request->max_limit_leads;
+            $data['test_number'] = $request->test_number;
+            $data['current_selected'] = '0';
+            
+
+            DB::table('phone_settings')->insert($data);
+        
+            Session::flash('message', 'Phone Record Added Successfully!'); 
+            Session::flash('alert-class', 'alert-success');
+            return redirect('dashboard');
+        
+        
+        
        
     }
     // ----------------  [ Update Phone Settings Page ] ------------

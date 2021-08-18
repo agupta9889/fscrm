@@ -160,22 +160,24 @@
                                 </tr>
                               </thead>
                               <tbody>
+                              <?php $i = 0 ?>
                               @foreach($rotator->getrotatorList as $rowdata)
+                              <?php $i++; ?>
                                 <tr >
                                   <td data-toggle="collapse"  class="accordion-toggle" data-target="#table2-{{ $rowdata->id }}">
                                     <a href="#" class="badge badge-info">
                                       <i class="ti-eye"></i>
                                     </a>
                                   </td>
-                                  <td>1</td>
-                                  <td>{{ $rowdata->phone_number }}</td>
+                                  <td>{{ $i}}</td>
+                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number }}</td>
                                   <td>0</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
                                   <td>0</td>
                                   <td>{{ $rowdata->max_weekly_leads }}</td>
                                   <td>0</td>
                                   <td>{{ $rowdata->max_limit_leads }}</td>
-                                  <td>900</td>
+                                  <td>9</td>
                                   <td>
                                   <?php if($rowdata->status == 0) { ?>
                                     <label class="badge badge-success"><i class="ti-check"></i></label>
@@ -273,6 +275,7 @@
                                     <div class="col-sm-4"></div>
                                   </td>
                                 </tr>
+                                
                                 @endforeach
                               </tbody>
                             </table>
@@ -342,6 +345,7 @@
         </div>
         <div class="modal-body">
           <input type="hidden" name="rotator_id" id="phone">
+          
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Phone Type</label>
             <div class="col-sm-5">
@@ -505,3 +509,9 @@ $(function() {
 
 });
 </script>
+
+<style>
+  td.active {
+    background: #029e0273;
+}
+</style>

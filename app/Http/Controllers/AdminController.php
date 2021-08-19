@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Session;
 use Mail; 
+use View;
 use Carbon\Carbon; 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -35,7 +36,12 @@ class AdminController extends Controller
         // check if user logged in
         if(Auth::check()) {
             
+            
             $data['rotatorD'] = Rotator::paginate(5);
+            //$data['sale'] = Rotator::paginate(5);
+
+            // echo "<pre>";
+            // print_r($data); die;
             $data['activecount'] = Phonesetting::where('status', '0')->count();
             $data['inactivecount'] = Phonesetting::where('status', '1')->count();
             //$data['sales_number'] = Phonesetting::count('sales_number');
@@ -169,7 +175,6 @@ class AdminController extends Controller
     {
             $rotator_id = $request->rotator_id;
             $current_selected['current_selected'] = '1';
-            
             DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
 
             $data['rotator_id'] = $rotator_id;
@@ -198,7 +203,17 @@ class AdminController extends Controller
     // ----------------  [ Update Phone Settings Page ] ------------
     public function editphone(Request $request) 
     {
+        //$activephone = Phonesetting::where('id', $updateID)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->get();
+        // $phonesettingID = $activephone[0]->id;
+        // $current_selected = $activephone[0]->current_selected;
+        
+        // // DB::table('phone_settings')->where('id',$phonesettingID)->update($current_selected);
+        // if($current_selected === '0'){
+        //     DB::table('phone_settings')->where('id',$phonesettingID)->update($current_selected);
+        // }
         $updateID = $request->id;
+        //$rotator_id = $request->rotator_id;
+        //$data['rotator_id'] = $rotator_id;
         $data['floor_label'] = $request->floor_label;
         $data['status'] = $request->status;
         $data['phone_number'] = $request->phone_number;
@@ -207,6 +222,12 @@ class AdminController extends Controller
         $data['max_limit_leads'] = $request->max_limit_leads;
         $data['test_number'] = $request->test_number;
         $data['notification_email'] = $request->notification_email;
+        // 
+        // if($current_selected === '0'){
+            //$data['current_selected'] = $current_selected;
+        //         DB::table('phone_settings')->where('id',$updateID)->update($data);
+        //     }
+        
         DB::table('phone_settings')->where('id',$updateID)->update($data);
         Session::flash('message', 'Phone Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');

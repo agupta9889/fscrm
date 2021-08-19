@@ -162,16 +162,26 @@
                               <tbody>
                               <?php $i = 0 ?>
                               @foreach($rotator->getrotatorList as $rowdata)
+                              
                               <?php $i++; ?>
                                 <tr >
                                   <td data-toggle="collapse"  class="accordion-toggle" data-target="#table2-{{ $rowdata->id }}">
-                                    <a href="#" class="badge badge-info">
+                                    <span class="badge badge-info">
                                       <i class="ti-eye"></i>
-                                    </a>
+                                    </span>
                                   </td>
                                   <td>{{ $i}}</td>
-                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number }}</td>
-                                  <td>0</td>
+                                  <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number }} 
+                                    <br/>
+                                    <?php if( $rowdata->test_number === 1231231234) { ?>
+                                      <span class="badge badge-warning">Test</span>
+                                    <?php }?>
+                                    
+                                  </td>
+                                  <!-- <?php
+                                    $tmp = \App\Models\Salephone::find('1');
+                                  ?> -->
+                                  <td>{{ 1 }}</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
                                   <td>0</td>
                                   <td>{{ $rowdata->max_weekly_leads }}</td>
@@ -215,6 +225,7 @@
                                               <input type="text" name="floor_label" value="{{ $rowdata->floor_label }}" class="form-control" id="exampleInputUsername1" placeholder="NYC Floor">
                                               </div>
                                               <input type="hidden" name="id" value="{{ $rowdata->id }}">
+                                              <input type="hidden" name="rotator_id" value="{{ $rowdata->rotator_id }}">
                                             </div>
                                             <div class="col-sm-6">
                                               <div class="form-group">

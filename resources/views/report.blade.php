@@ -44,7 +44,7 @@
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead>
-                        <tr>
+                        <tr class="text-center">
                           <th>Name</th>
                           <th>Email</th>
                           <th>Phone</th>
@@ -53,22 +53,21 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                        <td>Arun</td>
-                        <td>Arun@gmail.com</td>
-                          <td>9889899898</td>
-                          <td>Yes</td>
-                          <td>07/30/2021 02:19</td>
+                      @foreach($reportleads as $reportData)
+                        <tr class="text-center">
+                          <td>{{ $reportData->first_name }} {{ $reportData->first_name }}</td>
+                          <td>{{ $reportData->email }}</td>
+                          <td>{{ $reportData->phone }}</td>
+                          <td><label class="badge badge-success"><i class="ti-check"></i></label> <br/>{{ $reportData->sales_number }}</td>
+                          <td>{{ $reportData->created_at }}</td>
                         </tr>
+                        @endforeach
 			                </tbody>
                     </table>
+                    {{-- Pagination --}}
                     <div class="template-demo">
-                      <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary">Previous</button>
-                        <button type="button" class="btn btn-primary">1</button>
-                        <button type="button" class="btn btn-primary">2</button>
-                        <button type="button" class="btn btn-primary">3</button>
-                        <button type="button" class="btn btn-primary">Next</button>
+                      <div class="btn-group d-flex ">
+                          {{ $reportleads->links() }}
                       </div>
                     </div>
                   </div>

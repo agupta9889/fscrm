@@ -178,16 +178,16 @@
                                     <?php }?>
                                     
                                   </td>
-                                  <!-- <?php
+                                  <?php
                                     $tmp = \App\Models\Salephone::find('1');
-                                  ?> -->
-                                  <td>{{ 1 }}</td>
+                                  ?>
+                                  <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
-                                  <td>0</td>
+                                  <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
                                   <td>{{ $rowdata->max_weekly_leads }}</td>
-                                  <td>0</td>
+                                  <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
                                   <td>{{ $rowdata->max_limit_leads }}</td>
-                                  <td>9</td>
+                                  <td>{{ $rowdata->max_limit_leads - $tmp->salephonelist($rowdata->phone_number) }}</td>
                                   <td>
                                   <?php if($rowdata->status == 0) { ?>
                                     <label class="badge badge-success"><i class="ti-check"></i></label>
@@ -196,9 +196,9 @@
                                   <?php } ?>
                                   </td>
                                   <td>{{ $rowdata->floor_label }}</td>
-                                  <td><a href="{{ URL::to('unexportedlead') }}">0</a></td>
+                                  <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
                                   <td>
-                                    <a href="{{ URL::to('report') }}" class="badge badge-warning">
+                                    <a href="{{ URL::to('report') }}/{{ $rowdata->id }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
                                     </a> 
                                     <a href="deletephone/{{ $rowdata->id }}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
@@ -286,7 +286,6 @@
                                     <div class="col-sm-4"></div>
                                   </td>
                                 </tr>
-                                
                                 @endforeach
                               </tbody>
                             </table>

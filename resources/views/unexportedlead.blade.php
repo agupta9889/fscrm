@@ -8,7 +8,7 @@
                 <div class="card-body">
                   <div class="row">
                   <div class="col-md-6">
-                  <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}">(12 Exports)</a></h4>
+                  <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}} ">(12 Exports) </a> </h4>
                   </div>
                   <div class="col-md-6">
                   <button type="button" class="btn btn-outline-primary btn-icon-text" style="float:right;">
@@ -20,8 +20,7 @@
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead>
-                        <tr>
-                          <th>Sr. No.</th>
+                        <tr class="text-center">
                           <th>Name</th>
                           <th>Email</th>
                           <th>Phone</th>
@@ -30,23 +29,21 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                        <td>1</td>
-                          <td>My Commission Bootcamp</td>
-                          <td>arun@gmail.com</td>
-                          <td>9889899898</td>
-                          <td>Active</td>
-                          <td>07/30/2021 02:19</td>
+                      @foreach($unexpleads as $unexpleadData)
+                        <tr class="text-center">
+                          <td>{{ $unexpleadData->first_name }} {{ $unexpleadData->last_name }}</td>
+                          <td>{{ $unexpleadData->email }}</td>
+                          <td>{{ $unexpleadData->phone }}</td>
+                          <td><label class="badge badge-success"><i class="ti-check"></i></label> <br/>{{ $unexpleadData->sales_number }}</td>
+                          <td>{{ $unexpleadData->created_at }}</td>
                         </tr>
+                      @endforeach
 			                </tbody>
                     </table>
+                    {{-- Pagination --}}
                     <div class="template-demo">
-                      <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary">Previous</button>
-                        <button type="button" class="btn btn-primary">1</button>
-                        <button type="button" class="btn btn-primary">2</button>
-                        <button type="button" class="btn btn-primary">3</button>
-                        <button type="button" class="btn btn-primary">Next</button>
+                      <div class="btn-group d-flex ">
+                          {{ $unexpleads->links() }}
                       </div>
                     </div>
                   </div>

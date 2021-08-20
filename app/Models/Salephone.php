@@ -10,8 +10,8 @@ class Salephone extends Model
     use HasFactory;
     protected $table = 'sale_phones';
 
-    public function salephonelist(){
-        //return $this->where('phone_setting_id',$id)->count();
-        return $abc = '456';
+    public function salephonelist($phone_number){
+        return $this->distinct('email')->where('sales_number', $phone_number)->count();
+        
     }
 }

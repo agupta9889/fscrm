@@ -35,18 +35,17 @@ class AdminController extends Controller
     {
         // check if user logged in
         if(Auth::check()) {
-            
-            
+            $user = auth()->user();
+            if($user->role=== 'Coaching Manager')
+            {
+                return redirect('assignednumber');
+            }
+            else{
             $data['rotatorD'] = Rotator::paginate(5);
-            //$data['sale'] = Rotator::paginate(5);
-
-            // echo "<pre>";
-            // print_r($data); die;
             $data['activecount'] = Phonesetting::where('status', '0')->count();
             $data['inactivecount'] = Phonesetting::where('status', '1')->count();
-            //$data['sales_number'] = Phonesetting::count('sales_number');
-            //print_r($data['sales_number']);die;
             return view('dashboard', $data);
+            }
         }
         
         return redirect::to("auth.login")->withSuccess('Oopps! You do not have access');
@@ -251,19 +250,26 @@ class AdminController extends Controller
         return redirect('dashboard');
     }
     // ----------------  [ Get Unexported Lead Page ] ------------
-    public function unexpLead()
+    public function unexpLead($id)
     {
-        return view('unexportedlead');
+        $data['unexpleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
+        return view('unexportedlead', $data);
+       
     }
     // ----------------  [ Get Exports Lead Page ] ------------
     public function exportsLead()
-    {
+    {   
+        // $data['expleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(5);
+        // return view('exportlead', $data);
         return view('exportlead');
     }
     // ----------------  [ Get Report Lead Page ] ------------
-    public function leadReport()
+    public function leadReport($id)
     {
-        return view('report');
+        //dd($id);
+        $data['reportleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
+        return view('report', $data);
+       
     }
     // ----------------  [ Assigned Number Page ] ------------
     public function assignedNumber()

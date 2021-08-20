@@ -14,35 +14,42 @@ class APIController extends Controller
         
         $rotator_id = $request->rotator_id;
         $status = '0';  //0-active, 1-inactive
-        $activephone = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->get();
-        //$activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->count();
-        $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '1')->orderBy('id', 'desc')->get();
-         //return($activephonecount); die;
+        $activephone = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
+       // dd($activephone);
+        $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '1')->orderBy('id', 'desc')->first();
+       //dd($activephonecount);
+        //return($activephonecount); die;
 
-        $phoneid = $activephone[0]->id;
+        $phoneid = $activephone->id;
         $currentnumber['current_selected'] = '1'; 
-        $sales_number = $activephone[0]->phone_number;
-        $sales_number_status = $activephone[0]->status;  
-        $todaylimit = $activephone[0]->max_daily_leads; 
-        $weeklimit = $activephone[0]->max_daily_leads; 
-        $maxlimit = $activephone[0]->max_daily_leads; 
+        $sales_number = $activephone->phone_number;
+        $sales_number_status = $activephone->status;  
+        $todaylimit = $activephone->max_daily_leads; 
+        $weeklimit = $activephone->max_daily_leads; 
+        $maxlimit = $activephone->max_daily_leads; 
         //$phonesettingID = $phoneid-1 === 0 ? $activephonecount : $phoneid-1;
-        $phonesettingID = $activephonecount[0]->id;
+        //$phonesettingID = $activephonecount->id;
         $newcurrentnumber['current_selected'] = '0';
         //return(['new phone', $newcurrentnumber]); die;
         
         if($todaylimit > 0){
-        
-            DB::table('phone_settings')->where('id',$phoneid)->update($currentnumber);
-            DB::table('phone_settings')->where('id',$phonesettingID)->update($newcurrentnumber);
+             //dd($activephone);
+            //dd($activephonecount);
+            // if($activephone->test_number!= ''){
             
+            DB::table('phone_settings')->where('id',$activephonecount->id)->update($newcurrentnumber);
+            DB::table('phone_settings')->where('id',$activephone->id)->update($currentnumber);
+            // }
+            $activephonefindID = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
+            //dd($activephonefindID->id);
             $data = new Salephone;
-            $data->phone_setting_id=$phoneid;
+            //dd($activephonefindID->id);
+            $data->phone_setting_id=$activephonefindID->id;
             $data->api_key=$request->api_key;
             $data->rotator_id=$rotator_id;
             $data->email=$request->email;
             $data->phone=$request->phone;
-            $data->sales_number=$sales_number;
+            $data->sales_number=$activephonefindID->phone_number;
             $data->first_name=$request->first_name;
             $data->last_name=$request->last_name;
             $data->state=$request->state;   

@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', 'AdminController@login');
-
 Route::get('/clear', function() {
    Artisan::call('cache:clear');
    Artisan::call('config:clear');
@@ -26,6 +25,8 @@ Route::get('/clear', function() {
 });
 
 Route::group(['middleware' => 'auth'], function () {
+   
+   
    Route::get('/dashboard', 'AdminController@dashboard');
    Route::post('/adduser', 'AdminController@registration');
    Route::get('/adduser', 'AdminController@addRegistration');

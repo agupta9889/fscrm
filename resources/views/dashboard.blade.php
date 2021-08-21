@@ -37,7 +37,7 @@
                   <div class="card card-tale">
                     <div class="card-body">
                       <p class="mb-4">Accepted</p>
-                      <p class="fs-30 mb-2">0</p>
+                      <p class="fs-30 mb-2">{{ $totalReportActCount }}</p>
                     </div>
                   </div>
                 </div>
@@ -114,7 +114,10 @@
                           <td>{{ $rotator->id }}</td>
                           <td>{{ $rotator->mode }}</td>
                           <td> {{ $rotator->getrotatorList->count() }} <label class="text-success">{{ $rotator->getrotatorList->where('status', '0')->count(); }}</label> / <label class="text-danger">{{ $rotator->getrotatorList->where('status', '1')->count(); }}</label></td>
-                          <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
+                          <?php
+                            $tmp = \App\Models\Salephone::find('1');
+                          ?>
+                          <td>{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">0</label> / <label class="text-danger">0</label></td>
                           <td>
                           <?php if($rotator->status ==0){?>
                               <label class="badge badge-success">Active</label>
@@ -136,7 +139,6 @@
                             </a>
                           </td>
                         </tr>
-
                         <tr>
                           <td colspan="12" class="hiddenRow">
                             <div class="accordian-body collapse" id="table-<?php echo $rotator->id;?>"> 
@@ -173,6 +175,7 @@
                                   <td>{{ $i}}</td>
                                   <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number }} 
                                     <br/>
+                                    
                                     <?php if( $rowdata->test_number === 1231231234) { ?>
                                       <span class="badge badge-warning">Test</span>
                                     <?php }?>

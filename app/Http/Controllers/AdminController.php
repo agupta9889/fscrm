@@ -27,6 +27,9 @@ class AdminController extends Controller
      */
     public function login() 
     {
+        if(Auth::check()) {
+            return redirect('dashboard');
+        }
         return view('auth.login');
     }
     
@@ -44,6 +47,7 @@ class AdminController extends Controller
             $data['rotatorD'] = Rotator::paginate(5);
             $data['activecount'] = Phonesetting::where('status', '0')->count();
             $data['inactivecount'] = Phonesetting::where('status', '1')->count();
+            $data['totalReportActCount'] = Salephone::distinct('email')->count();
             return view('dashboard', $data);
             }
         }
@@ -266,8 +270,8 @@ class AdminController extends Controller
     // ----------------  [ Get Report Lead Page ] ------------
     public function leadReport($id)
     {
-        //dd($id);
-        $data['reportleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
+        $getsale = Salephone::where('phone_setting_id', $id)->first();
+        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number);
         return view('report', $data);
        
     }

@@ -14,4 +14,13 @@ class Salephone extends Model
         return $this->distinct('email')->where('sales_number', $phone_number)->count();
         
     }
+    public static function salephonereportlist($id){
+        return self::distinct('email')->where('sales_number', $id)->paginate(10);
+        
+    }
+    public function reportleadcount($rotatorid){
+        return $this->distinct('email')->where('rotator_id', $rotatorid)->count();
+        
+    }
+    
 }

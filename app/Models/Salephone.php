@@ -15,7 +15,7 @@ class Salephone extends Model
         
     }
     public static function salephonereportlist($id){
-        return self::distinct('email')->where('sales_number', $id)->paginate(10);
+        return self::distinct('email')->where('sales_number', $id);
         
     }
     public function reportleadcount($rotatorid){

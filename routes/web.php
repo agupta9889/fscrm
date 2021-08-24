@@ -26,17 +26,14 @@ Route::get('/clear', function() {
 
 Route::group(['middleware' => 'auth'], function () {
    
-   
    Route::get('/dashboard', 'AdminController@dashboard');
-   Route::post('/adduser', 'AdminController@registration');
    Route::get('/adduser', 'AdminController@addRegistration');
+   Route::post('/adduser', 'AdminController@registration');
    Route::get('/userlist', 'AdminController@userDetails');
    Route::get('/edituser/{id}', 'AdminController@updShowUser');
    Route::post('/updateuser', 'AdminController@updateUserRecord');
    Route::get('delete/{id}','AdminController@destroy');
-   //Route::get('/addrotator', 'AdminController@addRotator');
    Route::post('/addrotator', 'AdminController@insertRotator');
-   //Route::get('/rotatorlist', 'AdminController@rotatorDetails');
    Route::post('/rotatoredit', 'AdminController@rotatorDataEdit');
    Route::post('/addphonesetting', 'AdminController@addPhone');
    Route::post('/rotatorlist/{id}', 'AdminController@editphone');
@@ -47,6 +44,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::get('/report/{id}', 'AdminController@leadReport');
    Route::get('/assignednumber', 'AdminController@assignedNumber');
    Route::get('/addintegration', 'AdminController@integration');
+   Route::post('/insertintegaration', 'AdminController@addRegIntegration');
    Route::get('/integrationdoc', 'AdminController@integrationDoc');
    Route::resource('roles', RoleController::class);
 

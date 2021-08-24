@@ -12,38 +12,33 @@ class APIController extends Controller
     //
     public function salePhones(Request $request){
         
+        
         $rotator_id = $request->rotator_id;
         $status = '0';  //0-active, 1-inactive
         $activephone = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
        // dd($activephone);
-        $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '1')->orderBy('id', 'desc')->first();
+        $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '1')->orderBy('updated_at', 'asc')->first();
        //dd($activephonecount);
-        //return($activephonecount); die;
-
         $phoneid = $activephone->id;
-        $currentnumber['current_selected'] = '1'; 
         $sales_number = $activephone->phone_number;
         $sales_number_status = $activephone->status;  
         $todaylimit = $activephone->max_daily_leads; 
         $weeklimit = $activephone->max_daily_leads; 
         $maxlimit = $activephone->max_daily_leads; 
-        //$phonesettingID = $phoneid-1 === 0 ? $activephonecount : $phoneid-1;
-        //$phonesettingID = $activephonecount->id;
-        $newcurrentnumber['current_selected'] = '0';
-        //return(['new phone', $newcurrentnumber]); die;
         
         if($todaylimit > 0){
-             //dd($activephone);
-            //dd($activephonecount);
-            // if($activephone->test_number!= ''){
             
-            DB::table('phone_settings')->where('id',$activephonecount->id)->update($newcurrentnumber);
-            DB::table('phone_settings')->where('id',$activephone->id)->update($currentnumber);
-            // }
+            //if($activephone->test_number!= ''){
+            
+                $activephonecount->current_selected = '0';      //0-Selected(lead will came)
+                $activephonecount->save();
+                $activephone->current_selected = '1';       //1-Unselected(lead already get or next)
+                $activephone->save();
+
+            //}
+            
             $activephonefindID = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
-            //dd($activephonefindID->id);
             $data = new Salephone;
-            //dd($activephonefindID->id);
             $data->phone_setting_id=$activephonefindID->id;
             $data->api_key=$request->api_key;
             $data->rotator_id=$rotator_id;

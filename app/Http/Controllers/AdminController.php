@@ -73,7 +73,6 @@ class AdminController extends Controller
         $role = $request->input('role');
         $assign_number = $request->input('phone');
         $data = array('fname'=>$fname, 'lname'=>$lname, 'email'=>$email, 'role'=>$role, 'phone'=>$assign_number, 'password'=>$pass);
-        // $user = DB::table('users')->insert($data);
         $user = User::create($data);
         $user->assignRole($request->input('role'));
         Session::flash('message', 'Registered Successfully!'); 
@@ -176,32 +175,27 @@ class AdminController extends Controller
     // ----------------  [ Add Phones Page ] ------------
     public function addPhone(Request $request)
     {
-            $rotator_id = $request->rotator_id;
-            $current_selected['current_selected'] = '1';
-            DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
+        $rotator_id = $request->rotator_id;
+        $current_selected['current_selected'] = '1';
+        DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
 
-            $data['rotator_id'] = $rotator_id;
-            $data['phone_type'] = $request->phone_type;
-            $data['phone_number'] = $request->phone_number;
-            $data['integration'] = $request->integration;
-            $data['floor_label'] = $request->floor_label;
-            $data['status'] = $request->status;
-            $data['max_daily_leads'] = $request->max_daily_leads;
-            $data['max_weekly_leads'] = $request->max_weekly_leads;
-            $data['max_limit_leads'] = $request->max_limit_leads;
-            $data['test_number'] = $request->test_number;
-            $data['current_selected'] = '0';
-            
-
-            DB::table('phone_settings')->insert($data);
+        $data['rotator_id'] = $rotator_id;
+        $data['phone_type'] = $request->phone_type;
+        $data['phone_number'] = $request->phone_number;
+        $data['integration'] = $request->integration;
+        $data['floor_label'] = $request->floor_label;
+        $data['status'] = $request->status;
+        $data['max_daily_leads'] = $request->max_daily_leads;
+        $data['max_weekly_leads'] = $request->max_weekly_leads;
+        $data['max_limit_leads'] = $request->max_limit_leads;
+        $data['test_number'] = $request->test_number;
+        $data['current_selected'] = '0';
         
-            Session::flash('message', 'Phone Record Added Successfully!'); 
-            Session::flash('alert-class', 'alert-success');
-            return redirect('dashboard');
+        DB::table('phone_settings')->insert($data);
+        Session::flash('message', 'Phone Record Added Successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('dashboard');
         
-        
-        
-       
     }
     // ----------------  [ Update Phone Settings Page ] ------------
     public function editphone(Request $request) 
@@ -257,21 +251,24 @@ class AdminController extends Controller
     public function unexpLead($id)
     {
         $data['unexpleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
+        $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->first();
         return view('unexportedlead', $data);
        
     }
     // ----------------  [ Get Exports Lead Page ] ------------
-    public function exportsLead()
+    public function exportsLead($id)
     {   
-        // $data['expleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(5);
-        // return view('exportlead', $data);
-        return view('exportlead');
+        $data['expleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
+        $data['expleadscount'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->count();
+        return view('exportlead', $data);
+        //return view('exportlead');
     }
     // ----------------  [ Get Report Lead Page ] ------------
     public function leadReport($id)
     {
         $getsale = Salephone::where('phone_setting_id', $id)->first();
-        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number);
+        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->paginate(10);
+        $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->count();
         return view('report', $data);
        
     }
@@ -284,23 +281,26 @@ class AdminController extends Controller
     // ----------------  [ Get API Integration Page ] ------------
     public function integration()
     {
-        
         return view('addintegration');
+    }
+    // ----------------  [ Add API Integration Page ] ------------
+    public function addRegIntegration(Request $request)
+    {
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['api_key'] = $request->api_key;
+        $data['rotator_id'] = $request->rotator_id;
+        DB::table('integrations')->insert($data);
+        Session::flash('message', 'Integration Added successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('addintegration');
     }
     // ----------------  [ Get API Integration Page ] ------------
     public function integrationDoc()
     {
+        
         return view('integrationdoc');
     }
 
-    // public function sendMail(){
-    //     $to = "arungupta.info000@gmail.com";
-    //     $subject = "My subject";
-    //     $txt = "Hello world!";
-    //     $headers = "From: lakharapruthvi@gmail.com" . "\r\n" .
-    //     "CC: somebodyelse@example.com";
-
-    //     mail($to,$subject,$txt,$headers);
-
-    // }
+    
 }

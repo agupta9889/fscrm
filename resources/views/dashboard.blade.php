@@ -117,7 +117,7 @@
                           <?php
                             $tmp = \App\Models\Salephone::find('1');
                           ?>
-                          <td>{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">0</label> / <label class="text-danger">0</label></td>
+                          <td>{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">{{ $tmp->reportleadcount($rotator->id) }}</label> / <label class="text-danger">0</label></td>
                           <td>
                           <?php if($rotator->status ==0){?>
                               <label class="badge badge-success">Active</label>
@@ -164,7 +164,6 @@
                               <tbody>
                               <?php $i = 0 ?>
                               @foreach($rotator->getrotatorList as $rowdata)
-                              
                               <?php $i++; ?>
                                 <tr >
                                   <td data-toggle="collapse"  class="accordion-toggle" data-target="#table2-{{ $rowdata->id }}">

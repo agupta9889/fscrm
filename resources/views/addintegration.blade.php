@@ -11,7 +11,7 @@
                   @if(Session::has('message'))
                   <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
                   @endif
-                  <form class="forms-sample" method="post" action="{{'addintegration'}}">
+                  <form class="forms-sample" method="post" action="{{ URL::to('insertintegaration') }}">
                     @csrf()
                     <div class="form-group">
                       <label for="exampleInputUsername1">Name</label>
@@ -23,11 +23,11 @@
                     </div>
                     <div class="form-group">
                       <label for="exampleInputUsername1">API Key</label>
-                      <input type="text" name="apikey" class="form-control" id="exampleInputUsername1" placeholder="API Key" required>
+                      <input type="text" name="api_key" class="form-control" id="exampleInputUsername1" placeholder="API Key" required>
                     </div>
                     <div class="form-group">
                       <label for="exampleInputPassword1">Offer/Rotator Id</label>
-                      <input type="text" name="rotatorid" class="form-control" id="exampleInputPassword1" placeholder="Offer/Rotator Id" required>
+                      <input type="text" name="rotator_id" class="form-control" id="exampleInputPassword1" placeholder="Offer/Rotator Id" required>
                     </div>
                     <input type="submit" class="btn btn-primary mr-2" value="Submit">
                   </form>

@@ -11,7 +11,6 @@
                     <table class="table table-hover">
                       <thead>
                         <tr>
-                          <th>Sr. No.</th>
                           <th>Date Created</th>
                           <th>Phone</th>
                           <th>Leads Num</th>
@@ -19,23 +18,24 @@
                         </tr>
                       </thead>
                       <tbody>
+                      @forelse($expleads as $expdata)
                         <tr>
-                        <td>1</td>
-                        <td>07/30/2021 02:19</td>
-                          <td>9889899898</td>
-                          <td>5</td>
+                          <td>{{ $expdata->created_at }}</td>
+                          <td>{{ $expdata->sales_number }}</td>
+                          <td>{{ $expleadscount }}</td>
                           <td><i class="ti-download"></i> Download</td>
-                          
                         </tr>
+                        @empty
+                        <tr>
+                          <th>No Records Found!</th>
+                        </tr>
+                        @endforelse
 			                </tbody>
                     </table>
+                    {{-- Pagination --}}
                     <div class="template-demo">
-                      <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary">Previous</button>
-                        <button type="button" class="btn btn-primary">1</button>
-                        <button type="button" class="btn btn-primary">2</button>
-                        <button type="button" class="btn btn-primary">3</button>
-                        <button type="button" class="btn btn-primary">Next</button>
+                      <div class="btn-group d-flex ">
+                          {{ $expleads->links() }}
                       </div>
                     </div>
                   </div>

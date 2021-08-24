@@ -8,7 +8,19 @@
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Integrations</h4>
-                  
+                  <div class="table-responsive">
+                    <table class="table table-hover ">
+                      <tbody>
+                      <tr>
+                          <td>Name</td>
+                          <td>Email</td>
+                          <td>Role</td>
+                        </tr>
+                       
+                      </tbody>
+                    </table>
+                    
+                   </div>
                 </div>
               </div>
             </div>

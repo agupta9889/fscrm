@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Rotator;
 use App\Models\Phonesetting;
 use App\Models\Salephone;
+use App\Models\Integration;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -275,7 +276,7 @@ class AdminController extends Controller
     // ----------------  [ Assigned Number Page ] ------------
     public function assignedNumber()
     {
-       //echo ('hello'); die;
+        
         return view('assignednumber');
     }
     // ----------------  [ Get API Integration Page ] ------------
@@ -298,9 +299,34 @@ class AdminController extends Controller
     // ----------------  [ Get API Integration Page ] ------------
     public function integrationDoc()
     {
-        
-        return view('integrationdoc');
+        $data['integrationUser'] = DB::table('integrations')->get();
+        $data['coachingmanager'] = DB::table('users')->where('role', 'Coaching Manager')->get();
+        return view('integrationdoc', $data);
     }
-
+    // ----------------  [ Update API Integration Page ] ------------
+    public function updateIntegrationDoc(Request $request)
+    {
+        $updateID = $request->updatedID;
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['api_key'] = $request->api_key;
+        $data['rotator_id'] = $request->rotator_id;
+        $data['user_assign_id'] = $request->user_assign_id;
+        //dd($data);
+        DB::table('integrations')->where('id',$updateID)->update($data);
+        Session::flash('message', 'Record Updated Successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('integrationdoc');
+        
+    }
+    // ----------------  [ Delete API Integration Page ] ------------
+    public function deleteIntegrationUser($id) 
+    {
+        //dd($id);
+        DB::delete('delete from integrations where id = ?',[$id]);
+        Session::flash('message', 'Record Deleted Successfully!'); 
+        Session::flash('alert-class', 'alert-success');
+        return redirect('integrationdoc');
+    }
     
 }

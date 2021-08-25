@@ -46,6 +46,8 @@ Route::group(['middleware' => 'auth'], function () {
    Route::get('/addintegration', 'AdminController@integration');
    Route::post('/insertintegaration', 'AdminController@addRegIntegration');
    Route::get('/integrationdoc', 'AdminController@integrationDoc');
+   Route::post('/editintegrationdoc/{id}', 'AdminController@updateIntegrationDoc');
+   Route::get('/deleteintegration/{id}', 'AdminController@deleteIntegrationUser');
    Route::resource('roles', RoleController::class);
 
    

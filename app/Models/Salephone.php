@@ -19,8 +19,9 @@ class Salephone extends Model
         
     }
     public function reportleadcount($rotatorid){
-        return $this->distinct('email')->where('rotator_id', $rotatorid)->count();
-        
+        $lead =  $this->distinct('email')->where('rotator_id', $rotatorid)->count();
+        //dd('fasd',$lead);
+        return $lead !== 0 ? $lead : 0;
     }
     
 }

@@ -11,21 +11,21 @@
                   <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(12 Exports)</a></h4>
                   </div>
                   <div class="col-md-6">
-                  <button type="button" class="btn btn-outline-primary btn-icon-text" style="float:right;">
+                  <button type="button"  class="btn btn-outline-primary btn-icon-text" style="float:right;">
                     <i class="ti-download"></i>
                       Export
                   </button>
                   </div>
                   </div>
                   <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover display " id="example">
                       <thead>
                         <tr class="text-center">
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th>Accepted</th>
-                          <th>Date Created</th>
+                          <th class="nosort" data-orderable="false">Name</th>
+                          <th data-orderable="false">Email</th>
+                          <th data-orderable="false">Phone</th>
+                          <th data-orderable="false">Accepted</th>
+                          <th data-orderable="false">Date Created</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -58,4 +58,30 @@
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-        @include('layouts.footer')       
+
+        @include('layouts.footer')  
+<!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/> -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.html5.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#example').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+             'excel'
+        ]
+    } );
+} );
+
+
+</script>
+<style>
+  .dataTables_filter, .dataTables_info { display: none; }
+  #example_paginate { display: none; }
+
+</style>

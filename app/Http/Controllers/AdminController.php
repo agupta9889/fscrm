@@ -311,8 +311,9 @@ class AdminController extends Controller
         $data['email'] = $request->email;
         $data['api_key'] = $request->api_key;
         $data['rotator_id'] = $request->rotator_id;
-        $data['user_assign_id'] = $request->user_assign_id;
-        //dd($data);
+        $user_assign_id= $request->user_assign_id;
+        $data['user_assign_id'] = implode(",", $user_assign_id);
+        //dd($data['user_assign_id']);
         DB::table('integrations')->where('id',$updateID)->update($data);
         Session::flash('message', 'Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');

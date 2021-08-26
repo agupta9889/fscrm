@@ -77,7 +77,7 @@
                 </div>
                 <div class="preview-item-content">
                   <h6 class="preview-subject font-weight-normal">API Key</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted" id="apicopy">ee755b33b27b94ecb0b896edb8d9b691</p>
+                  <p class="font-weight-light small-text mb-0 text-muted" id="apicopy">fsc188fsc734fsc106fsc</p>
                   <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('#apicopy')">Copy to clipboard</button>
                 </div>
               </a>

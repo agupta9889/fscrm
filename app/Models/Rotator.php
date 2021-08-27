@@ -15,5 +15,10 @@ class Rotator extends Model
         return $this->hasMany('App\Models\Phonesetting','rotator_id','id')->orderBy("current_selected", "asc");
     }
 
+    public function getrotatorName($id)
+    {
+        return $this->where('id', $id)->first();
+        
+    }
     
 }

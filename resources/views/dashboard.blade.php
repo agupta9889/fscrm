@@ -117,7 +117,11 @@
                           <?php
                             $tmp = \App\Models\Salephone::find('1');
                           ?>
+                          @if(!$tmp)
+                          <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
+                          @else
                           <td>{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">{{ $tmp->reportleadcount($rotator->id) }}</label> / <label class="text-danger">0</label></td>
+                          @endif
                           <td>
                           <?php if($rotator->status ==0){?>
                               <label class="badge badge-success">Active</label>
@@ -183,13 +187,29 @@
                                   <?php
                                     $tmp = \App\Models\Salephone::find('1');
                                   ?>
+                                  @if(!$tmp)
+                                  <td>0</td>
+                                  @else
                                   <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
+                                  @endif
                                   <td>{{ $rowdata->max_daily_leads }}</td>
-                                  <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
+                                  @if(!$tmp)
+                                  <td>0</td>
+                                  @else
+                                  <td>{{ $tmp->salephonelist($rowdata->phone_number)}}</td>
+                                  @endif
                                   <td>{{ $rowdata->max_weekly_leads }}</td>
+                                  @if(!$tmp)
+                                  <td>0</td>
+                                  @else
                                   <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
+                                  @endif
                                   <td>{{ $rowdata->max_limit_leads }}</td>
+                                  @if(!$tmp)
+                                  <td>0</td>
+                                  @else
                                   <td>{{ $rowdata->max_limit_leads - $tmp->salephonelist($rowdata->phone_number) }}</td>
+                                  @endif
                                   <td>
                                   <?php if($rowdata->status == 0) { ?>
                                     <label class="badge badge-success"><i class="ti-check"></i></label>

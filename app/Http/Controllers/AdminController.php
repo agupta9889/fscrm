@@ -276,8 +276,10 @@ class AdminController extends Controller
     // ----------------  [ Assigned Number Page ] ------------
     public function assignedNumber()
     {
-        
-        return view('assignednumber');
+        $user = auth()->user();
+        $data['phone'] = $user->phone;
+        $data['assignedID'] = Salephone::WHERE('sales_number', $user->phone)->paginate(10);
+        return view('assignednumber', $data);
     }
     // ----------------  [ Get API Integration Page ] ------------
     public function integration()

@@ -61,13 +61,13 @@
                                             <div class="form-group">
                                               <label for="exampleInputUsername1">Users with role "account manager"</label>
                                               <br>
-                                              <?php  $userAssignID = explode(',',$user->user_assign_id); 
-                                                 //print_r($userAssignID);
-                                              ?>
+                                              
                                               @foreach($coachingmanager as $row)
-                                              <?php $assignID = explode(',',$row->id); 
-                                                  // print_r($assignID);
-                                              ?>
+                                              <!-- <?php $assignID = explode(',',$row->id); 
+                                                   print_r($assignID);
+                                                $userAssignID = explode(',',$user->user_assign_id); 
+                                                 print_r($userAssignID);
+                                              ?> -->
                                               <label>
                                                 <input class="form-group" name="user_assign_id[]" type="checkbox" value="{{ $row->id }}" <?php if( $row->id == $user->user_assign_id ){ ?> checked <?php } ?> > {{$row->fname}} {{$row->lname}} ({{$row->email}})
                                               </label><br>

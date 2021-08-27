@@ -127,8 +127,10 @@ class APIController extends Controller
                         $data->lead_id=$lead_id;
                         //dd($data);
                         $result = $data->save();
+
                         $activephone->current_selected = '1';       //1-Unselected(lead already get or next)
                         $activephone->save();
+
                         $flag = true;
                     }else{
                         $activephone->status = '1'; 

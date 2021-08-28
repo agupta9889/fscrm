@@ -4,3 +4,6 @@
 .hiddenRow {
     padding: 0 !important;
 }
+td.active {
+  background: #029e0273;
+}

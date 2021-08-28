@@ -7,15 +7,15 @@
               <div class="card">
                 <div class="card-body">
                   <div class="row">
-                  <div class="col-md-6">
-                  <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(12 Exports)</a></h4>
-                  </div>
-                  <div class="col-md-6">
-                  <button type="button"  class="btn btn-outline-primary btn-icon-text" style="float:right;">
-                    <i class="ti-download"></i>
-                      Export
-                  </button>
-                  </div>
+                    <div class="col-md-6">
+                      <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(12 Exports)</a></h4>
+                    </div>
+                    <div class="col-md-6">
+                      <button type="button"  class="btn btn-outline-primary btn-icon-text" style="float:right;">
+                        <i class="ti-download"></i>
+                          Export
+                      </button>
+                    </div>
                   </div>
                   <div class="table-responsive">
                     <table class="table table-hover display " id="example">

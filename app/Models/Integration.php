@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Integration extends Model
 {
     use HasFactory;
+
+    public function getintegrationName($id){
+        return $this->where('id', $id);
+    }
 }

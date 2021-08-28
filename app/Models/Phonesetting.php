@@ -14,7 +14,8 @@ class Phonesetting extends Model
 
     public function getsalephoneList()
     {
-        return $this->hasMany('App\Models\Salephone','phone_setting_id','id');
+        return $this->hasMany('App\Models\Salephone','phone_setting_id','id')->whereDate('created_at', Carbon::today());
+        //return $this->hasMany('App\Models\Salephone','phone_setting_id','id');
     }
     
     public function getphoneSettingStatus($id)

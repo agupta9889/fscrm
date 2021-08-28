@@ -79,9 +79,9 @@
                      <h4 class="card-title">Rotator List</h4>
                   </div>
                   <div class="col-md-6">
-                    <a href="#" data-toggle="modal" data-target="#rotatorModal" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
+                    <span data-toggle="modal" data-target="#rotatorModal" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
                     Add Rotator <i class="ti-control-forward"></i>
-                    </a>
+                    </span>
                 </div>
                 </div>
                   @if(Session::has('message'))
@@ -116,6 +116,7 @@
                           <td> {{ $rotator->getrotatorList->count() }} <label class="text-success">{{ $rotator->getrotatorList->where('status', '0')->count(); }}</label> / <label class="text-danger">{{ $rotator->getrotatorList->where('status', '1')->count(); }}</label></td>
                           <?php
                             $tmp = \App\Models\Salephone::find('1');
+                            echo ($tmp);
                           ?>
                           @if(!$tmp)
                           <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
@@ -123,21 +124,20 @@
                           <td>{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">{{ $tmp->reportleadcount($rotator->id) }}</label> / <label class="text-danger">0</label></td>
                           @endif
                           <td>
-                          <?php if($rotator->status ==0){?>
-                              <label class="badge badge-success">Active</label>
-                              <?php } else { ?>
-                               <label class="badge badge-danger">Paused</label>
-                                <?php  } ?>
-                                  
-                              </td>   
+                            <?php if($rotator->status ==0){?>
+                            <label class="badge badge-success">Active</label>
+                            <?php } else { ?>
+                            <label class="badge badge-danger">Paused</label>
+                            <?php  } ?>
+                          </td>   
                           <td>{{ $rotator->test_number }}</td>
                           <td>
-                            <a href="#" onClick="rotatorId({{ $rotator->id }})" class="badge badge-success">
+                            <span onClick="rotatorId({{ $rotator->id }})" class="badge badge-success">
                               <i class="ti-mobile" data-toggle="modal" data-target="#phoneModal"></i>
-                            </a>
-                            <a href="#" class="rotatorsetting badge badge-warning" attrid="{{ $rotator->id  }}" attrname="{{ $rotator->rotatorname }}" attstatus="{{ $rotator->status }}" attrtestnumber="{{ $rotator->test_number }}">
+                            </span>
+                            <span class="rotatorsetting badge badge-warning" attrid="{{ $rotator->id  }}" attrname="{{ $rotator->rotatorname }}" attstatus="{{ $rotator->status }}" attrtestnumber="{{ $rotator->test_number }}">
                               <i class="ti-pencil-alt" data-toggle="modal" data-target="#RotatorSettingseModal"></i>
-                            </a> 
+                            </span> 
                             <a href='deleterotator/{{ $rotator->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')">
                               <i class="ti-trash" data-toggle="tooltip" title="Delete Rotator"></i>
                             </a>
@@ -169,23 +169,31 @@
                               <?php $i = 0 ?>
                               @foreach($rotator->getrotatorList as $rowdata)
                               <?php $i++; ?>
-                                <tr >
+                                <tr>
                                   <td data-toggle="collapse"  class="accordion-toggle" data-target="#table2-{{ $rowdata->id }}">
                                     <span class="badge badge-info">
                                       <i class="ti-eye"></i>
                                     </span>
                                   </td>
                                   <td>{{ $i}}</td>
-                                  <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number }} 
-                                    <br/>
-                                    
+                                  @if($rowdata->phone_type === '0')
+                                  <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number}} 
+                                  @else
+                                  <!-- <?php
+                                    //$model = \App\Models\Integration::find('1');
+                                    //dd($model);
+                                    //$intgname = $model->getintegrationName($rowdata->integration_id);
+                                  ?> -->
+                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->integration_id }} 
+                                  @endif
+                                  <br/>
                                     <?php if( $rowdata->test_number === 1231231234) { ?>
                                       <span class="badge badge-warning">Test</span>
                                     <?php }?>
-                                    
                                   </td>
                                   <?php
                                     $tmp = \App\Models\Salephone::find('1');
+                                    
                                   ?>
                                   @if(!$tmp)
                                   <td>0</td>
@@ -205,10 +213,14 @@
                                   <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
                                   @endif
                                   <td>{{ $rowdata->max_limit_leads }}</td>
-                                  @if(!$tmp)
+                                  <?php
+                                    $left = \App\Models\Salephone::find('1');
+                                  ?>
+                                  @if(!$left)
                                   <td>0</td>
                                   @else
-                                  <td>{{ $rowdata->max_limit_leads - $tmp->salephonelist($rowdata->phone_number) }}</td>
+                                  
+                                  <td>{{ $rowdata->max_limit_leads - $left->salephonelistleftlead($rowdata->phone_number) }}</td>
                                   @endif
                                   <td>
                                   <?php if($rowdata->status == 0) { ?>
@@ -383,7 +395,7 @@
             <div class="col-sm-5">
             <div class="form-check">
                 <label class="form-check-label">
-                <input type="radio" name="phone_type" value="1" class="form-check-input" onclick="onButtonClick()" checked>
+                <input type="radio" name="phone_type" value="0" class="form-check-input" onclick="onButtonClick()" checked>
                 Phone Number
                 <i class="input-helper"></i></label>
             </div>
@@ -391,7 +403,7 @@
             <div class="col-sm-4">
             <div class="form-check">
                 <label class="form-check-label">
-                <input type="radio" name="phone_type"  value="2" class="form-check-input" onclick="onButtonClick1()">
+                <input type="radio" name="phone_type"  value="1" class="form-check-input" onclick="onButtonClick1()">
                 Integration
                 <i class="input-helper"></i></label>
             </div>
@@ -403,9 +415,11 @@
           </div>
           <div class="form-group hide" id="integrations">
             <label for="exampleInputUsername1">Select Integration</label>
-            <Select class="form-control" name="integration">
+            <Select class="form-control" name="integration_id">
               <option value="">Select</option>
-              <option value="api">API</option>
+              @foreach($integration as $row)
+              <option value="{{$row->id}}">{{$row->name}}</option>
+              @endforeach
             </select>
           </div>
           <div class="form-group row">
@@ -509,41 +523,3 @@
 </div>
 <!-----------End--------------->
 @include('layouts.footer')
-
-<!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<script type="text/javascript">
-$(function() {
-
-    var start = moment().subtract(29, 'days');
-    var end = moment();
-
-    function cb(start, end) {
-        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-    }
-
-    $('#reportrange').daterangepicker({
-        startDate: start,
-        endDate: end,
-        ranges: {
-           'Today': [moment(), moment()],
-           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-           'This Month': [moment().startOf('month'), moment().endOf('month')],
-           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        }
-    }, cb);
-
-    cb(start, end);
-
-});
-</script>
-
-<style>
-  td.active {
-    background: #029e0273;
-}
-</style>

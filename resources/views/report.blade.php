@@ -6,7 +6,22 @@
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">9876543210 Leads</h4>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h4 class="card-title">{{ $getsalenumber }} Leads</h4>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="justify-content-end d-flex">
+                        <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                          <div id="reportrange" class="btn btn-sm btn-light bg-white dropdown-toggle">
+                            <i class="mdi mdi-calendar"></i>
+                            <span></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <br/>
                   <div class="row">
                     <div class="col-md-3 mb-4 stretch-card transparent">
                       <div class="card card-tale">

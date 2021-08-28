@@ -45,10 +45,11 @@ class AdminController extends Controller
                 return redirect('assignednumber');
             }
             else{
+            $data['integration'] = integration::all();    
             $data['rotatorD'] = Rotator::paginate(5);
             $data['activecount'] = Phonesetting::where('status', '0')->count();
             $data['inactivecount'] = Phonesetting::where('status', '1')->count();
-            $data['totalReportActCount'] = Salephone::distinct('email')->count();
+            $data['totalReportActCount'] = Salephone::distinct('email')->whereDate('created_at', Carbon::today())->count();
             return view('dashboard', $data);
             }
         }
@@ -61,7 +62,6 @@ class AdminController extends Controller
     {   
         $role = Role::pluck('name','name')->all();    
         return view('adduser', compact('role'));
-        
     }
 
     // ------------------ [ Insert User Details Page ] ------------
@@ -154,12 +154,6 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // ----------------  [ Get Rotator Details Page ] ------------
-    public function rotatorDetails()
-    {
-        $data['rotatorD'] = Rotator::paginate(5);
-        return view('dashboard', $data);
-    }
     // ----------------  [ Update Phone Settings Page ] ------------
     public function rotatorDataEdit(Request $request) 
     {
@@ -183,7 +177,7 @@ class AdminController extends Controller
         $data['rotator_id'] = $rotator_id;
         $data['phone_type'] = $request->phone_type;
         $data['phone_number'] = $request->phone_number;
-        $data['integration'] = $request->integration;
+        $data['integration_id'] = $request->integration_id;
         $data['floor_label'] = $request->floor_label;
         $data['status'] = $request->status;
         $data['max_daily_leads'] = $request->max_daily_leads;
@@ -235,6 +229,7 @@ class AdminController extends Controller
     public function deletePhoneRecord($id) 
     {
         DB::delete('delete from phone_settings where id = ?',[$id]);
+        DB::delete('delete from sale_phones where phone_setting_id = ?',[$id]);
         Session::flash('message', 'Phone Record Deleted Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
@@ -268,8 +263,9 @@ class AdminController extends Controller
     public function leadReport($id)
     {
         $getsale = Salephone::where('phone_setting_id', $id)->first();
-        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->paginate(10);
-        $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->count();
+        $data['getsalenumber'] = $getsale->sales_number;
+        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->whereDate('created_at', Carbon::today())->paginate(10);
+        $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->whereDate('created_at', Carbon::today())->count();
         return view('report', $data);
        
     }

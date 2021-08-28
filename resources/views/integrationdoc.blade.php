@@ -90,7 +90,7 @@
                     </table>
                   </div>
                   <br/>
-                  <h3 class="card-title">Using swifthis outside IMA?</h3>
+                  <h3 class="card-title">Using Floor Solution outside IMA?</h3>
                   <p>Show this to your developer. He'll know what to do. Once you get a response back, please save the sales_number and show it to your lead on your members area.</p>
                   <blockquote>
                     <pre>

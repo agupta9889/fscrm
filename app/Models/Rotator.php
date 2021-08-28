@@ -10,6 +10,7 @@ use App\Models\Phonesetting;
 class Rotator extends Model
 {
     use HasFactory;
+
     public function getrotatorList()
     {
         return $this->hasMany('App\Models\Phonesetting','rotator_id','id')->orderBy("current_selected", "asc");
@@ -20,5 +21,7 @@ class Rotator extends Model
         return $this->where('id', $id)->first();
         
     }
+
+    
     
 }

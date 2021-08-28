@@ -22,5 +22,9 @@ class Phonesetting extends Model
     {
         return $this->where('id', $id )->first();
     }
+
+    public function getIntegrationName(){
+        return $this->belongsTo('App\Models\Integration','integration_id', 'id');
+    }
     
 }

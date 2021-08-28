@@ -115,8 +115,7 @@
                           <td>{{ $rotator->mode }}</td>
                           <td> {{ $rotator->getrotatorList->count() }} <label class="text-success">{{ $rotator->getrotatorList->where('status', '0')->count(); }}</label> / <label class="text-danger">{{ $rotator->getrotatorList->where('status', '1')->count(); }}</label></td>
                           <?php
-                            $tmp = \App\Models\Salephone::find('1');
-                            echo ($tmp);
+                            $tmp = \App\Models\Salephone::first();
                           ?>
                           @if(!$tmp)
                           <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
@@ -179,12 +178,7 @@
                                   @if($rowdata->phone_type === '0')
                                   <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number}} 
                                   @else
-                                  <!-- <?php
-                                    //$model = \App\Models\Integration::find('1');
-                                    //dd($model);
-                                    //$intgname = $model->getintegrationName($rowdata->integration_id);
-                                  ?> -->
-                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->integration_id }} 
+                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->getIntegrationName->name }} 
                                   @endif
                                   <br/>
                                     <?php if( $rowdata->test_number === 1231231234) { ?>
@@ -192,10 +186,9 @@
                                     <?php }?>
                                   </td>
                                   <?php
-                                    $tmp = \App\Models\Salephone::find('1');
-                                    
+                                    $tmp = \App\Models\Salephone::first();
                                   ?>
-                                  @if(!$tmp)
+                                  @if(!($tmp))
                                   <td>0</td>
                                   @else
                                   <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
@@ -214,12 +207,11 @@
                                   @endif
                                   <td>{{ $rowdata->max_limit_leads }}</td>
                                   <?php
-                                    $left = \App\Models\Salephone::find('1');
+                                    $left = \App\Models\Salephone::first();
                                   ?>
                                   @if(!$left)
                                   <td>0</td>
                                   @else
-                                  
                                   <td>{{ $rowdata->max_limit_leads - $left->salephonelistleftlead($rowdata->phone_number) }}</td>
                                   @endif
                                   <td>

@@ -195,18 +195,35 @@ class AdminController extends Controller
     // ----------------  [ Update Phone Settings Page ] ------------
     public function editphone(Request $request) 
     {
-        //$activephone = Phonesetting::where('id', $updateID)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->get();
-        // $phonesettingID = $activephone[0]->id;
-        // $current_selected = $activephone[0]->current_selected;
         
-        // // DB::table('phone_settings')->where('id',$phonesettingID)->update($current_selected);
-        // if($current_selected === '0'){
-        //     DB::table('phone_settings')->where('id',$phonesettingID)->update($current_selected);
-        // }
         $updateID = $request->id;
-        //$rotator_id = $request->rotator_id;
-        //$data['rotator_id'] = $rotator_id;
-        $data['floor_label'] = $request->floor_label;
+        $phoneSetting = Phonesetting::findOrFail($updateID);
+        $today_leads = Salephone::where('phone_setting_id',$updateID)->whereDate('created_at', date('Y-m-d'))->count();
+        $week_leads = Salephone::where('phone_setting_id',$updateID)->whereBetween('created_at',[date("Y-m-d", strtotime("-1 week")), date("Y-m-d", strtotime("+1 day"))])->count();
+        $total_leads = Salephone::where('phone_setting_id',$updateID)->count();   
+        if($phoneSetting->max_daily_leads > $today_leads && $phoneSetting->max_weekly_leads > $week_leads && $phoneSetting->max_limit_leads > $total_leads)
+        {
+            $phoneSetting->status = $request->status;
+            if($phoneSetting->test_number != "1231231234"){
+                $phoneSetting->current_selected = $request->status;
+            }
+        }else{
+            if($request->status == '1'){
+                $phoneSetting->status = $request->status;
+            }
+        }
+
+        $phoneSetting->floor_label = $request->floor_label;
+        $phoneSetting->phone_number = $request->phone_number;
+        $phoneSetting->max_daily_leads = $request->max_daily_leads;
+        $phoneSetting->max_weekly_leads = $request->max_weekly_leads;
+        $phoneSetting->max_limit_leads = $request->max_limit_leads;
+        $phoneSetting->test_number = $request->test_number;
+        $phoneSetting->notification_email = $request->notification_email;
+
+        $phoneSetting->save();
+
+       /* $data['floor_label'] = $request->floor_label;
         $data['status'] = $request->status;
         $data['phone_number'] = $request->phone_number;
         $data['max_daily_leads'] = $request->max_daily_leads;
@@ -214,13 +231,8 @@ class AdminController extends Controller
         $data['max_limit_leads'] = $request->max_limit_leads;
         $data['test_number'] = $request->test_number;
         $data['notification_email'] = $request->notification_email;
-        // 
-        // if($current_selected === '0'){
-            //$data['current_selected'] = $current_selected;
-        //         DB::table('phone_settings')->where('id',$updateID)->update($data);
-        //     }
         
-        DB::table('phone_settings')->where('id',$updateID)->update($data);
+        DB::table('phone_settings')->where('id',$updateID)->update($data);*/
         Session::flash('message', 'Phone Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');

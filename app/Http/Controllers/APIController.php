@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 use DB;
 use App\Models\Phonesetting;
 use App\Models\Salephone;
+use Exception;
 
 
 class APIController extends Controller
@@ -38,11 +39,12 @@ class APIController extends Controller
                 return ["response_code"=>400, "response_message"=>"Email Is Required"];
             }
             
+
+
             $activephone = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
             //dd($activephone);
-            $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '1')->orderBy('updated_at', 'asc')->get();
+            $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->whereNULL('test_number')->where('current_selected', '1')->orderBy('updated_at', 'asc')->get();
             //dd($activephonecount);
-        
             if($activephone)
             {
                 $phoneid = $activephone->id;
@@ -52,91 +54,63 @@ class APIController extends Controller
                 $weeklimit = $activephone->max_daily_leads; 
                 $maxlimit = $activephone->max_daily_leads; 
                 $flag = false;
-                
-                foreach($activephonecount as $nextactive){
-                    
-                    $today_leads = Salephone::where('phone_setting_id',$nextactive->id)->whereDate('created_at', date('Y-m-d'))->count();
-                    $week_leads = Salephone::where('phone_setting_id',$nextactive->id)->whereBetween('created_at',[date("Y-m-d", strtotime("-1 week")), date("Y-m-d", strtotime("+1 day"))])->count();
-                    
-                    /*echo "phone:". $nextactive->phone_number;
-                    echo "today leads : ". $today_leads;
-                    echo "week leads : ". $week_leads;
+				
+				$today_leads = Salephone::where('phone_setting_id',$activephone->id)->whereDate('created_at', date('Y-m-d'))->count();
+                $week_leads = Salephone::where('phone_setting_id',$activephone->id)->whereBetween('created_at',[date("Y-m-d", strtotime("-1 week")), date("Y-m-d", strtotime("+1 day"))])->count();
+                $total_leads = Salephone::where('phone_setting_id',$activephone->id)->count();
+                // echo "todays_leads : ".$today_leads;
+                // echo "week_leads : ".$week_leads;
+                // echo "limit today : ".$todaylimit;
+                // echo "limit week : ".$weeklimit;
+                // die;
+				if($activephone->max_daily_leads > $today_leads && $activephone->max_weekly_leads > $week_leads && $activephone->max_limit_leads > $total_leads)
+				{
+                    // echo "coming"; die;
+                    try{
+                        DB::beginTransaction();
 
-                    echo "total todays :".$nextactive->max_daily_leads;
-                    echo "total weekly :".$nextactive->max_weekly_leads;*/
-
-                    if($nextactive->max_daily_leads > $today_leads && $nextactive->max_weekly_leads > $week_leads)
-                    {
-                        $nextactive->current_selected = '0';      //0-Selected(lead will came)
-                        $nextactive->save();
-                        $activephone->current_selected = '1';       //1-Unselected(lead already get or next)
-                        $activephone->save();
-
-                        $activephonefindID = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
                         $data = new Salephone;
-                        $data->phone_setting_id=$activephonefindID->id;
-                        $data->api_key=$key;
-                        $data->rotator_id=$rotator_id;
-                        $data->email=$email;
-                        $data->phone=$request->phone;
-                        $data->sales_number=$activephonefindID->phone_number;
-                        $data->first_name=$request->first_name;
-                        $data->last_name=$request->last_name;
-                        $data->state=$request->state;   
-                        $data->address=$request->address;
-                        $data->city=$request->city;
-                        $data->zip=$request->zip;
-                        $data->country=$request->country;
-                        $lead_id = mt_rand( 1000000000, 9999999999 );
-                        $data->lead_id=$lead_id;
-                        //dd($data);
-                        $result = $data->save();
-
-                        $flag = true;
-
-                    }else{
-                        $nextactive->status = '1'; 
-                        $nextactive->save();
-                    }
-
-                    if($flag) break;
-                }
-                if(!$flag)
-                {
-                    $today_leads = Salephone::where('phone_setting_id',$activephone->id)->whereDate('created_at', date('Y-m-d'))->count();
-                    $week_leads = Salephone::where('phone_setting_id',$activephone->id)->whereBetween('created_at',[date("Y-m-d", strtotime("-1 week")), date("Y-m-d", strtotime("+1 day"))])->count();
-                    
-                    if($activephone->max_daily_leads > $today_leads && $activephone->max_weekly_leads > $week_leads)
-                    {
-                        $activephonefindID = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
-                        $data = new Salephone;
-                        $data->phone_setting_id=$activephonefindID->id;
+                        $data->phone_setting_id=$activephone->id;
                         $data->api_key=$key;
                         $data->rotator_id=$rotator_id;
                         $data->email=$request->email;
                         $data->phone=$request->phone;
-                        $data->sales_number=$activephonefindID->phone_number;
+                        $data->sales_number=$activephone->phone_number;
                         $data->first_name=$request->first_name;
                         $data->last_name=$request->last_name;
-                        $data->state=$request->state;   
+                        $data->state=$request->state;
                         $data->address=$request->address;
                         $data->city=$request->city;
                         $data->zip=$request->zip;
                         $data->country=$request->country;
                         $lead_id = mt_rand( 1000000000, 9999999999 );
                         $data->lead_id=$lead_id;
-                        //dd($data);
                         $result = $data->save();
+                        
+                        if(count($activephonecount) > 0){
+                            
+                            $activephonecount->first()->current_selected = '0';
+                            $activephonecount->first()->save();
+                            $activephone->current_selected = '1';
+                        }else{
+                            $activephone->current_selected = '0';
+                        }
+                        
+                        if((($activephone->max_daily_leads - $today_leads) == 1) || (($activephone->max_weekly_leads - $week_leads) == 1) || (($activephone->max_limit_leads - $total_leads) == 1)){
+                            $activephone->current_selected = '1';
+                            $activephone->status = '1';
+                        }
 
-                        $activephone->current_selected = '1';       //1-Unselected(lead already get or next)
                         $activephone->save();
-
-                        $flag = true;
-                    }else{
-                        $activephone->status = '1'; 
-                        $activephone->save();
+                        
+                        DB::commit(); 
+                    }Catch(Exception $e){
+                        DB::rollback();
+                        dd($e);
                     }
-                }
+					
+				}
+				
             }else{
                 return ["response_code"=>500, "response_message"=>"no phones available", "sales_number"=>$sales_number,"accepted"=>false];
             }

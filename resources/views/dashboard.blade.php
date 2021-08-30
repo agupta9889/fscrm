@@ -222,7 +222,7 @@
                                   <?php } ?>
                                   </td>
                                   <td>{{ $rowdata->floor_label }}</td>
-                                  <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
+                                  <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">{{ $rowdata->export_count }}</a></td>
                                   <td>
                                     <a href="{{ URL::to('report') }}/{{ $rowdata->id }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>

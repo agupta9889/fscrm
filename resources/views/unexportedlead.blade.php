@@ -18,7 +18,8 @@
                     </div>
                   </div>
                   <div class="table-responsive">
-                    <table class="table table-hover display " id="example">
+                    <input type="hidden" id="export_count" value="{{ request()->id }}">
+                    <table class="table table-hover display" id="example">
                       <thead>
                         <tr class="text-center">
                           <th class="nosort" data-orderable="false">Name</th>
@@ -70,12 +71,34 @@
 
 <script>
   $(document).ready(function() {
-    $('#example').DataTable( {
+    $('#example').DataTable({
         dom: 'Bfrtip',
-        buttons: [
-             'excel'
-        ]
-    } );
+        buttons: {
+          buttons: [
+              { extend: 'excel', className: 'getExportCount' }
+          ]
+     }
+    });
+   
+   $(".getExportCount").click(function(){
+      var exportID = $("#export_count").val();
+      //alert(exportID);
+      //$.post('updateExportCount', {exportID:exportID});
+      // $.post('updateExportCount', {exportID:exportID}, function(response){ 
+      //         alert("success");
+      //         //$("#mypar").html(response.amount);
+      //   });
+
+        $.ajax({
+            type:'POST',
+            url:'/updateExportCount',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){}
+        });
+   })
+
 } );
 
 

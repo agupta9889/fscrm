@@ -339,5 +339,9 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
     }
+
+    public function updateExportCount(Request $request){
+         print_r($_POST); die;
+    }
     
 }

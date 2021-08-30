@@ -56,11 +56,11 @@ $(document).ready(function(){
 //--Date picker--
 $(function() {
 
-    var start = moment().subtract(29, 'days');
+    var start = moment().subtract(0, 'days');
     var end = moment();
 
     function cb(start, end) {
-        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        $('#reportrange span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
     }
 
     $('#reportrange').daterangepicker({
@@ -75,7 +75,21 @@ $(function() {
           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, cb);
-
+    
     cb(start, end);
-
+    
+    //var dateabc = $("#reportrange").data('daterangepicker');
+    //alert(dateabc);
+    //console.log(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
+    $(document).ready(function(){
+        $('.ranges li').click(function(){
+         //var dataVal = start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD');
+         var dafsdfa = $(this).val();
+          alert(dafsdfa);
+         });
+      });
+    
 });
+
+
+ 

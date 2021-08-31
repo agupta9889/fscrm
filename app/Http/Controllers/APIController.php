@@ -41,14 +41,19 @@ class APIController extends Controller
             
 
 
-            $activephone = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
+            $activephone = Phonesetting::select('phone_settings.*','integrations.email')->leftJoin('integrations', function($join){$join->on('phone_settings.integration_id','=','integrations.id');})->where('phone_settings.rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
             //dd($activephone);
-            $activephonecount = Phonesetting::where('rotator_id', $rotator_id)->where('status', $status)->whereNULL('test_number')->where('current_selected', '1')->orderBy('updated_at', 'asc')->get();
+            $activephonecount = Phonesetting::select('phone_settings.*','integrations.email')->leftJoin('integrations', function($join){$join->on('phone_settings.integration_id','=','integrations.id');})->where('phone_settings.rotator_id', $rotator_id)->where('status', $status)->whereNULL('test_number')->where('current_selected', '1')->orderBy('updated_at', 'asc')->get();
             //dd($activephonecount);
             if($activephone)
             {
                 $phoneid = $activephone->id;
-                $sales_number = $activephone->phone_number;
+                if(is_null($activephone->integration_id)){
+                    $sales_number=$activephone->phone_number;
+                }else{
+                    $sales_number=$activephone->email;
+                }
+                //$sales_number = $activephone->phone_number;
                 $sales_number_status = $activephone->status; 
                 $todaylimit = $activephone->max_daily_leads; 
                 $weeklimit = $activephone->max_daily_leads; 
@@ -75,7 +80,12 @@ class APIController extends Controller
                         $data->rotator_id=$rotator_id;
                         $data->email=$request->email;
                         $data->phone=$request->phone;
-                        $data->sales_number=$activephone->phone_number;
+                        if(is_null($activephone->integration_id)){
+                            $data->sales_number=$activephone->phone_number;
+                        }else{
+                            $data->sales_number=$activephone->email;
+                        }
+                        
                         $data->first_name=$request->first_name;
                         $data->last_name=$request->last_name;
                         $data->state=$request->state;

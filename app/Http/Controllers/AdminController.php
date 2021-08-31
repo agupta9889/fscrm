@@ -343,5 +343,24 @@ class AdminController extends Controller
     public function updateExportCount(Request $request){
          print_r($_POST); die;
     }
+
+    public function sendmail(){
+        
+        Mail::send([], [], function ($message) { 
+            $message->to('arun@softkiwi.co.in', 'Tutorials Point')
+               ->subject('subject') 
+               ->setBody('some body', 'text/html'); 
+        });
+        
+
+        // $data = array('name'=>"Virat Gandhi");
+        // Mail::send(['text'=>'mail'], $data, function($message) {
+        //     $message->to('arun@softkiwi.co.in', 'Tutorials Point')->subject
+        //         ('Laravel Basic Testing Mail');
+        //     $message->from('bharatimmortals@gmail.com','Virat Gandhi');
+        // });
+        // echo "Basic Email Sent. Check your inbox.";
+
+    }
     
 }

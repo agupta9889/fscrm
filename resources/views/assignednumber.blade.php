@@ -27,13 +27,13 @@
                               <td>{{$i}}</td>
                               <td>{{ $rowdata->sales_number }}</td>
                               <?php
-                                  $model = \App\Models\Rotator::find('1');
+                                  $model = \App\Models\Rotator::first();
                                   $rotator = $model->getrotatorName($rowdata->rotator_id);
                               ?>
                               <td>{{ $rotator->rotatorname }}</td>
                               <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->phone_setting_id }}">0</a></td>
                               <?php
-                                  $model = \App\Models\Phonesetting::find('1');
+                                  $model = \App\Models\Phonesetting::first();
                                   $phonesetting = $model->getphoneSettingStatus($rowdata->phone_setting_id);
                               ?>
                               <td>

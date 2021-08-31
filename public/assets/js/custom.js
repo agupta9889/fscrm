@@ -61,6 +61,7 @@ $(function() {
 
     function cb(start, end) {
         $('#reportrange span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
+        $("#filterdate").val(start.format('Y-MM-DD') + '&' + end.format('Y-MM-DD'))
     }
 
     $('#reportrange').daterangepicker({
@@ -83,9 +84,10 @@ $(function() {
     //console.log(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
     $(document).ready(function(){
         $('.ranges li').click(function(){
-         //var dataVal = start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD');
-         var dafsdfa = $(this).val();
-          alert(dafsdfa);
+            var datefilters = $("#filterdate").val();
+            const myArr = datefilters.split("&");
+            console.log(myArr);
+            //window.location = 'http://127.0.0.1:8000/dashboard/?start_date='+myArr[0]+'&end_date='+myArr[1]+'';
          });
       });
     

@@ -49,9 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::post('/editintegrationdoc/{id}', 'AdminController@updateIntegrationDoc');
    Route::get('/deleteintegration/{id}', 'AdminController@deleteIntegrationUser');
    Route::post('/updateExportCount','AdminController@updateExportCount');
+   Route::get('/sendmail','AdminController@sendmail');
    Route::resource('roles', RoleController::class);
-
    
-   // Route::get('/mail', 'AdminController@sendMail');
-    
 });

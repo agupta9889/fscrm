@@ -15,7 +15,8 @@
                   <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
                     <div id="reportrange" class="btn btn-sm btn-light bg-white dropdown-toggle">
                      <i class="mdi mdi-calendar"></i>
-                     <span></span>
+                     <span class='filter-data'></span>
+                     <input Type="text" name="filterdate" id="filterdate"/>
                     </div>
                   </div>
                  </div>
@@ -177,14 +178,21 @@
                                   <td>{{ $i}}</td>
                                   @if($rowdata->phone_type === '0')
                                   <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number}} 
-                                  @else
-                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->getIntegrationName->name }} 
-                                  @endif
                                   <br/>
                                     <?php if( $rowdata->test_number === 1231231234) { ?>
                                       <span class="badge badge-warning">Test</span>
                                     <?php }?>
                                   </td>
+                                  @else
+                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->getIntegrationName->name }} 
+                                  <br/>
+                                    <a href="{{ URL::to('integrationdoc') }}" class="badge badge-info">api</a>
+                                    <?php if( $rowdata->test_number === 1231231234) { ?>
+                                      <span class="badge badge-warning">Test</span>
+                                    <?php }?>
+                                  </td>
+                                  @endif
+                                  
                                   <?php
                                     $tmp = \App\Models\Salephone::first();
                                   ?>

@@ -50,6 +50,8 @@ Route::group(['middleware' => 'auth'], function () {
    Route::get('/deleteintegration/{id}', 'AdminController@deleteIntegrationUser');
    Route::post('/updateExportCount','AdminController@updateExportCount');
    Route::get('/sendmail','AdminController@sendmail');
+   Route::post('/filterdate', 'AdminController@filterByDate');
    Route::resource('roles', RoleController::class);
+
    
 });

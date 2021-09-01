@@ -16,7 +16,8 @@
                     <div id="reportrange" class="btn btn-sm btn-light bg-white dropdown-toggle">
                      <i class="mdi mdi-calendar"></i>
                      <span class='filter-data'></span>
-                     <input Type="text" name="filterdate" id="filterdate"/>
+                    <input type="hidden" name="start_date" value="2019-04-24"  id="id_start_date">
+                    <input type="hidden" name="end_date" value="2019-05-02" id="id_end_date">
                     </div>
                   </div>
                  </div>
@@ -38,7 +39,7 @@
                   <div class="card card-tale">
                     <div class="card-body">
                       <p class="mb-4">Accepted</p>
-                      <p class="fs-30 mb-2">{{ $totalReportActCount }}</p>
+                      <p class="fs-30 mb-2" id="accepted">{{$totalReportActCount}}</p>
                     </div>
                   </div>
                 </div>
@@ -114,14 +115,15 @@
                           <td>{{ $rotator->rotatorname }}</td>
                           <td>{{ $rotator->id }}</td>
                           <td>{{ $rotator->mode }}</td>
-                          <td> {{ $rotator->getrotatorList->count() }} <label class="text-success">{{ $rotator->getrotatorList->where('status', '0')->count(); }}</label> / <label class="text-danger">{{ $rotator->getrotatorList->where('status', '1')->count(); }}</label></td>
+                          <td> {{ $rotator->getrotatorList->count() }} <label class="text-success">{{ $rotator->getrotatorList->where('status', '0')->count() }}</label> / <label class="text-danger">{{ $rotator->getrotatorList->where('status', '1')->count() }}</label></td>
                           <?php
                             $tmp = \App\Models\Salephone::first();
                           ?>
                           @if(!$tmp)
                           <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
                           @else
-                          <td>{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">{{ $tmp->reportleadcount($rotator->id) }}</label> / <label class="text-danger">0</label></td>
+                          <td id="rotatorLeadCount{{$rotator->id}}">{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">{{ $tmp->reportleadcount($rotator->id) }}</label> / <label class="text-danger">0</label></td>
+                          
                           @endif
                           <td>
                             <?php if($rotator->status ==0){?>
@@ -193,14 +195,16 @@
                                   </td>
                                   @endif
                                   
-                                  <?php
-                                    $tmp = \App\Models\Salephone::first();
-                                  ?>
-                                  @if(!($tmp))
-                                  <td>0</td>
-                                  @else
-                                  <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
-                                  @endif
+                                  @php
+                                    $phoneemailCond = array($rowdata->phone_number);
+                                    if(isset($rowdata->getIntegrationName->email)){
+                                      array_push($phoneemailCond,$rowdata->getIntegrationName->email);
+                                    }
+                                    $sql =  \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereDate('created_at',Carbon::today());
+
+                                    $todaysLeads = $sql->count();
+                                  @endphp
+                                  <td id="todayLeads"> {{$todaysLeads}}</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
                                   @if(!$tmp)
                                   <td>0</td>
@@ -271,10 +275,12 @@
                                               </div>
                                             </div>
                                           </div>
+                                          @if($rowdata->phone_type === '0')
                                           <div class="form-group">
                                             <label for="exampleInputUsername1">Phone Number</label>
                                             <input type="text" name="phone_number" value="{{ $rowdata->phone_number }}" class="form-control" id="exampleInputUsername1" placeholder="Phone Number">
                                           </div>
+                                          @endif
                                           <div class="row">
                                             <div class="col-sm-4">
                                               <div class="form-group">

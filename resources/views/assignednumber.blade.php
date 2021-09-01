@@ -25,25 +25,21 @@
                         <?php $i++ ?>
                           <tr>
                               <td>{{$i}}</td>
-                              <td>{{ $rowdata->sales_number }}</td>
+                              <td>{{ $rowdata->phone_number }}</td>
                               <?php
                                   $model = \App\Models\Rotator::first();
                                   $rotator = $model->getrotatorName($rowdata->rotator_id);
                               ?>
                               <td>{{ $rotator->rotatorname }}</td>
-                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->phone_setting_id }}">0</a></td>
-                              <?php
-                                  $model = \App\Models\Phonesetting::first();
-                                  $phonesetting = $model->getphoneSettingStatus($rowdata->phone_setting_id);
-                              ?>
+                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
                               <td>
-                              <?php if($phonesetting->status ==0){?>
+                              <?php if($rowdata->status ==0){?>
                                 <label class="badge badge-success">Active</label>
                               <?php } else { ?>
                                <label class="badge badge-danger">Paused</label>
                                 <?php  } ?>
                               </td>  
-                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata->phone_setting_id }}">0</a></td>
+                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata->id }}">0</a></td>
                           </tr>
                           @empty
                         <tr>

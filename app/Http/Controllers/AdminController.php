@@ -35,26 +35,51 @@ class AdminController extends Controller
     }
     
     // ------------------ [ Load Dashboard Page ] ---------------------
-    public function dashboard() 
+    public function dashboard(Request $request) 
     {
-        // check if user logged in
+        $from= date($request->startDate." 00:00:00");
+        
+        $to= date($request->endDate)." 23:59:59";
+        
         if(Auth::check()) {
             $user = auth()->user();
-            if($user->role=== 'Coaching Manager')
+            if($user->role === 'Coaching Manager')
             {
                 return redirect('assignednumber');
             }
             else{
-            $data['integration'] = integration::all();    
-            $data['rotatorD'] = Rotator::paginate(5);
-            $data['activecount'] = Phonesetting::where('status', '0')->count();
-            $data['inactivecount'] = Phonesetting::where('status', '1')->count();
-            $data['totalReportActCount'] = Salephone::distinct('email')->whereDate('created_at', Carbon::today())->count();
-            return view('dashboard', $data);
+                $data['integration'] = integration::all();    
+                $data['rotatorD'] = Rotator::paginate(5);
+                $data['activecount'] = Phonesetting::where('status', '0')->count();
+                $data['inactivecount'] = Phonesetting::where('status', '1')->count();
+                $data['totalReportActCount'] = Salephone::distinct('email')->whereDate('created_at', Carbon::today())->count();
+                //$data['totalReportActCount'] = Salephone::distinct('email')->whereBetween('created_at', [$from, $to])->count();
+                
+                return view('dashboard', $data);
             }
         }
         
         return redirect::to("auth.login")->withSuccess('Oopps! You do not have access');
+    }
+
+    public function filterByDate(Request $request) 
+    {
+        $from= date($request->startDate." 00:00:00");
+        $to= date($request->endDate)." 23:59:59";
+        
+        $data['totalReportActCount'] = Salephone::distinct('email')->whereBetween('created_at', [$from, $to])->count();
+        $temp = Salephone::select('rotator_id', DB::raw('0 as total'))->groupBy('rotator_id')->whereNotBetween('created_at', [$from, $to])->get();
+        //return $temp;
+        $actualData = Salephone::select('rotator_id',DB::raw('count(*) as total'))->distinct('email')->whereBetween('created_at', [$from, $to])->groupBy('rotator_id')->get();
+        
+        foreach($temp as $t){
+            $actualData->push($t);
+        }
+        $data['reportLeads'] = $actualData;
+        
+        //return $data['reportLeads'];
+        return $data;
+    
     }
 
     // ------------------ [ Load Add Registration Page ] ---------------
@@ -286,7 +311,12 @@ class AdminController extends Controller
     {
         $user = auth()->user();
         $data['phone'] = $user->phone;
-        $data['assignedID'] = Salephone::WHERE('sales_number', $user->phone)->paginate(10);
+        $data['assignedID'] = Phonesetting::WHERE('phone_number', $user->phone)->paginate(10);
+        // $data['assignee_users'] = DB::table('assignee_users')->where('user_assignee',$user->id)->get();
+        // foreach($data['assignee_users'] as $rows) {
+        //     $rows->username = integration::getUsername($rows->integration_id);
+        // } 
+        //print_r($data1); die;
         return view('assignednumber', $data);
     }
     // ----------------  [ Get API Integration Page ] ------------
@@ -316,6 +346,7 @@ class AdminController extends Controller
     // ----------------  [ Update API Integration Page ] ------------
     public function updateIntegrationDoc(Request $request)
     {
+        //echo "fds"; die;
         $updateID = $request->updatedID;
         $data['name'] = $request->name;
         $data['email'] = $request->email;
@@ -323,8 +354,14 @@ class AdminController extends Controller
         $data['rotator_id'] = $request->rotator_id;
         $user_assign_id= $request->user_assign_id;
         $data['user_assign_id'] = implode(",", $user_assign_id);
-        //dd($data['user_assign_id']);
         DB::table('integrations')->where('id',$updateID)->update($data);
+        // DB::table('assignee_users')->where('integration_id',$request->updatedID)->delete();
+        //     foreach($request->user_assign_id as $rows){
+        //         $assignee['rotator_id'] = $request->rotator_id;
+        //         $assignee['integration_id'] = $request->updatedID;
+        //         $assignee['user_assignee'] = $rows;
+        //         DB::table('assignee_users')->insert($assignee);
+        //     }
         Session::flash('message', 'Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
@@ -362,5 +399,7 @@ class AdminController extends Controller
         // echo "Basic Email Sent. Check your inbox.";
 
     }
+
+    
     
 }

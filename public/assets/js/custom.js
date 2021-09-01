@@ -58,10 +58,16 @@ $(function() {
 
     var start = moment().subtract(0, 'days');
     var end = moment();
-
+    
+    $('#reportrange span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
+    $('#id_start_date').val(start.format('YYYY-MM-DD'));
+    $('#id_end_date').val(end.format('YYYY-MM-DD'));
+    
     function cb(start, end) {
         $('#reportrange span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
-        $("#filterdate").val(start.format('Y-MM-DD') + '&' + end.format('Y-MM-DD'))
+        $('#id_start_date').val(start.format('YYYY-MM-DD'));
+        $('#id_end_date').val(end.format('YYYY-MM-DD'));
+        filterByDate();
     }
 
     $('#reportrange').daterangepicker({
@@ -77,21 +83,58 @@ $(function() {
         }
     }, cb);
     
-    cb(start, end);
-    
-    //var dateabc = $("#reportrange").data('daterangepicker');
-    //alert(dateabc);
-    //console.log(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
-    $(document).ready(function(){
-        $('.ranges li').click(function(){
-            var datefilters = $("#filterdate").val();
-            const myArr = datefilters.split("&");
-            console.log(myArr);
-            //window.location = 'http://127.0.0.1:8000/dashboard/?start_date='+myArr[0]+'&end_date='+myArr[1]+'';
-         });
-      });
+    //cb(start, end);
+
+    function filterByDate() {
+        var sDate = $('#id_start_date').val();
+    	var eDate = $('#id_end_date').val();
+        var _token = $('input[name="_token"]').val();
+       console.log(sDate);
+       console.log(eDate);
+        if(sDate == start.format('Y-MM-DD')){
+            location.reload();
+        }
+        
+        $.ajax({
+            url:  "/filterdate",
+            //dataType: "json",
+            type: "post",
+            async: true,
+            data: {"startDate":sDate,"endDate":eDate, _token:_token},
+            success: function (data) {
+                   console.log(data);
+                   $('#accepted').html(data.totalReportActCount);
+                   for(let i=0; i < data.reportLeads.length; i++){
+                        $('#todayLeads').html(0);
+                        //console.log("ID:"+ data.reportLeads[i].rotator_id + "total : " +data.reportLeads[i].total);
+                        $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
+                   }
+            },
+            error: function (xhr, exception, thrownError) {
+                var msg = "";
+                if (xhr.status === 0) {
+                    msg = "Not connect.\n Verify Network.";
+                } else if (xhr.status == 404) {
+                    msg = "Requested page not found. [404]";
+                } else if (xhr.status == 500) {
+                    msg = "Internal Server Error [500].";
+                } else if (exception === "parsererror") {
+                    msg = "Requested JSON parse failed.";
+                } else if (exception === "timeout") {
+                    msg = "Time out error.";
+                } else if (exception === "abort") {
+                    msg = "Ajax request aborted.";
+                } else {
+                    //msg = "Error:" + xhr.status + " " + xhr.responseText;
+                }
+               
+            }
+        }); 
+    }
     
 });
+
+
 
 
  

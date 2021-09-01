@@ -15,9 +15,7 @@ class Salephone extends Model
 
     public function salephonelist($phone_number){
         return $this->distinct('email')->where('sales_number', $phone_number)->whereDate('created_at', Carbon::today())->count();
-        //return $this->distinct('email')->where('sales_number', $phone_number)->count();
-        //return $dd = "fds";
-        
+                
     }
     public function salephonelistleftlead($phone_number){
         return $this->distinct('email')->where('sales_number', $phone_number)->count();
@@ -29,7 +27,7 @@ class Salephone extends Model
     }
     public function reportleadcount($rotatorid){
         return $this->distinct('email')->where('rotator_id', $rotatorid)->whereDate('created_at', Carbon::today())->count();
-        //return $this->distinct('email')->where('rotator_id', $rotatorid)->count();
+        //$this->distinct('email')->where('rotator_id', $rotatorid)->whereBetween('created_at', [$from, $to])->count();
         
     }
     

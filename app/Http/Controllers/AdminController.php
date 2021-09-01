@@ -283,7 +283,10 @@ class AdminController extends Controller
     // ----------------  [ Get Unexported Lead Page ] ------------
     public function unexpLead($id)
     {
-        $data['unexpleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
+        $data['exportCount'] = Phonesetting::select('export_count')->where('id', $id)->first();
+        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
+        //print_r($data->rotator_id); die;
+        $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('remove_data',0)->paginate(10);
         $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->first();
         return view('unexportedlead', $data);
        
@@ -378,7 +381,14 @@ class AdminController extends Controller
     }
 
     public function updateExportCount(Request $request){
-         print_r($_POST); die;
+        //$data['export_count']
+        //echo $_POST['exportID']; die;
+        $getExportCount = Phonesetting::select('export_count')->where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
+        $updateData['export_count'] = $getExportCount->export_count+1;
+        Phonesetting::where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($updateData);
+        $removeUpdates['remove_data'] = 1; 
+        Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
+        
     }
 
     public function sendmail(){

@@ -8,7 +8,7 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
-                      <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(12 Exports)</a></h4>
+                      <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(<?php echo $exportCount->export_count;?> Exports)</a></h4>
                     </div>
                     <div class="col-md-6">
                       <button type="button"  class="btn btn-outline-primary btn-icon-text" style="float:right;">
@@ -19,6 +19,7 @@
                   </div>
                   <div class="table-responsive">
                     <input type="hidden" id="export_count" value="{{ request()->id }}">
+                    <input type="hidden" id="rotatorID" value="<?php echo $rotatorIDs->rotator_id;?>">
                     <table class="table table-hover display" id="example">
                       <thead>
                         <tr class="text-center">
@@ -79,27 +80,36 @@
           ]
      }
     });
-   
-   $(".getExportCount").click(function(){
-      var exportID = $("#export_count").val();
-      //alert(exportID);
-      //$.post('updateExportCount', {exportID:exportID});
-      // $.post('updateExportCount', {exportID:exportID}, function(response){ 
-      //         alert("success");
-      //         //$("#mypar").html(response.amount);
-      //   });
 
+     
+    $(".getExportCount").click(function(){
+        var exportID = $("#export_count").val();
+        var rotatorID = $("#rotatorID").val();
+
+        //var _token = $('input[name="_token"]').val();   
+        //alert(_token); 
         $.ajax({
-            type:'POST',
-            url:'/updateExportCount',
+            url:  "/updateExportCount",
+            type: "post",
+            //async: true,
+            data: {exportID:exportID,rotatorID:rotatorID},
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            success:function(data){}
-        });
-   })
+            success: function (data) {
+                  
+                console.log(data);
+                   
+            },
+            error: function (xhr, exception, thrownError) {
+               
+            }
+        }); 
+    });
 
-} );
+
+
+  } );
 
 
 </script>

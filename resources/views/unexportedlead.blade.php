@@ -10,17 +10,17 @@
                     <div class="col-md-6">
                       <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(<?php echo $exportCount->export_count;?> Exports)</a></h4>
                     </div>
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                       <button type="button"  class="btn btn-outline-primary btn-icon-text" style="float:right;">
                         <i class="ti-download"></i>
                           Export
                       </button>
-                    </div>
+                    </div> -->
                   </div>
                   <div class="table-responsive">
                     <input type="hidden" id="export_count" value="{{ request()->id }}">
                     <input type="hidden" id="rotatorID" value="<?php echo $rotatorIDs->rotator_id;?>">
-                    <table class="table table-hover display" id="example">
+                    <table class="table table-hover" id="example">
                       <thead>
                         <tr class="text-center">
                           <th class="nosort" data-orderable="false">Name</th>
@@ -46,12 +46,7 @@
                         @endforelse
 			                </tbody>
                     </table>
-                    {{-- Pagination --}}
-                    <div class="template-demo">
-                      <div class="btn-group d-flex ">
-                          {{ $unexpleads->links() }}
-                      </div>
-                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -60,61 +55,4 @@
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-
-        @include('layouts.footer')  
-<!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/> -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.0/js/dataTables.buttons.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.html5.min.js"></script>
-
-<script>
-  $(document).ready(function() {
-    $('#example').DataTable({
-        dom: 'Bfrtip',
-        buttons: {
-          buttons: [
-              { extend: 'excel', className: 'getExportCount' }
-          ]
-     }
-    });
-
-     
-    $(".getExportCount").click(function(){
-        var exportID = $("#export_count").val();
-        var rotatorID = $("#rotatorID").val();
-
-        //var _token = $('input[name="_token"]').val();   
-        //alert(_token); 
-        $.ajax({
-            url:  "/updateExportCount",
-            type: "post",
-            //async: true,
-            data: {exportID:exportID,rotatorID:rotatorID},
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (data) {
-                  
-                console.log(data);
-                   
-            },
-            error: function (xhr, exception, thrownError) {
-               
-            }
-        }); 
-    });
-
-
-
-  } );
-
-
-</script>
-<style>
-  .dataTables_filter, .dataTables_info { display: none; }
-  #example_paginate { display: none; }
-
-</style>
+@include('layouts.footer')

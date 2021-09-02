@@ -104,10 +104,14 @@ $(function() {
             success: function (data) {
                    console.log(data);
                    $('#accepted').html(data.totalReportActCount);
+                   $('.todayLeads').html(0);
                    for(let i=0; i < data.reportLeads.length; i++){
-                        $('#todayLeads').html(0);
                         //console.log("ID:"+ data.reportLeads[i].rotator_id + "total : " +data.reportLeads[i].total);
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
+                        
+                       // for(let j=0; data.totalReportLeadsObj[i].length; j++){
+                          //  $('.totalReportLeads').html(data.totalReportLeadsObj[i][j]);
+                        //}
                    }
             },
             error: function (xhr, exception, thrownError) {
@@ -132,6 +136,43 @@ $(function() {
         }); 
     }
    
+});
+
+// Data Table
+$(document).ready(function() {
+    $('#example').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+          buttons: [
+              { extend: 'excel', text: 'Export', className: 'getExportCount' }
+          ]
+     }
+    });
+
+     
+    $(".getExportCount").click(function(){
+        var exportID = $("#export_count").val();
+        var rotatorID = $("#rotatorID").val();
+
+        $.ajax({
+            url:  "/updateExportCount",
+            type: "post",
+            //async: true,
+            data: {exportID:exportID,rotatorID:rotatorID},
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (data) {
+                  
+                console.log(data);
+                   
+            },
+            error: function (xhr, exception, thrownError) {
+               
+            }
+        }); 
+    });
+
 });
 
  

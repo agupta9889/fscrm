@@ -24,6 +24,7 @@ class APIController extends Controller
         $key = $request->api_key;
         $lead_id = "";
         $sales_number = ""; $result = "";
+        $now = Carbon::now();
         
         if($api_key === $key)
         {
@@ -61,7 +62,7 @@ class APIController extends Controller
                 $flag = false;
 				
 				$today_leads = Salephone::where('phone_setting_id',$activephone->id)->whereDate('created_at', date('Y-m-d'))->count();
-                $week_leads = Salephone::where('phone_setting_id',$activephone->id)->whereBetween('created_at',[date("Y-m-d", strtotime("-1 week")), date("Y-m-d", strtotime("+1 day"))])->count();
+                $week_leads = Salephone::where('phone_setting_id',$activephone->id)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
                 $total_leads = Salephone::where('phone_setting_id',$activephone->id)->count();
                 // echo "todays_leads : ".$today_leads;
                 // echo "week_leads : ".$week_leads;

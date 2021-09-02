@@ -32,12 +32,7 @@
                         @endforelse
 			                </tbody>
                     </table>
-                    {{-- Pagination --}}
-                    <div class="template-demo">
-                      <div class="btn-group d-flex ">
-                          {{ $expleads->links() }}
-                      </div>
-                    </div>
+                   
                   </div>
                 </div>
               </div>

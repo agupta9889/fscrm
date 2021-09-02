@@ -34,7 +34,7 @@ class AdminController extends Controller
         return view('auth.login');
     }
     
-    // ------------------ [ Load Dashboard Page ] ---------------------
+    // [ Load Dashboard Page ] 
     public function dashboard(Request $request) 
     {
         $from= date($request->startDate." 00:00:00");
@@ -73,23 +73,45 @@ class AdminController extends Controller
         $actualData = Salephone::select('rotator_id',DB::raw('count(*) as total'))->distinct('email')->whereBetween('created_at', [$from, $to])->groupBy('rotator_id')->get();
         
         foreach($temp as $t){
-            $actualData->push($t);
+            if(!$actualData->contains('rotator_id',$t->rotator_id)){
+                $actualData->push($t);
+            }
         }
+        $obj = array();
+        foreach($actualData as $aData){
+            $i = 0;
+            $intObj = array();
+            $phoneList = Phonesetting::where('rotator_id', $aData->rotator_id)->get();
+            foreach($phoneList as $rowdata){
+                $j = 0;
+                $phoneemailCond = array($rowdata->phone_number);
+                if(isset($rowdata->getIntegrationName->email)){
+                    array_push($phoneemailCond,$rowdata->getIntegrationName->email);
+                }
+                $totalReportLeads = \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereBetween('created_at', [$from, $to])->count();
+                $intObj[] = $totalReportLeads;
+                $j++;
+            }
+            $obj[] = $intObj;
+            $i++;
+        }
+
         $data['reportLeads'] = $actualData;
+        $data['totalReportLeadsObj'] = $obj;
         
         //return $data['reportLeads'];
         return $data;
     
     }
 
-    // ------------------ [ Load Add Registration Page ] ---------------
+    // [ Load Add Registration Page ] 
     public function addRegistration() 
     {   
         $role = Role::pluck('name','name')->all();    
         return view('adduser', compact('role'));
     }
 
-    // ------------------ [ Insert User Details Page ] ------------
+    // [ Insert User Details Page ] 
     public function registration(Request $request) 
     {
         $fname = $request->input('first_name');
@@ -106,14 +128,14 @@ class AdminController extends Controller
         return redirect('adduser');
     }
 
-    // ----------------  [ Get User Details Page ] ------------
+    // [ Get User Details Page ]
     public function userDetails() 
     {
         $userD = DB::table('users')->paginate(5);
         return view('userlist', ['userD'=>$userD]);
     }
 
-    // ----------------  [ Update User Details Page ] ------------
+    // [ Update User Details Page ] 
     public function updShowUser($id) 
     {
         $user = User::find($id);
@@ -122,7 +144,7 @@ class AdminController extends Controller
         return view('edituser',compact('user','roles','userRole'));
     }
 
-    // ----------------  [ Update User Details Page ] ------------
+    // [ Update User Details Page ] 
     public function updateUserRecord(Request $request) 
     {
         $updateID = $request->updateID;
@@ -154,7 +176,7 @@ class AdminController extends Controller
         return redirect('userlist');
     }
 
-    // ----------------  [ Delete User Row Page ] ------------
+    // [ Delete User Row Page ] 
     public function destroy($id) 
     {
         DB::delete('delete from users where id = ?',[$id]);
@@ -163,12 +185,12 @@ class AdminController extends Controller
         return redirect('userlist');
     }
 
-    // ----------------  [ Load Add Rotator Page ] ------------
+    // [ Load Add Rotator Page ] 
     public function addRotator() 
     {
         return view('addrotator');
     }
-    // ----------------  [ Insert Rotator Page ] ------------
+    // [ Insert Rotator Page ] 
     public function insertRotator(Request $request)
     {
         $data['rotatorname'] = $request->rotatorname;
@@ -179,7 +201,7 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // ----------------  [ Update Phone Settings Page ] ------------
+    // [ Update Phone Settings Page ] 
     public function rotatorDataEdit(Request $request) 
     {
         $updateID = $request->id;
@@ -192,7 +214,7 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // ----------------  [ Add Phones Page ] ------------
+    // [ Add Phones Page ] 
     public function addPhone(Request $request)
     {
         $rotator_id = $request->rotator_id;
@@ -217,14 +239,14 @@ class AdminController extends Controller
         return redirect('dashboard');
         
     }
-    // ----------------  [ Update Phone Settings Page ] ------------
+    // [ Update Phone Settings Page ] 
     public function editphone(Request $request) 
     {
-        
+        $now = Carbon::now();
         $updateID = $request->id;
         $phoneSetting = Phonesetting::findOrFail($updateID);
         $today_leads = Salephone::where('phone_setting_id',$updateID)->whereDate('created_at', date('Y-m-d'))->count();
-        $week_leads = Salephone::where('phone_setting_id',$updateID)->whereBetween('created_at',[date("Y-m-d", strtotime("-1 week")), date("Y-m-d", strtotime("+1 day"))])->count();
+        $week_leads = Salephone::where('phone_setting_id',$updateID)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
         $total_leads = Salephone::where('phone_setting_id',$updateID)->count();   
         if($phoneSetting->max_daily_leads > $today_leads && $phoneSetting->max_weekly_leads > $week_leads && $phoneSetting->max_limit_leads > $total_leads)
         {
@@ -248,21 +270,11 @@ class AdminController extends Controller
 
         $phoneSetting->save();
 
-       /* $data['floor_label'] = $request->floor_label;
-        $data['status'] = $request->status;
-        $data['phone_number'] = $request->phone_number;
-        $data['max_daily_leads'] = $request->max_daily_leads;
-        $data['max_weekly_leads'] = $request->max_weekly_leads;
-        $data['max_limit_leads'] = $request->max_limit_leads;
-        $data['test_number'] = $request->test_number;
-        $data['notification_email'] = $request->notification_email;
-        
-        DB::table('phone_settings')->where('id',$updateID)->update($data);*/
         Session::flash('message', 'Phone Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // ----------------  [ Delete Phone Records Section ] ------------
+    // [ Delete Phone Records Section ] 
     public function deletePhoneRecord($id) 
     {
         DB::delete('delete from phone_settings where id = ?',[$id]);
@@ -271,7 +283,7 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // ----------------  [ Delete Rotator Row Section ] ------------
+    // [ Delete Rotator Row Section ] 
     public function deleteRotatorRecord($id) 
     {
         DB::delete('delete from rotators where id = ?',[$id]);
@@ -280,36 +292,39 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // ----------------  [ Get Unexported Lead Page ] ------------
+    // [ Get Unexported Lead Page ] 
     public function unexpLead($id)
     {
         $data['exportCount'] = Phonesetting::select('export_count')->where('id', $id)->first();
         $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
-        //print_r($data->rotator_id); die;
-        $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('remove_data',0)->paginate(10);
-        $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->first();
+       // print_r($data['rotatorIDs']->rotator_id); die;
+        $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
+        $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
         return view('unexportedlead', $data);
        
     }
-    // ----------------  [ Get Exports Lead Page ] ------------
+    // [ Get Exports Lead Page ] 
     public function exportsLead($id)
     {   
-        $data['expleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->paginate(10);
-        $data['expleadscount'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->count();
+        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
+        $data['expleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->get();
+        $data['expleadscount'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->count();
         return view('exportlead', $data);
-        //return view('exportlead');
+    
     }
-    // ----------------  [ Get Report Lead Page ] ------------
+    // [ Get Report Lead Page ]
     public function leadReport($id)
     {
         $getsale = Salephone::where('phone_setting_id', $id)->first();
         $data['getsalenumber'] = $getsale->sales_number;
-        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->whereDate('created_at', Carbon::today())->paginate(10);
-        $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->whereDate('created_at', Carbon::today())->count();
+        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
+        $data['exportcount'] = Phonesetting::where('id', $id)->first();
+        $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->where('rotator_id', $data['rotatorIDs']->rotator_id)->whereDate('created_at', Carbon::today())->get();
+        $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->where('rotator_id', $data['rotatorIDs']->rotator_id)->whereDate('created_at', Carbon::today())->count();
         return view('report', $data);
        
     }
-    // ----------------  [ Assigned Number Page ] ------------
+    // [ Assigned Number Page ] 
     public function assignedNumber()
     {
         $user = auth()->user();
@@ -322,12 +337,12 @@ class AdminController extends Controller
         //print_r($data1); die;
         return view('assignednumber', $data);
     }
-    // ----------------  [ Get API Integration Page ] ------------
+    // [ Get API Integration Page ] 
     public function integration()
     {
         return view('addintegration');
     }
-    // ----------------  [ Add API Integration Page ] ------------
+    // [ Add API Integration Page ] 
     public function addRegIntegration(Request $request)
     {
         $data['name'] = $request->name;
@@ -339,14 +354,14 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('addintegration');
     }
-    // ----------------  [ Get API Integration Page ] ------------
+    // [ Get API Integration Page ] 
     public function integrationDoc()
     {
         $data['integrationUser'] = DB::table('integrations')->get();
         $data['coachingmanager'] = DB::table('users')->where('role', 'Coaching Manager')->get();
         return view('integrationdoc', $data);
     }
-    // ----------------  [ Update API Integration Page ] ------------
+    // [ Update API Integration Page ] 
     public function updateIntegrationDoc(Request $request)
     {
         //echo "fds"; die;
@@ -370,7 +385,7 @@ class AdminController extends Controller
         return redirect('integrationdoc');
         
     }
-    // ----------------  [ Delete API Integration Page ] ------------
+    // [ Delete API Integration Page ] 
     public function deleteIntegrationUser($id) 
     {
         //dd($id);
@@ -379,10 +394,10 @@ class AdminController extends Controller
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
     }
-
-    public function updateExportCount(Request $request){
-        //$data['export_count']
-        //echo $_POST['exportID']; die;
+    // [ Export Count ] 
+    public function updateExportCount(Request $request)
+    {
+       
         $getExportCount = Phonesetting::select('export_count')->where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
         $updateData['export_count'] = $getExportCount->export_count+1;
         Phonesetting::where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($updateData);
@@ -390,7 +405,7 @@ class AdminController extends Controller
         Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
         
     }
-
+    // [ Mail ] 
     public function sendmail(){
         
         Mail::send([], [], function ($message) { 

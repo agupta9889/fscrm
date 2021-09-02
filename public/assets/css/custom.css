@@ -7,3 +7,13 @@
 td.active {
   background: #029e0273;
 }
+.dataTables_filter, .dataTables_info { display: none; }
+  #example_paginate { display: none; }
+  button.getExportCount {
+    float: right;
+    padding: 10px;
+    background: #4b49ac;
+    color: #fff;
+    border: 0px;
+    border-radius: 5px;
+}

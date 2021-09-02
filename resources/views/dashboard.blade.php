@@ -78,7 +78,7 @@
                 <div class="card-body">
                 <div class="row">
                   <div class="col-md-6">
-                     <h4 class="card-title">Rotator List</h4>
+                     <h4 class="card-title">Rotators</h4>
                   </div>
                   <div class="col-md-6">
                     <span data-toggle="modal" data-target="#rotatorModal" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
@@ -200,32 +200,29 @@
                                     if(isset($rowdata->getIntegrationName->email)){
                                       array_push($phoneemailCond,$rowdata->getIntegrationName->email);
                                     }
-                                    $sql =  \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereDate('created_at',Carbon::today());
+                                    $today =  \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereDate('created_at',Carbon::today());
 
-                                    $todaysLeads = $sql->count();
+                                    $todaysLeads = $today->count();
                                   @endphp
-                                  <td id="todayLeads"> {{$todaysLeads}}</td>
+                                  <td class="todayLeads"> {{$todaysLeads}}</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
-                                  @if(!$tmp)
-                                  <td>0</td>
-                                  @else
-                                  <td>{{ $tmp->salephonelist($rowdata->phone_number)}}</td>
-                                  @endif
+                                  @php 
+                                    $now = Carbon::now();
+                                    $week =  \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                                    $weekLeads =  $week->count();
+                                  @endphp
+                                  <td>{{ $weekLeads }}</td>
                                   <td>{{ $rowdata->max_weekly_leads }}</td>
-                                  @if(!$tmp)
-                                  <td>0</td>
-                                  @else
-                                  <td>{{ $tmp->salephonelist($rowdata->phone_number) }}</td>
-                                  @endif
+                                  @php 
+                                    $totalRepLead = \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->count();
+                                    $total = \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereDate('created_at',Carbon::today())->get();
+                                    $totalReportLeads = $total->count();
+                                  @endphp
+                                  <td class="totalReportLeads">{{ $totalReportLeads }}</td>
                                   <td>{{ $rowdata->max_limit_leads }}</td>
-                                  <?php
-                                    $left = \App\Models\Salephone::first();
-                                  ?>
-                                  @if(!$left)
-                                  <td>0</td>
-                                  @else
-                                  <td>{{ $rowdata->max_limit_leads - $left->salephonelistleftlead($rowdata->phone_number) }}</td>
-                                  @endif
+
+                                  <td>{{ $rowdata->max_limit_leads - $totalRepLead }}</td>
+                                 
                                   <td>
                                   <?php if($rowdata->status == 0) { ?>
                                     <label class="badge badge-success"><i class="ti-check"></i></label>

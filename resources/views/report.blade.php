@@ -15,7 +15,9 @@
                         <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
                           <div id="reportrange" class="btn btn-sm btn-light bg-white dropdown-toggle">
                             <i class="mdi mdi-calendar"></i>
-                            <span></span>
+                            <span class='filter-data'></span>
+                            <input type="hidden" name="start_date" value="2019-04-24"  id="id_start_date">
+                            <input type="hidden" name="end_date" value="2019-05-02" id="id_end_date">
                           </div>
                         </div>
                       </div>
@@ -27,6 +29,7 @@
                       <div class="card card-tale">
                         <div class="card-body">
                           <p class="mb-4">Total</p>
+                          <!-- <p class="fs-30 mb-2" id="total">{{ $totalCount }}</p> -->
                           <p class="fs-30 mb-2">{{ $totalCount }}</p>
                         </div>
                       </div>
@@ -35,7 +38,8 @@
                       <div class="card card-dark-blue">
                         <div class="card-body">
                           <p class="mb-4">Accepted</p>
-                          <p class="fs-30 mb-2">{{ $totalCount }}</p>
+                          <!-- <p class="fs-30 mb-2" id="accepted">{{$totalCount}}</p> -->
+                          <p class="fs-30 mb-2">{{$totalCount}}</p>
                         </div>
                       </div>
                     </div>
@@ -51,20 +55,20 @@
                       <div class="card card-light-danger">
                         <div class="card-body">
                           <p class="mb-4">Exports</p>
-                          <p class="fs-30 mb-2">0</p>
+                          <p class="fs-30 mb-2">{{ $exportcount->export_count }}</p>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="example">
                       <thead>
                         <tr class="text-center">
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th>Accepted</th>
-                          <th>Date Created</th>
+                          <th class="nosort" data-orderable="false">Name</th>
+                          <th data-orderable="false">Email</th>
+                          <th data-orderable="false">Phone</th>
+                          <th data-orderable="false">Accepted</th>
+                          <th data-orderable="false">Date Created</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -83,12 +87,7 @@
                         @endforelse
 			                </tbody>
                     </table>
-                    {{-- Pagination --}}
-                    <div class="template-demo">
-                      <div class="btn-group d-flex ">
-                          {{ $reportleads->links() }}
-                      </div>
-                    </div>
+                    
                   </div>
                 </div>
               </div>

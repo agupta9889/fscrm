@@ -32,11 +32,11 @@ function onButtonClick1(){
     document.getElementById('phones').style.display ='none';
 }
 //--Popover show--
-  // $(document).ready(function(){
+  $(document).ready(function(){
     
-  //     $('[data-toggle="popover"]').popover();   
-  //     placement : 'top'
-  // });
+      $('[data-toggle="popover"]').popover();   
+      placement : 'top'
+  });
 //--Rotator ID get--
 function rotatorId(id)
 {
@@ -109,9 +109,9 @@ $(function() {
                         //console.log("ID:"+ data.reportLeads[i].rotator_id + "total : " +data.reportLeads[i].total);
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
                         
-                       // for(let j=0; data.totalReportLeadsObj[i].length; j++){
-                          //  $('.totalReportLeads').html(data.totalReportLeadsObj[i][j]);
-                        //}
+                        for(let j=0; j < data.totalReportLeadsObj[i].length; j++){
+                            $('.totalReportLeads').html(data.totalReportLeadsObj[i][j]);
+                        }
                    }
             },
             error: function (xhr, exception, thrownError) {
@@ -138,7 +138,7 @@ $(function() {
    
 });
 
-// Data Table
+// Data Table Export 
 $(document).ready(function() {
     $('#example').DataTable({
         dom: 'Bfrtip',

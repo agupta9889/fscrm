@@ -24,7 +24,7 @@ class APIController extends Controller
         $key = $request->api_key;
         $lead_id = "";
         $sales_number = ""; $result = "";
-        $now = Carbon::now();
+        $now = \Carbon::now();
         
         if($api_key === $key)
         {
@@ -64,11 +64,52 @@ class APIController extends Controller
 				$today_leads = Salephone::where('phone_setting_id',$activephone->id)->whereDate('created_at', date('Y-m-d'))->count();
                 $week_leads = Salephone::where('phone_setting_id',$activephone->id)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
                 $total_leads = Salephone::where('phone_setting_id',$activephone->id)->count();
-                // echo "todays_leads : ".$today_leads;
-                // echo "week_leads : ".$week_leads;
-                // echo "limit today : ".$todaylimit;
-                // echo "limit week : ".$weeklimit;
-                // die;
+                
+                if($activephone->max_daily_leads == 0 || $activephone->max_weekly_leads == 0 || $activephone->max_limit_leads == 0){
+                    try{
+                        DB::beginTransaction();
+
+                        $data = new Salephone;
+                        $data->phone_setting_id=$activephone->id;
+                        $data->api_key=$key;
+                        $data->rotator_id=$rotator_id;
+                        $data->email=$request->email;
+                        $data->phone=$request->phone;
+                        if(is_null($activephone->integration_id)){
+                            $data->sales_number=$activephone->phone_number;
+                        }else{
+                            $data->sales_number=$activephone->email;
+                        }
+                        
+                        $data->first_name=$request->first_name;
+                        $data->last_name=$request->last_name;
+                        $data->state=$request->state;
+                        $data->address=$request->address;
+                        $data->city=$request->city;
+                        $data->zip=$request->zip;
+                        $data->country=$request->country;
+                        $lead_id = mt_rand( 1000000000, 9999999999 );
+                        $data->lead_id=$lead_id;
+                        $result = $data->save();
+                        
+                        if(count($activephonecount) > 0){
+                            
+                            $activephonecount->first()->current_selected = '0';
+                            $activephonecount->first()->save();
+                            $activephone->current_selected = '1';
+                        }else{
+                            $activephone->current_selected = '0';
+                        }
+
+                        $activephone->save();
+                        
+                        DB::commit(); 
+                    }Catch(Exception $e){
+                        DB::rollback();
+                        dd($e);
+                    }
+                }
+
 				if($activephone->max_daily_leads > $today_leads && $activephone->max_weekly_leads > $week_leads && $activephone->max_limit_leads > $total_leads)
 				{
                     // echo "coming"; die;

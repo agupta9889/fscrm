@@ -20,9 +20,9 @@
                       <tbody>
                       @forelse($expleads as $expdata)
                         <tr>
-                          <td>{{ $expdata->created_at }}</td>
+                          <td>{{ $expdata->updated_at }}</td>
                           <td>{{ $expdata->sales_number }}</td>
-                          <td>{{ $expleadscount }}</td>
+                          <td>{{ $expdata->total }}</td>
                           <td><i class="ti-download"></i> Download</td>
                         </tr>
                         @empty

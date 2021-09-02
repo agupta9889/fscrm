@@ -300,6 +300,7 @@ class AdminController extends Controller
        // print_r($data['rotatorIDs']->rotator_id); die;
         $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
         $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
+        
         return view('unexportedlead', $data);
        
     }
@@ -307,8 +308,9 @@ class AdminController extends Controller
     public function exportsLead($id)
     {   
         $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
-        $data['expleads'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->get();
+        $data['expleads'] = Salephone::select(DB::raw('count(*) as total'),'updated_at')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('sales_number',$data['rotatorIDs']->sales_number)->groupBy('updated_at')->get();
         $data['expleadscount'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->count();
+  //echo "<pre>";print_r($data);echo "</pre>";die;
         return view('exportlead', $data);
     
     }

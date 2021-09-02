@@ -445,8 +445,8 @@
           <div class="form-group row">
             <div class="col-sm-4">
               <div class="form-group">
-              <label for="exampleInputUsername1" style="font-size:12px;">Max Daily Leads 
-                <span class="badge badge-pill badge-primary">
+              <label style="font-size:12px;">Max Daily Leads 
+                <span class="badge badge-pill badge-primary badge-size">
                   <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Daily Leads:"  data-content="Total amount of leads allocated to this number for the day (MST). After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
               </label>
@@ -455,8 +455,8 @@
             </div>
             <div class="col-sm-4">
               <div class="form-group">
-                <label for="exampleInputUsername1" style="font-size:12px;">Max Weekly Leads
-                <span class="badge badge-pill badge-primary">
+                <label style="font-size:12px;">Max Weekly Leads
+                <span class="badge badge-pill badge-primary badge-size">
                   <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Weekly Leads:"  data-content="Total amount of leads allocated to this number for the week (Monday-Sunday). After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
                 </label>
@@ -465,9 +465,9 @@
             </div>
             <div class="col-sm-4">
               <div class="form-group">
-                <label for="exampleInputUsername1" style="font-size:12px;">Max Limit Leads
-                <span class="badge badge-pill badge-primary">
-                  <i class="ti-info" data-toggle="popover" data-placement="top" title="Max limit Leads:"  data-content="otal amount of leads allocated to this number. After quota is reached no more leads are added. 0 means unlimited."></i>
+                <label style="font-size:12px;">Max Limit Leads
+                <span class="badge badge-pill badge-primary badge-size">
+                  <i class="ti-info" data-toggle="popover" data-placement="top" title="Max limit Leads:"  data-content="Total amount of leads allocated to this number. After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
                 </label>
                 <input type="number" name="max_limit_leads" class="form-control">

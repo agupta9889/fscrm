@@ -218,7 +218,7 @@
                                     $total = \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereDate('created_at',Carbon::today())->get();
                                     $totalReportLeads = $total->count();
                                   @endphp
-                                  <td class="totalReportLeads">{{ $totalReportLeads }}</td>
+                                  <td class="totalReportLeads{{$rotator->id}}{{$loop->index}}">{{ $totalReportLeads }}</td>
                                   <td>{{ $rowdata->max_limit_leads }}</td>
                                   <td>{{ $rowdata->max_limit_leads - $totalRepLead }}</td>
                                   <td>

@@ -119,7 +119,8 @@ $(function() {
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
                         
                         for(let j=0; j < data.totalReportLeadsObj[i].length; j++){
-                            $('.totalReportLeads').html(data.totalReportLeadsObj[i][j]);
+                            console.log('.totalReportLeads'+data.reportLeads[i].rotator_id+j+ " : "+ data.totalReportLeadsObj[i][j]);
+                            $('.totalReportLeads'+data.reportLeads[i].rotator_id+j).html(data.totalReportLeadsObj[i][j]);
                         }
                    }
             },

@@ -66,7 +66,10 @@ class AdminController extends Controller
     {
         $from= date($request->startDate." 00:00:00");
         $to= date($request->endDate)." 23:59:59";
-        
+        $phoneSettingID =  $request->phoneID;
+        //echo $phoneSettingID;
+        $data['totalReportAct'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->get();
+  
         $data['totalReportActCount'] = Salephone::distinct('email')->whereBetween('created_at', [$from, $to])->count();
         $temp = Salephone::select('rotator_id', DB::raw('0 as total'))->groupBy('rotator_id')->whereNotBetween('created_at', [$from, $to])->get();
         //return $temp;
@@ -259,7 +262,6 @@ class AdminController extends Controller
                 $phoneSetting->status = $request->status;
             }
         }
-
         $phoneSetting->floor_label = $request->floor_label;
         $phoneSetting->phone_number = $request->phone_number;
         $phoneSetting->max_daily_leads = $request->max_daily_leads;
@@ -267,7 +269,6 @@ class AdminController extends Controller
         $phoneSetting->max_limit_leads = $request->max_limit_leads;
         $phoneSetting->test_number = $request->test_number;
         $phoneSetting->notification_email = $request->notification_email;
-
         $phoneSetting->save();
 
         Session::flash('message', 'Phone Record Updated Successfully!'); 
@@ -300,7 +301,6 @@ class AdminController extends Controller
        // print_r($data['rotatorIDs']->rotator_id); die;
         $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
         $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
-        
         return view('unexportedlead', $data);
        
     }

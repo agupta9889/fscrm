@@ -88,24 +88,33 @@ $(function() {
     function filterByDate() {
         var sDate = $('#id_start_date').val();
     	var eDate = $('#id_end_date').val();
+        var phoneID = $('#phone_id').val();
+        console.log(phoneID);
         var _token = $('input[name="_token"]').val();
-       console.log(sDate);
-       console.log(eDate);
+        console.log(sDate);
+        console.log(eDate);
         if(sDate == start.format('Y-MM-DD')){
             location.reload();
         }
-        
         $.ajax({
             url:  "/filterdate",
             //dataType: "json",
             type: "post",
             async: true,
-            data: {"startDate":sDate,"endDate":eDate, _token:_token},
+            data: {"startDate":sDate,"endDate":eDate,"phoneID":phoneID, _token:_token},
             success: function (data) {
-                   console.log(data);
+                   //console.log(data.totalReportAct);
                    $('#accepted').html(data.totalReportActCount);
                    $('.todayLeads').html(0);
-                   for(let i=0; i < data.reportLeads.length; i++){
+                   $(".reportList").find("tr:gt(0)").remove();
+                   $.each(data.totalReportAct, function(index, val){
+                   console.log('Arun', index, val);
+                   //var createddate = new date(val.created_at);
+                    $('.reportList').append('<tr class="text-center"><td>' + val.first_name + val.last_name + '</td><td>' + val.email + '</td> <td>' + val.phone + '</td><td><label class="badge badge-success"><i class="ti-check"></i></label><br/>' + val.sales_number +
+                    '</td><td>' + val.created_at + '</td></tr>'); 
+                    });
+                
+                    for(let i=0; i < data.reportLeads.length; i++){
                         //console.log("ID:"+ data.reportLeads[i].rotator_id + "total : " +data.reportLeads[i].total);
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
                         
@@ -138,9 +147,12 @@ $(function() {
    
 });
 
-// Data Table Export 
+
+
+// Data Table UnExport 
 $(document).ready(function() {
-    $('#example').DataTable({
+    
+    $('#exampleUnexp').DataTable({
         dom: 'Bfrtip',
         buttons: {
           buttons: [
@@ -172,7 +184,16 @@ $(document).ready(function() {
             }
         }); 
     });
-
 });
 
- 
+// Data Table Report 
+$(document).ready(function() {
+    $('#exampleReport').DataTable({
+        dom: 'Bfrtip',
+        buttons: {
+          buttons: [
+              { extend: 'excel', text: 'Export', className: 'getExportCount' }
+          ]
+     }
+    });
+});

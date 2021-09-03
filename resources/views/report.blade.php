@@ -16,8 +16,8 @@
                           <div id="reportrange" class="btn btn-sm btn-light bg-white dropdown-toggle">
                             <i class="mdi mdi-calendar"></i>
                             <span class='filter-data'></span>
-                            <input type="hidden" name="start_date" value="2019-04-24"  id="id_start_date">
-                            <input type="hidden" name="end_date" value="2019-05-02" id="id_end_date">
+                            <input type="hidden" name="start_date" id="id_start_date">
+                            <input type="hidden" name="end_date" id="id_end_date">
                           </div>
                         </div>
                       </div>
@@ -29,8 +29,8 @@
                       <div class="card card-tale">
                         <div class="card-body">
                           <p class="mb-4">Total</p>
-                          <!-- <p class="fs-30 mb-2" id="total">{{ $totalCount }}</p> -->
-                          <p class="fs-30 mb-2">{{ $totalCount }}</p>
+                          <p class="fs-30 mb-2 totalReportLeads">{{ $totalCount }}</p>
+                          <!-- <p class="fs-30 mb-2">{{ $totalCount }}</p> -->
                         </div>
                       </div>
                     </div>
@@ -38,8 +38,8 @@
                       <div class="card card-dark-blue">
                         <div class="card-body">
                           <p class="mb-4">Accepted</p>
-                          <!-- <p class="fs-30 mb-2" id="accepted">{{$totalCount}}</p> -->
-                          <p class="fs-30 mb-2">{{$totalCount}}</p>
+                          <p class="fs-30 mb-2 totalReportLeads">{{ $totalCount }}</p>
+                          <!-- <p class="fs-30 mb-2">{{$totalCount}}</p> -->
                         </div>
                       </div>
                     </div>
@@ -61,19 +61,23 @@
                     </div>
                   </div>
                   <div class="table-responsive">
-                    <table class="table table-hover" id="example">
+                    <table class="table table-hover" id="exampleReport">
                       <thead>
                         <tr class="text-center">
                           <th class="nosort" data-orderable="false">Name</th>
-                          <th data-orderable="false">Email</th>
+                          <th data-orderable="false">Email </th>
                           <th data-orderable="false">Phone</th>
                           <th data-orderable="false">Accepted</th>
                           <th data-orderable="false">Date Created</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <!-- <tbody class="reportList" >
+                        <input type="text" name="phoneID" value="{{ request()->route('id') }}" id="phone_id">
+                      </tbody> -->
+                      <tbody class="reportList" >
                       @forelse($reportleads as $reportData)
                         <tr class="text-center">
+                        <input type="hidden" name="phoneID" value="{{ $reportData->phone_setting_id }}" id="phone_id">
                           <td>{{ $reportData->first_name }} {{ $reportData->last_name }}</td>
                           <td>{{ $reportData->email }}</td>
                           <td>{{ $reportData->phone }}</td>
@@ -84,10 +88,9 @@
                         <tr>
                           <th>No Records Found!</th>
                         </tr>
-                        @endforelse
+                      @endforelse
 			                </tbody>
                     </table>
-                    
                   </div>
                 </div>
               </div>
@@ -98,3 +101,5 @@
         <!-- partial:../../partials/_footer.html -->
 @include('layouts.footer')        
     
+<script>
+</script>

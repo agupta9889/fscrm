@@ -27,7 +27,6 @@ class Salephone extends Model
     }
     public function reportleadcount($rotatorid){
         return $this->distinct('email')->where('rotator_id', $rotatorid)->whereDate('created_at', Carbon::today())->count();
-        //$this->distinct('email')->where('rotator_id', $rotatorid)->whereBetween('created_at', [$from, $to])->count();
         
     }
     

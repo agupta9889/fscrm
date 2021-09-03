@@ -20,7 +20,7 @@
                   <div class="table-responsive">
                     <input type="hidden" id="export_count" value="{{ request()->id }}">
                     <input type="hidden" id="rotatorID" value="<?php echo $rotatorIDs->rotator_id;?>">
-                    <table class="table table-hover" id="example">
+                    <table class="table table-hover" id="exampleUnexp">
                       <thead>
                         <tr class="text-center">
                           <th class="nosort" data-orderable="false">Name</th>

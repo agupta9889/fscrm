@@ -16,8 +16,8 @@
                     <div id="reportrange" class="btn btn-sm btn-light bg-white dropdown-toggle">
                      <i class="mdi mdi-calendar"></i>
                      <span class='filter-data'></span>
-                    <input type="hidden" name="start_date" value="2019-04-24"  id="id_start_date">
-                    <input type="hidden" name="end_date" value="2019-05-02" id="id_end_date">
+                    <input type="hidden" name="start_date" id="id_start_date">
+                    <input type="hidden" name="end_date" id="id_end_date">
                     </div>
                   </div>
                  </div>
@@ -220,9 +220,7 @@
                                   @endphp
                                   <td class="totalReportLeads">{{ $totalReportLeads }}</td>
                                   <td>{{ $rowdata->max_limit_leads }}</td>
-
                                   <td>{{ $rowdata->max_limit_leads - $totalRepLead }}</td>
-                                 
                                   <td>
                                   <?php if($rowdata->status == 0) { ?>
                                     <label class="badge badge-success"><i class="ti-check"></i></label>
@@ -282,18 +280,27 @@
                                             <div class="col-sm-4">
                                               <div class="form-group">
                                               <label for="exampleInputUsername1">Max Daily Leads</label>
+                                              <span class="badge badge-pill badge-primary badge-size">
+                                                <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Daily Leads:"  data-content="Total amount of leads allocated to this number for the day (MST). After quota is reached no more leads are added. 0 means unlimited."></i>
+                                              </span>
                                               <input type="number" name="max_daily_leads" value="{{ $rowdata->max_daily_leads }}" class="form-control" placeholder="">
-                                              </div>
+                                            </div>
                                             </div>
                                             <div class="col-sm-4">
                                               <div class="form-group">
                                                 <label for="exampleInputUsername1">Max Weekly Leads</label>
+                                                <span class="badge badge-pill badge-primary badge-size">
+                                                  <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Weekly Leads:"  data-content="Total amount of leads allocated to this number for the week (Monday-Sunday). After quota is reached no more leads are added. 0 means unlimited."></i>
+                                                </span>
                                                 <input type="number" name="max_weekly_leads" value="{{ $rowdata->max_weekly_leads }}" class="form-control" placeholder="">
                                               </div>
                                             </div>
                                             <div class="col-sm-4">
                                               <div class="form-group">
                                                 <label for="exampleInputUsername1">Max Limit Leads</label>
+                                                <span class="badge badge-pill badge-primary badge-size">
+                                                  <i class="ti-info" data-toggle="popover" data-placement="top" title="Max limit Leads:"  data-content="Total amount of leads allocated to this number. After quota is reached no more leads are added. 0 means unlimited."></i>
+                                                </span>
                                                 <input type="number" name="max_limit_leads" value="{{ $rowdata->max_limit_leads }}" class="form-control" placeholder="">
                                               </div>
                                             </div>
@@ -450,7 +457,7 @@
                   <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Daily Leads:"  data-content="Total amount of leads allocated to this number for the day (MST). After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
               </label>
-              <input type="number" name="max_daily_leads" class="form-control">
+              <input type="number" name="max_daily_leads" value="0" class="form-control">
               </div>
             </div>
             <div class="col-sm-4">
@@ -460,7 +467,7 @@
                   <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Weekly Leads:"  data-content="Total amount of leads allocated to this number for the week (Monday-Sunday). After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
                 </label>
-                <input type="number" name="max_weekly_leads" class="form-control">
+                <input type="number" name="max_weekly_leads" value="0" class="form-control">
               </div>
             </div>
             <div class="col-sm-4">
@@ -470,7 +477,7 @@
                   <i class="ti-info" data-toggle="popover" data-placement="top" title="Max limit Leads:"  data-content="Total amount of leads allocated to this number. After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
                 </label>
-                <input type="number" name="max_limit_leads" class="form-control">
+                <input type="number" name="max_limit_leads" value="0" class="form-control">
               </div>
             </div>
           </div>

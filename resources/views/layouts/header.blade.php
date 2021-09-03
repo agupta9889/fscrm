@@ -22,6 +22,8 @@
   <link rel="stylesheet" href="{{asset('/assets/css/custom.css')}}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{{asset('/assets/images/fs_favicon.png')}}" />
+<!--Date Picker-->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 </head>
 <body>

@@ -15,7 +15,8 @@ td.active {
   background: #029e0273;
 }
 .dataTables_filter, .dataTables_info { display: none; }
-  #example_paginate { display: none; }
+#exampleReport_paginate { display: none; }
+#exampleUnexp_paginate { display: none; }
   button.getExportCount {
     float: right;
     padding: 10px;

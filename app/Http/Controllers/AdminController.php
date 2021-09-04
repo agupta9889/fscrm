@@ -68,8 +68,11 @@ class AdminController extends Controller
         $to= date($request->endDate)." 23:59:59";
         $phoneSettingID =  $request->phoneID;
         //echo $phoneSettingID;
-        $data['totalReportAct'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->get();
-  
+        //$data['totalReportAct'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->get();
+        // foreach($data['totalReportAct'] as $rows) {
+        //     echo $rows->created_at;
+        // }  die;
+
         $data['totalReportActCount'] = Salephone::distinct('email')->whereBetween('created_at', [$from, $to])->count();
         $temp = Salephone::select('rotator_id', DB::raw('0 as total'))->groupBy('rotator_id')->whereNotBetween('created_at', [$from, $to])->get();
         //return $temp;
@@ -105,6 +108,21 @@ class AdminController extends Controller
         //return $data['reportLeads'];
         return $data;
     
+    }
+
+
+    public function reportFilterData(Request $request) {
+
+        //echo "fds"; die;
+        $from= date($request->startDate." 00:00:00");
+        $to= date($request->endDate)." 23:59:59";
+        $phoneSettingID =  $request->phoneID;
+        $data['totalReportAct'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->get();
+        $data['totalReportActCount'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->count();
+        $exportnumber = Phonesetting::where('id', $phoneSettingID )->first();
+        $data['export_count'] = $exportnumber->export_count;
+        return view('filterdata', $data);
+
     }
 
     // [ Load Add Registration Page ] 
@@ -407,25 +425,7 @@ class AdminController extends Controller
         Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
         
     }
-    // [ Mail ] 
-    public function sendmail(){
-        
-        Mail::send([], [], function ($message) { 
-            $message->to('arun@softkiwi.co.in', 'Tutorials Point')
-               ->subject('subject') 
-               ->setBody('some body', 'text/html'); 
-        });
-        
-
-        // $data = array('name'=>"Virat Gandhi");
-        // Mail::send(['text'=>'mail'], $data, function($message) {
-        //     $message->to('arun@softkiwi.co.in', 'Tutorials Point')->subject
-        //         ('Laravel Basic Testing Mail');
-        //     $message->from('bharatimmortals@gmail.com','Virat Gandhi');
-        // });
-        // echo "Basic Email Sent. Check your inbox.";
-
-    }
+   
 
     
     

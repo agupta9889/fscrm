@@ -68,6 +68,7 @@ $(function() {
         $('#id_start_date').val(start.format('YYYY-MM-DD'));
         $('#id_end_date').val(end.format('YYYY-MM-DD'));
         filterByDate();
+        reportFilterByDate();
     }
 
     $('#reportrange').daterangepicker({
@@ -88,8 +89,7 @@ $(function() {
     function filterByDate() {
         var sDate = $('#id_start_date').val();
     	var eDate = $('#id_end_date').val();
-        var phoneID = $('#phone_id').val();
-        console.log(phoneID);
+        
         var _token = $('input[name="_token"]').val();
         console.log(sDate);
         console.log(eDate);
@@ -101,19 +101,12 @@ $(function() {
             //dataType: "json",
             type: "post",
             async: true,
-            data: {"startDate":sDate,"endDate":eDate,"phoneID":phoneID, _token:_token},
+            data: {"startDate":sDate,"endDate":eDate, _token:_token},
             success: function (data) {
                    //console.log(data.totalReportAct);
                    $('#accepted').html(data.totalReportActCount);
                    $('.todayLeads').html(0);
-                   $(".reportList").find("tr:gt(0)").remove();
-                   $.each(data.totalReportAct, function(index, val){
-                   console.log('Arun', index, val);
-                   //var createddate = new date(val.created_at);
-                    $('.reportList').append('<tr class="text-center"><td>' + val.first_name + val.last_name + '</td><td>' + val.email + '</td> <td>' + val.phone + '</td><td><label class="badge badge-success"><i class="ti-check"></i></label><br/>' + val.sales_number +
-                    '</td><td>' + val.created_at + '</td></tr>'); 
-                    });
-                
+                   
                     for(let i=0; i < data.reportLeads.length; i++){
                         //console.log("ID:"+ data.reportLeads[i].rotator_id + "total : " +data.reportLeads[i].total);
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
@@ -123,6 +116,43 @@ $(function() {
                             $('.totalReportLeads'+data.reportLeads[i].rotator_id+j).html(data.totalReportLeadsObj[i][j]);
                         }
                    }
+            },
+            error: function (xhr, exception, thrownError) {
+                var msg = "";
+                if (xhr.status === 0) {
+                    msg = "Not connect.\n Verify Network.";
+                } else if (xhr.status == 404) {
+                    msg = "Requested page not found. [404]";
+                } else if (xhr.status == 500) {
+                    msg = "Internal Server Error [500].";
+                } else if (exception === "parsererror") {
+                    msg = "Requested JSON parse failed.";
+                } else if (exception === "timeout") {
+                    msg = "Time out error.";
+                } else if (exception === "abort") {
+                    msg = "Ajax request aborted.";
+                } else {
+                    //msg = "Error:" + xhr.status + " " + xhr.responseText;
+                }
+               
+            }
+        }); 
+    }
+    function reportFilterByDate() {
+        var sDate = $('#id_start_date').val();
+    	var eDate = $('#id_end_date').val();
+        var phoneID = $('#phone_id').val();
+        var _token = $('input[name="_token"]').val();
+        //alert(_token);
+        $.ajax({
+            url:  "/reportfilterdata",
+            //dataType: "json",
+            type: "post",
+            async: true,
+            data: {"startDate":sDate,"endDate":eDate,"phoneID":phoneID, _token:_token},
+            success: function (data) {
+                console.log(data);
+                $(".reportListByFilter").html(data);
             },
             error: function (xhr, exception, thrownError) {
                 var msg = "";
@@ -198,3 +228,4 @@ $(document).ready(function() {
      }
     });
 });
+

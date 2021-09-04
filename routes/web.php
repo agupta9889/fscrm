@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::post('/updateExportCount','AdminController@updateExportCount');
    Route::get('/sendmail','AdminController@sendmail');
    Route::post('/filterdate', 'AdminController@filterByDate');
+   Route::post('/reportfilterdata', 'AdminController@reportfilterdata');
    Route::resource('roles', RoleController::class);
 
    

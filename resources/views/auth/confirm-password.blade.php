@@ -1,7 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Floor Solution CRM</title>
+  
+</head>
 <x-guest-layout>
     <x-jet-authentication-card>
         <x-slot name="logo">
-        <img style="width:200px; height:auto;" src="{{ url('assets/images/floor_solution_logo.png') }}" />
+            <img style="width:200px; height:auto;" src="{{ url('assets/images/floor_solution_logo.png') }}" />
             <!-- <x-jet-authentication-card-logo /> -->
         </x-slot>
 

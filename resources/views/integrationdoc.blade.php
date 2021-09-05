@@ -63,7 +63,9 @@
                                               <br>
                                               
                                               @foreach($coachingmanager as $row)
-                                              <?php $array= explode(',',$user->user_assign_id);?>
+                                              <?php $array= explode(',',$user->user_assign_id);
+                                              //print_r($user->user_assign_id);
+                                              ?>
                                               <label>
                                                 <input class="form-group" name="user_assign_id[]" type="checkbox" value="{{ $row->id }}" <?php if (in_array($row->id, $array)){ echo "checked"; }?>> {{$row->fname}} {{$row->lname}} ({{$row->email}})
                                               </label><br>

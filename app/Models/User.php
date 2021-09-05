@@ -74,4 +74,10 @@ class User extends Authenticatable
         $response = '<span title="'.$result->email.'" style="color:#000;">'.$result->name.'</span>';
         return $response;
     }
+
+    
+    public function getassignUser()
+    {
+      return $this->hasMany('App\Models\Assignuser','user_assignee','id');
+    } 
 }

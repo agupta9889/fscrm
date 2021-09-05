@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::get('/sendmail','AdminController@sendmail');
    Route::post('/filterdate', 'AdminController@filterByDate');
    Route::post('/reportfilterdata', 'AdminController@reportfilterdata');
+   Route::get('/csvexport/{id}', 'AdminController@csvexport');
    Route::resource('roles', RoleController::class);
 
    

@@ -13,10 +13,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Rotator;
 use App\Models\Phonesetting;
 use App\Models\Salephone;
 use App\Models\Integration;
+use App\Models\Assignuser;
+use App\Models\Export;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -325,10 +329,13 @@ class AdminController extends Controller
     // [ Get Exports Lead Page ] 
     public function exportsLead($id)
     {   
-        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
-        $data['expleads'] = Salephone::select(DB::raw('count(*) as total'),'updated_at')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('sales_number',$data['rotatorIDs']->sales_number)->groupBy('updated_at')->get();
-        $data['expleadscount'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->count();
-  //echo "<pre>";print_r($data);echo "</pre>";die;
+        $getRotatorArray = Phonesetting::select('rotator_id')->where('id', $id)->first('rotator_id');
+        $data['expleads'] = Export::where('phone_setting_id', $id)->where('rotator_id',$getRotatorArray->rotator_id)->get();
+        foreach($data['expleads'] as $rows) {
+            
+            $getSaleNo = Salephone::where('id', $rows->sale_phone_id)->first();
+            $rows->sale_number = $getSaleNo->sales_number;
+        }
         return view('exportlead', $data);
     
     }
@@ -349,13 +356,24 @@ class AdminController extends Controller
     {
         $user = auth()->user();
         $data['phone'] = $user->phone;
-        $data['assignedID'] = Phonesetting::WHERE('phone_number', $user->phone)->paginate(10);
-        // $data['assignee_users'] = DB::table('assignee_users')->where('user_assignee',$user->id)->get();
-        // foreach($data['assignee_users'] as $rows) {
-        //     $rows->username = integration::getUsername($rows->integration_id);
-        // } 
-        //print_r($data1); die;
-        return view('assignednumber', $data);
+        $data['assignedID'] = Phonesetting::select('id','phone_number','rotator_id','status','export_count')->where('phone_number', $user->phone)->paginate(10);
+        foreach($data['assignedID'] as $rows) {
+              $getRotatorName = Rotator::where('id',$rows->rotator_id)->first(); 
+              $rows->rotator_id = $getRotatorName->rotatorname;
+        }
+        $data1['assignee_users'] = Assignuser::where('user_assignee',$user->id)->get();
+           foreach($data1['assignee_users'] as $rows1) {
+              $getRotatorName = Rotator::where('id',$rows1->rotator_id)->first();
+              $getExportcount = Phonesetting::where('integration_id',$rows1->integration_id)->first(); 
+              //echo "<pre>";
+              //print_r($getExportcount); die;
+              $rows1->export_count = $getExportcount->export_count;
+              $rows1->rotator_id = $getRotatorName->rotatorname;
+              $rows1->username = integration::getUsername($rows1->integration_id);
+              
+         } 
+         
+        return view('assignednumber', $data, $data1);
     }
     // [ Get API Integration Page ] 
     public function integration()
@@ -392,14 +410,14 @@ class AdminController extends Controller
         $data['rotator_id'] = $request->rotator_id;
         $user_assign_id= $request->user_assign_id;
         $data['user_assign_id'] = implode(",", $user_assign_id);
-        DB::table('integrations')->where('id',$updateID)->update($data);
-        // DB::table('assignee_users')->where('integration_id',$request->updatedID)->delete();
-        //     foreach($request->user_assign_id as $rows){
-        //         $assignee['rotator_id'] = $request->rotator_id;
-        //         $assignee['integration_id'] = $request->updatedID;
-        //         $assignee['user_assignee'] = $rows;
-        //         DB::table('assignee_users')->insert($assignee);
-        //     }
+        $inter=Integration::where('id',$updateID)->update($data);
+        foreach($user_assign_id as $user)
+        {
+            Assignuser::updateOrCreate(
+                ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user],
+                ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user]
+            );
+      }
         Session::flash('message', 'Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
@@ -417,16 +435,34 @@ class AdminController extends Controller
     // [ Export Count ] 
     public function updateExportCount(Request $request)
     {
-       
         $getExportCount = Phonesetting::select('export_count')->where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
         $updateData['export_count'] = $getExportCount->export_count+1;
         Phonesetting::where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($updateData);
         $removeUpdates['remove_data'] = 1; 
-        Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
+        if(Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates)){
+           
+            $getRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->get();
+            foreach($getRows as $rows){
+                 $salephoneIdsArray[] = $rows->id;
+            }
+           
+            $allIdsArrya = implode(",", $salephoneIdsArray);
+            $getSingleRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
+            $exports['sale_phone_id'] = $getSingleRows->id;
+            $exports['phone_setting_id'] = $getSingleRows->phone_setting_id;
+            $exports['rotator_id'] = $getSingleRows->rotator_id;
+            $exports['leads_count'] = count($salephoneIdsArray);
+            $exports['total_leads_id'] = $allIdsArrya;
+            Export::insert($exports);
+            
+        }
         
     }
-   
 
-    
+    public function csvexport($id) {
+        
+        return Excel::download(new UsersExport($id), 'fsc.xlsx');
+    }
+   
     
 }

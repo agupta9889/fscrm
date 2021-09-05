@@ -6,12 +6,13 @@
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
+    
                   <h4 class="card-title">Assigned Numbers {{$phone}}</h4>
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead>
                           <tr>
-                              <th>#</th>
+                          
                               <th>Phone Number</th>
                               <th>Offer</th>
                               <th>Unexported</th>
@@ -20,17 +21,14 @@
                           </tr>
                       </thead>
                       <tbody>
-                        <?php $i = 0; ?>
-                      @forelse($assignedID as $rowdata)
-                        <?php $i++ ?>
+
+                    <?php if(!empty($assignedID) && !empty($assignee_users)) {?>
+                      
+                      @foreach($assignedID as $rowdata)
                           <tr>
-                              <td>{{$i}}</td>
-                              <td>{{ $rowdata->phone_number }}</td>
-                              <?php
-                                  $model = \App\Models\Rotator::first();
-                                  $rotator = $model->getrotatorName($rowdata->rotator_id);
-                              ?>
-                              <td>{{ $rotator->rotatorname }}</td>
+                              <td> {{ $rowdata->phone_number }}</td>
+                          
+                              <td> {{ $rowdata->rotator_id }}</td>
                               <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
                               <td>
                               <?php if($rowdata->status ==0){?>
@@ -39,13 +37,32 @@
                                <label class="badge badge-danger">Paused</label>
                                 <?php  } ?>
                               </td>  
-                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata->id }}">0</a></td>
+                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata->id }}">{{ $rowdata->export_count }}</a></td>
                           </tr>
-                          @empty
+                        @endforeach
+
+                        
+                        @foreach($assignee_users as $rowdata1)
+                          <tr>
+                              <td> {{ $rowdata1->username }}</td>
+                          
+                              <td> {{ $rowdata1->rotator_id }}</td>
+                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
+                              <td>
+                              <?php if($rowdata1->status ==0){?>
+                                <label class="badge badge-success">Active</label>
+                              <?php } else { ?>
+                               <label class="badge badge-danger">Paused</label>
+                                <?php  } ?>
+                              </td>  
+                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata1->id }}">{{ $rowdata1->export_count }}</a></td>
+                          </tr>
+                          @endforeach
+                         <?php } else { ?>
                         <tr>
-                          <th>No Records Found!</th>
+                           <th>No Records Found!</th>
                         </tr>
-                        @endforelse
+                        <?php } ?>
                       </tbody>
                     </table>
                     {{-- Pagination --}}

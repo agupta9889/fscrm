@@ -272,18 +272,8 @@ class AdminController extends Controller
         $phoneSetting = Phonesetting::findOrFail($updateID);
         $today_leads = Salephone::where('phone_setting_id',$updateID)->whereDate('created_at', date('Y-m-d'))->count();
         $week_leads = Salephone::where('phone_setting_id',$updateID)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $total_leads = Salephone::where('phone_setting_id',$updateID)->count();   
-        if($phoneSetting->max_daily_leads > $today_leads && $phoneSetting->max_weekly_leads > $week_leads && $phoneSetting->max_limit_leads > $total_leads)
-        {
-            $phoneSetting->status = $request->status;
-            if($phoneSetting->test_number != "1231231234"){
-                $phoneSetting->current_selected = $request->status;
-            }
-        }else{
-            if($request->status == '1'){
-                $phoneSetting->status = $request->status;
-            }
-        }
+        $total_leads = Salephone::where('phone_setting_id',$updateID)->count(); 
+
         $phoneSetting->floor_label = $request->floor_label;
         $phoneSetting->phone_number = $request->phone_number;
         $phoneSetting->max_daily_leads = $request->max_daily_leads;
@@ -293,6 +283,39 @@ class AdminController extends Controller
         $phoneSetting->notification_email = $request->notification_email;
         $phoneSetting->save();
 
+        if($request->status == '1'){
+            $phoneSetting->status = $request->status;
+            $phoneSetting->current_selected = $request->status;
+            $phoneSetting->save();
+            $newSel = Phonesetting::where('rotator_id', $phoneSetting->rotator_id)->where('status','0')->whereNull('test_number')->first();
+            $newSel->current_selected = '0';
+            $newSel->save();
+        }else{
+            if(($phoneSetting->max_daily_leads > $today_leads && $phoneSetting->max_weekly_leads > $week_leads && $phoneSetting->max_limit_leads > $total_leads) || ($request->max_daily_leads > $today_leads && $request->max_weekly_leads > $week_leads && $request->max_limit_leads > $total_leads) || ($request->max_daily_leads == 0 && $request->max_weekly_leads > $week_leads && $request->max_limit_leads > $total_leads) || ($request->max_weekly_leads == 0 && $request->max_limit_leads > $total_leads) || ($request->max_limit_leads == 0))
+            {
+                $phoneSetting->status = $request->status;
+                if($phoneSetting->test_number == "1231231234"){
+                    if($phoneSetting->current_selected == '0'){
+                        $newSel = Phonesetting::where('rotator_id', $phoneSetting->rotator_id)->where('status','0')->whereNull('test_number')->first();
+                        $newSel->current_selected = '0';
+                        $newSel->save();
+                    }
+                    $phoneSetting->current_selected = '1';
+                }else{
+                    $phoneSetting->current_selected = '0';
+                    Phonesetting::where('rotator_id', $phoneSetting->rotator_id)->where('id', '!=' ,$phoneSetting->id)->where('current_selected','0')->update(array('current_selected' => '1'));
+                }
+                if($request->status == '1'){
+                    $phoneSetting->current_selected = '1';
+                }
+            }else{
+                if($request->status == '1'){
+                    $phoneSetting->status = $request->status;
+                }
+            }
+            $phoneSetting->save();
+        }
+       
         Session::flash('message', 'Phone Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
@@ -320,11 +343,9 @@ class AdminController extends Controller
     {
         $data['exportCount'] = Phonesetting::select('export_count')->where('id', $id)->first();
         $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
-       // print_r($data['rotatorIDs']->rotator_id); die;
         $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
         $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
         return view('unexportedlead', $data);
-       
     }
     // [ Get Exports Lead Page ] 
     public function exportsLead($id)
@@ -368,6 +389,8 @@ class AdminController extends Controller
               //echo "<pre>";
               //print_r($getExportcount); die;
               $rows1->export_count = $getExportcount->export_count;
+              $rows1->id = $getExportcount->id;
+              $rows1->status = $getExportcount->status;
               $rows1->rotator_id = $getRotatorName->rotatorname;
               $rows1->username = integration::getUsername($rows1->integration_id);
               
@@ -461,7 +484,7 @@ class AdminController extends Controller
 
     public function csvexport($id) {
         
-        return Excel::download(new UsersExport($id), 'fsc.xlsx');
+        return Excel::download(new UsersExport($id), 'Floor Solution CRM.xlsx');
     }
    
     

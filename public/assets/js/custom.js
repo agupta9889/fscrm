@@ -89,10 +89,9 @@ $(function() {
     function filterByDate() {
         var sDate = $('#id_start_date').val();
     	var eDate = $('#id_end_date').val();
-        
         var _token = $('input[name="_token"]').val();
-        console.log(sDate);
-        console.log(eDate);
+        //console.log(sDate);
+        //console.log(eDate);
         if(sDate == start.format('Y-MM-DD')){
             location.reload();
         }
@@ -103,7 +102,7 @@ $(function() {
             async: true,
             data: {"startDate":sDate,"endDate":eDate, _token:_token},
             success: function (data) {
-                   //console.log(data.totalReportAct);
+                   //console.log(data.totalReportActCount);
                    $('#accepted').html(data.totalReportActCount);
                    $('.todayLeads').html(0);
                    
@@ -112,7 +111,7 @@ $(function() {
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
                         
                         for(let j=0; j < data.totalReportLeadsObj[i].length; j++){
-                            console.log('.totalReportLeads'+data.reportLeads[i].rotator_id+j+ " : "+ data.totalReportLeadsObj[i][j]);
+                            //console.log('.totalReportLeads'+data.reportLeads[i].rotator_id+j+ " : "+ data.totalReportLeadsObj[i][j]);
                             $('.totalReportLeads'+data.reportLeads[i].rotator_id+j).html(data.totalReportLeadsObj[i][j]);
                         }
                    }
@@ -151,7 +150,7 @@ $(function() {
             async: true,
             data: {"startDate":sDate,"endDate":eDate,"phoneID":phoneID, _token:_token},
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 $(".reportListByFilter").html(data);
             },
             error: function (xhr, exception, thrownError) {
@@ -207,7 +206,7 @@ $(document).ready(function() {
             },
             success: function (data) {
                   
-                console.log(data);
+                //console.log(data);
                    
             },
             error: function (xhr, exception, thrownError) {
@@ -228,4 +227,5 @@ $(document).ready(function() {
      }
     });
 });
+
 

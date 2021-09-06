@@ -47,7 +47,7 @@
                               <td> {{ $rowdata1->username }}</td>
                           
                               <td> {{ $rowdata1->rotator_id }}</td>
-                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
+                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata1->id }}">0</a></td>
                               <td>
                               <?php if($rowdata1->status ==0){?>
                                 <label class="badge badge-success">Active</label>

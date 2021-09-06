@@ -10,16 +10,10 @@
                     <div class="col-md-6">
                       <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(<?php echo $exportCount->export_count;?> Exports)</a></h4>
                     </div>
-                    <!-- <div class="col-md-6">
-                      <button type="button"  class="btn btn-outline-primary btn-icon-text" style="float:right;">
-                        <i class="ti-download"></i>
-                          Export
-                      </button>
-                    </div> -->
                   </div>
                   <div class="table-responsive">
                     <input type="hidden" id="export_count" value="{{ request()->id }}">
-                    <input type="hidden" id="rotatorID" value="<?php echo $rotatorIDs->rotator_id;?>">
+                    <input type="hidden" id="rotatorID" value="{{ $rotatorIDs->rotator_id }}">
                     <table class="table table-hover" id="exampleUnexp">
                       <thead>
                         <tr class="text-center">

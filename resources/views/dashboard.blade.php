@@ -229,12 +229,20 @@
                                   <?php } ?>
                                   </td>
                                   <td>{{ $rowdata->floor_label }}</td>
-                                  <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">{{ $rowdata->export_count }}</a></td>
+                                  
+                                  <td>
+                                    <?php if(!empty($totalRepLead)){ ?>
+                                    <a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">{{ $rowdata->export_count }}</a>
+                                    <?php } else {?>
+                                      <a href="javascript:void(0);" onclick="notfound();">{{ $rowdata->export_count }}</a>
+                                    <?php } ?>
+                                  </td>
+                                  
                                   <td>
                                     <a href="{{ URL::to('report') }}/{{ $rowdata->id }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
                                     </a> 
-                                    <a href="deletephone/{{ $rowdata->id }}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
+                                    <a href="deletephone/{{ $rowdata->id }}/{{$rowdata->rotator_id}}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
                                       <i class="ti-trash"></i>
                                     </a>
                                   </td>

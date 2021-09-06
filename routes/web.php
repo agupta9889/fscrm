@@ -37,7 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
    Route::post('/rotatoredit', 'AdminController@rotatorDataEdit');
    Route::post('/addphonesetting', 'AdminController@addPhone');
    Route::post('/rotatorlist/{id}', 'AdminController@editphone');
-   Route::get('/deletephone/{id}', 'AdminController@deletePhoneRecord');
+   Route::get('/deletephone/{id}/{rotatorID}', 'AdminController@deletePhoneRecord');
    Route::get('deleterotator/{id}','AdminController@deleteRotatorRecord');
    Route::get('/unexportedlead/{id}', 'AdminController@unexpLead');
    Route::get('/exportlead/{id}', 'AdminController@exportsLead');

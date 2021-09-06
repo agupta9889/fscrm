@@ -13,10 +13,10 @@ $("select.crmrole").change(function(){
     var selectedRole = $(this).children("option:selected").val();
     //alert("You have selected the role - " + selectedRole);
     if(selectedRole === 'Coaching Manager' ){
-      document.getElementById('textInput').style.display ='block';
+        $('#textInput').show();
     }
     else{
-      document.getElementById('textInput').style.display = 'none';
+      $('#textInput').hide();
     }
     
 });
@@ -227,5 +227,10 @@ $(document).ready(function() {
      }
     });
 });
+
+
+function notfound() {
+    alert('There is no loads Available.')
+}
 
 

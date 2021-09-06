@@ -321,10 +321,15 @@ class AdminController extends Controller
         return redirect('dashboard');
     }
     // [ Delete Phone Records Section ] 
-    public function deletePhoneRecord($id) 
-    {
+    public function deletePhoneRecord($id,$rotatorID) 
+    { 
         DB::delete('delete from phone_settings where id = ?',[$id]);
         DB::delete('delete from sale_phones where phone_setting_id = ?',[$id]);
+
+        $newSel = Phonesetting::where('rotator_id', $rotatorID)->where('status','0')->whereNull('test_number')->first();
+        $newSel->current_selected = '0';
+        $newSel->save();
+        
         Session::flash('message', 'Phone Record Deleted Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
@@ -434,13 +439,20 @@ class AdminController extends Controller
         $user_assign_id= $request->user_assign_id;
         $data['user_assign_id'] = implode(",", $user_assign_id);
         $inter=Integration::where('id',$updateID)->update($data);
-        foreach($user_assign_id as $user)
-        {
-            Assignuser::updateOrCreate(
-                ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user],
-                ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user]
-            );
-      }
+        DB::table('assignee_users')->where('integration_id',$request->updatedID)->delete();
+            foreach($request->user_assign_id as $rows){
+                $assignee['rotator_id'] = $request->rotator_id;
+                $assignee['integration_id'] = $request->updatedID;
+                $assignee['user_assignee'] = $rows;
+                DB::table('assignee_users')->insert($assignee);
+            }
+    //     foreach($user_assign_id as $user)
+    //     {
+    //         Assignuser::updateOrCreate(
+    //             ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user],
+    //             ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user]
+    //         );
+    //   }
         Session::flash('message', 'Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');

@@ -44,10 +44,13 @@ class APIController extends Controller
 
             $activephone = Phonesetting::select('phone_settings.*','integrations.email')->leftJoin('integrations', function($join){$join->on('phone_settings.integration_id','=','integrations.id');})->where('phone_settings.rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
             //dd($activephone);
+            //return $activephone;
             $activephonecount = Phonesetting::select('phone_settings.*','integrations.email')->leftJoin('integrations', function($join){$join->on('phone_settings.integration_id','=','integrations.id');})->where('phone_settings.rotator_id', $rotator_id)->where('status', $status)->whereNULL('test_number')->where('current_selected', '1')->orderBy('updated_at', 'asc')->get();
             //dd($activephonecount);
+            $myfile = fopen("printdata.txt", "w") or die("Unable to open file!");
             if($activephone)
             {
+                fwrite($myfile, "line 53");
                 $phoneid = $activephone->id;
                 if(is_null($activephone->integration_id)){
                     $sales_number=$activephone->phone_number;
@@ -67,11 +70,12 @@ class APIController extends Controller
                 // $activephone->max_limit_leads;
                 // echo "___";
                 // echo $total_leads; //die;
+                fwrite($myfile, "line 73");
                 if($activephone->max_daily_leads == 0 || $activephone->max_weekly_leads == 0 || $activephone->max_limit_leads == 0){
                     if(!(($activephone->max_limit_leads > 0) && ($activephone->max_limit_leads == $total_leads))){
                         try{
                             DB::beginTransaction();
-
+                            fwrite($myfile, "transaction is begin now");
                             $data = new Salephone;
                             $data->phone_setting_id=$activephone->id;
                             $data->api_key=$key;
@@ -94,17 +98,20 @@ class APIController extends Controller
                             $lead_id = mt_rand( 1000000000, 9999999999 );
                             $data->lead_id=$lead_id;
                             $result = $data->save();
-                            
+                            fwrite($myfile, "line 101");
                             if((count($activephonecount) > 0) || ((($activephone->max_limit_leads > 0) && ($activephone->max_limit_leads-$total_leads == 1))))
                             {
                                 if(count($activephonecount) > 0)
                                {
+                                   fwrite($myfile, "line 106");
                                     $activephonecount->first()->current_selected = '0';
                                     $activephonecount->first()->save();
                                }
+                               fwrite($myfile, "line 110");
                                 $activephone->current_selected = '1';
                                 $activephone->status = '1';
                             }else{
+                                fwrite($myfile, "line 114");
                                 $activephone->current_selected = '0';
                             }
 
@@ -112,10 +119,12 @@ class APIController extends Controller
                             
                             DB::commit(); 
                         }Catch(Exception $e){
+                            fwrite($myfile, "Exception");
                             DB::rollback();
                             dd($e);
                         }
                     }else{
+                        fwrite($myfile, "line 127");
                         $activephone->current_selected = '1';
                         $activephone->save();
                     }
@@ -132,6 +141,7 @@ class APIController extends Controller
 				if($activephone->max_daily_leads > $today_leads && $activephone->max_weekly_leads > $week_leads && $activephone->max_limit_leads > $total_leads)
 				{
                     // echo "coming"; die;
+                    fwrite($myfile, "line 144");
                     try{
                         DB::beginTransaction();
 
@@ -173,15 +183,17 @@ class APIController extends Controller
                         }
 
                         $activephone->save();
-                        
+                        fwrite($myfile, "line 186");
                         DB::commit(); 
                     }Catch(Exception $e){
+                        fwrite($myfile, "line 189");
+                        fwrite($myfile,$e->getMessage());
                         DB::rollback();
                         dd($e);
                     }
 					
 				}
-				
+				fclose($myfile);
             }else{
                 return ["response_code"=>500, "response_message"=>"no phones available", "sales_number"=>$sales_number,"accepted"=>false];
             }

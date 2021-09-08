@@ -230,7 +230,7 @@ $(document).ready(function() {
 
 
 function notfound() {
-    alert('There is no loads Available.')
+    alert('There is no leads available.')
 }
 
 

@@ -69,7 +69,7 @@
                             <th class="nosort" data-orderable="false">Name</th>
                             <th data-orderable="false">Email </th>
                             <th data-orderable="false">Phone</th>
-                            <th data-orderable="false">Accepted</th>
+                            <th data-orderable="false">Sales Floor Number</th>
                             <th data-orderable="false">Date Created</th>
                           </tr>
                         </thead>

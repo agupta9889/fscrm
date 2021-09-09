@@ -29,5 +29,11 @@ class Salephone extends Model
         return $this->distinct('email')->where('rotator_id', $rotatorid)->whereDate('created_at', Carbon::today())->count();
         
     }
+
+    public static function getUnexportedCountData($id){
+         
+        $data = self::where('phone_setting_id', $id)->where('remove_data', 0)->count();
+        return $data;
+    }
     
 }

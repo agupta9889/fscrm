@@ -41,7 +41,7 @@
                           <th class="nosort" data-orderable="false">Name</th>
                           <th data-orderable="false">Email </th>
                           <th data-orderable="false">Phone</th>
-                          <th data-orderable="false">Accepted</th>
+                          <th data-orderable="false">Sales Floor Number</th>
                           <th data-orderable="false">Date Created</th>
                         </tr>
                       </thead>
@@ -76,6 +76,7 @@
 $(document).ready(function() {
     $('#exampleReport2').DataTable({
         dom: 'Bfrtip',
+        "order": [[ 4, "asc" ]], 
         buttons: {
           buttons: [
               { extend: 'excel', text: 'Export', className: 'getExportCount' }

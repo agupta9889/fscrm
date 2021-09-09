@@ -181,14 +181,15 @@ $(function() {
 
 // Data Table UnExport 
 $(document).ready(function() {
-    
     $('#exampleUnexp').DataTable({
         dom: 'Bfrtip',
+        "order": [[ 4, "asc" ]], 
         buttons: {
           buttons: [
               { extend: 'excel', text: 'Export', className: 'getExportCount' }
-          ]
-     }
+            ]
+        }
+        
     });
 
      
@@ -220,6 +221,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('#exampleReport').DataTable({
         dom: 'Bfrtip',
+        "order": [[ 4, "asc" ]], 
         buttons: {
           buttons: [
               { extend: 'excel', text: 'Export', className: 'getExportCount' }

@@ -29,7 +29,13 @@
                               <td> {{ $rowdata->phone_number }}</td>
                           
                               <td> {{ $rowdata->rotator_id }}</td>
-                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">0</a></td>
+                              <?php $Unexportedcount1 = \App\Models\Salephone::getUnexportedCountData($rowdata->id); ?>
+                              <td>
+                              <?php if(!empty($Unexportedcount1)){ ?>
+                              <a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">{{ $Unexportedcount1 }}</a></td>
+                              <?php } else {?>
+                                <a href="javascript:void(0);" onclick="notfound();">{{ $Unexportedcount1 }}</a>
+                              <?php } ?>
                               <td>
                               <?php if($rowdata->status ==0){?>
                                 <label class="badge badge-success">Active</label>
@@ -47,7 +53,13 @@
                               <td> {{ $rowdata1->username }}</td>
                           
                               <td> {{ $rowdata1->rotator_id }}</td>
-                              <td><a href="{{ URL::to('unexportedlead') }}/{{ $rowdata1->id }}">0</a></td>
+                              <?php $Unexportedcount2 = \App\Models\Salephone::getUnexportedCountData($rowdata1->id); ?>
+                              <td>
+                                <?php if(!empty($Unexportedcount2)) { ?>
+                                <a href="{{ URL::to('unexportedlead') }}/{{ $rowdata1->id }}">{{ $Unexportedcount2 }}</a></td>
+                                <?php } else { ?>
+                                  <a href="javascript:void(0);" onclick="notfound();">{{ $Unexportedcount2 }}</a>
+                              <?php } ?>
                               <td>
                               <?php if($rowdata1->status ==0){?>
                                 <label class="badge badge-success">Active</label>

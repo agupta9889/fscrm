@@ -377,6 +377,7 @@ class AdminController extends Controller
         return view('report', $data);
        
     }
+
     // [ Assigned Number Page ] 
     public function assignedNumber()
     {
@@ -384,22 +385,24 @@ class AdminController extends Controller
         $data['phone'] = $user->phone;
         $data['assignedID'] = Phonesetting::select('id','phone_number','rotator_id','status','export_count')->where('phone_number', $user->phone)->paginate(10);
         foreach($data['assignedID'] as $rows) {
-              $getRotatorName = Rotator::where('id',$rows->rotator_id)->first(); 
-              $rows->rotator_id = $getRotatorName->rotatorname;
+            $getRotatorName = Rotator::where('id',$rows->rotator_id)->first(); 
+            $rows->rotator_id = $getRotatorName->rotatorname;
+            
         }
+        
         $data1['assignee_users'] = Assignuser::where('user_assignee',$user->id)->get();
-           foreach($data1['assignee_users'] as $rows1) {
-              $getRotatorName = Rotator::where('id',$rows1->rotator_id)->first();
-              $getExportcount = Phonesetting::where('integration_id',$rows1->integration_id)->first(); 
-              //echo "<pre>";
-              //print_r($getExportcount); die;
-              $rows1->export_count = $getExportcount->export_count;
-              $rows1->id = $getExportcount->id;
-              $rows1->status = $getExportcount->status;
-              $rows1->rotator_id = $getRotatorName->rotatorname;
-              $rows1->username = integration::getUsername($rows1->integration_id);
+        foreach($data1['assignee_users'] as $rows1) {
+            $getRotatorName = Rotator::where('id',$rows1->rotator_id)->first();
+            $getExportcount = Phonesetting::where('integration_id',$rows1->integration_id)->first(); 
+            //echo "<pre>";
+            //print_r($getExportcount); die;
+            $rows1->export_count = $getExportcount->export_count;
+            $rows1->id = $getExportcount->id;
+            $rows1->status = $getExportcount->status;
+            $rows1->rotator_id = $getRotatorName->rotatorname;
+            $rows1->username = integration::getUsername($rows1->integration_id);
               
-         } 
+        } 
          
         return view('assignednumber', $data, $data1);
     }
@@ -430,7 +433,6 @@ class AdminController extends Controller
     // [ Update API Integration Page ] 
     public function updateIntegrationDoc(Request $request)
     {
-        //echo "fds"; die;
         $updateID = $request->updatedID;
         $data['name'] = $request->name;
         $data['email'] = $request->email;
@@ -440,19 +442,12 @@ class AdminController extends Controller
         $data['user_assign_id'] = implode(",", $user_assign_id);
         $inter=Integration::where('id',$updateID)->update($data);
         DB::table('assignee_users')->where('integration_id',$request->updatedID)->delete();
-            foreach($request->user_assign_id as $rows){
-                $assignee['rotator_id'] = $request->rotator_id;
-                $assignee['integration_id'] = $request->updatedID;
-                $assignee['user_assignee'] = $rows;
-                DB::table('assignee_users')->insert($assignee);
-            }
-    //     foreach($user_assign_id as $user)
-    //     {
-    //         Assignuser::updateOrCreate(
-    //             ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user],
-    //             ['integration_id' =>$updateID, 'rotator_id'=>$request->rotator_id, 'user_assignee' => $user]
-    //         );
-    //   }
+        foreach($request->user_assign_id as $rows){
+            $assignee['rotator_id'] = $request->rotator_id;
+            $assignee['integration_id'] = $request->updatedID;
+            $assignee['user_assignee'] = $rows;
+            DB::table('assignee_users')->insert($assignee);
+        }
         Session::flash('message', 'Record Updated Successfully!'); 
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
@@ -461,7 +456,6 @@ class AdminController extends Controller
     // [ Delete API Integration Page ] 
     public function deleteIntegrationUser($id) 
     {
-        //dd($id);
         DB::delete('delete from integrations where id = ?',[$id]);
         Session::flash('message', 'Record Deleted Successfully!'); 
         Session::flash('alert-class', 'alert-success');
@@ -493,11 +487,10 @@ class AdminController extends Controller
         }
         
     }
-
+    // [ Excel Download on Export Section]
     public function csvexport($id) {
         
         return Excel::download(new UsersExport($id), 'Floor Solution CRM.xlsx');
     }
-   
     
 }

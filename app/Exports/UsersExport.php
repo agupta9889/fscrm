@@ -8,7 +8,7 @@ use App\Models\Salephone;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromArray;
 
-class UsersExport implements FromArray 
+class UsersExport implements FromArray
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -22,7 +22,7 @@ class UsersExport implements FromArray
     public function array(): array
     {
         $data=array(
-            array('Name','Email', 'Phone', 'Acepted')
+            array('Name','Email', 'Phone', 'Sales Floor Number', 'Date Created')
         );
          $getExportDetails = Export::where('id',$this->ids)->first();
          $exportsArrya = explode(",",$getExportDetails->total_leads_id);
@@ -30,7 +30,7 @@ class UsersExport implements FromArray
              $getsaleRows = Salephone::where('id',$rows)->get();
             foreach($getsaleRows as $row){
                
-                  array_push($data,[$row->first_name." ".$row->last_name, $row->email, $row->phone, $row->sales_number]);
+                  array_push($data,[$row->first_name." ".$row->last_name, $row->email, $row->phone, $row->sales_number, $row->created_at]);
              }   
          }
          return $data;

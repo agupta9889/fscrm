@@ -109,7 +109,7 @@ class APIController extends Controller
                                }
                                fwrite($myfile, "line 110");
                                 $activephone->current_selected = '1';
-                                $activephone->status = '1';
+                                //$activephone->status = '1';
                             }else{
                                 fwrite($myfile, "line 114");
                                 $activephone->current_selected = '0';
@@ -180,6 +180,7 @@ class APIController extends Controller
                         if((($activephone->max_daily_leads - $today_leads) == 1) || (($activephone->max_weekly_leads - $week_leads) == 1) || (($activephone->max_limit_leads - $total_leads) == 1)){
                             $activephone->current_selected = '1';
                             $activephone->status = '1';
+                            fwrite($myfile, "line 183");
                         }
 
                         $activephone->save();

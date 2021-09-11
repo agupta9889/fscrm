@@ -24,6 +24,8 @@ Route::get('/clear', function() {
    return "Cleared!";
 });
 
+Route::get('/cronscript', 'AdminController@cronScript');
+
 Route::group(['middleware' => 'auth'], function () {
    
    Route::get('/dashboard', 'AdminController@dashboard');

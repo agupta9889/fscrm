@@ -239,9 +239,15 @@
                                   </td>
                                   
                                   <td>
+                                    <?php if(!empty($totalRepLead)) { ?> 
                                     <a href="{{ URL::to('report') }}/{{ $rowdata->id }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
                                     </a> 
+                                    <?php } else { ?>
+                                    <a href="javascript:void(0);" onclick="notfound();" class="badge badge-warning">
+                                    <i class="ti-bar-chart"></i>
+                                    </a> 
+                                      <?php } ?>
                                     <a href="deletephone/{{ $rowdata->id }}/{{$rowdata->rotator_id}}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
                                       <i class="ti-trash"></i>
                                     </a>

@@ -7,8 +7,9 @@ use App\Models\Export;
 use App\Models\Salephone;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class UsersExport implements FromArray
+class UsersExport implements FromArray, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection

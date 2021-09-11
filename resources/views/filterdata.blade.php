@@ -79,7 +79,11 @@ $(document).ready(function() {
         "order": [[ 4, "asc" ]], 
         buttons: {
           buttons: [
-              { extend: 'excel', text: 'Export', className: 'getExportCount' }
+              { 
+                extend: 'excel', text: 'Export', className: 'getExportCount',
+                filename: function () { return "Leads";}
+              }
+              
           ]
      }
     });

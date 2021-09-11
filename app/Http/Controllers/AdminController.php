@@ -71,12 +71,6 @@ class AdminController extends Controller
         $from= date($request->startDate." 00:00:00");
         $to= date($request->endDate)." 23:59:59";
         $phoneSettingID =  $request->phoneID;
-        //echo $phoneSettingID;
-        //$data['totalReportAct'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->get();
-        // foreach($data['totalReportAct'] as $rows) {
-        //     echo $rows->created_at;
-        // }  die;
-
         $data['totalReportActCount'] = Salephone::distinct('email')->whereBetween('created_at', [$from, $to])->count();
         $temp = Salephone::select('rotator_id', DB::raw('0 as total'))->groupBy('rotator_id')->whereNotBetween('created_at', [$from, $to])->get();
         //return $temp;
@@ -156,7 +150,7 @@ class AdminController extends Controller
     // [ Get User Details Page ]
     public function userDetails() 
     {
-        $userD = DB::table('users')->paginate(5);
+        $userD = DB::table('users')->paginate(10);
         return view('userlist', ['userD'=>$userD]);
     }
 
@@ -490,7 +484,55 @@ class AdminController extends Controller
     // [ Excel Download on Export Section]
     public function csvexport($id) {
         
-        return Excel::download(new UsersExport($id), 'Floor Solution CRM.xlsx');
+        return Excel::download(new UsersExport($id), 'Leads.xlsx');
+    }
+    // [ Cron Script Section]
+    public function cronScript() {
+        
+        // $week_leads = Phonesetting::select('max_weekly_leads')->where('test_number',NULL)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->get();
+        // foreach($week_leads as $rows) {
+        //    echo $rows;
+        // }  die;
+
+        $result = Phonesetting::select('id','rotator_id','max_limit_leads')->where('test_number',NULL)->get(); 
+        foreach($result as $rows) {
+           
+              $getRows = Salephone::where('phone_setting_id',$rows->id)->where('rotator_id',$rows->rotator_id)->count();
+             
+              if($rows->max_limit_leads > $getRows){
+                //echo "IDs.".$rows->id."1Max-limit".$rows->max_limit_leads." Selephone Count".$getRows."<br>";
+                  //$statusUpdate['status'] = '0';
+                  DB::table('phone_settings')->where('id',$rows->id)->update(array('status'=>'0'));
+                  $this->updateCurrentSelected();
+              } 
+        } 
+  
+    }
+
+
+    public function updateCurrentSelected(){
+        $result = Phonesetting::select('id','rotator_id','max_limit_leads')->where('test_number',NULL)->get(); 
+        foreach($result as $abc){ 
+            $rotatorID[$abc->id] = $abc->rotator_id;
+        }   
+        $getRotatorIds = array_unique($rotatorID);
+        // DB::enableQueryLog();
+        // $update['current_selected'] = 1;
+        // DB::table('phone_settings')->where('id',2)->update($update);
+        // //$dd = DB::table('phone_settings')->where('rotator_id',1)->update($update); 
+        // dd(DB::getQueryLog());
+        // die;
+
+
+        foreach($getRotatorIds as $key => $row){
+             $update['current_selected'] = '1';
+             $dd = DB::table('phone_settings')->where('rotator_id',$row)->update($update);
+             
+              $updateCurr['current_selected'] = '0';
+              DB::table('phone_settings')->where('id',$key)->update($updateCurr);
+              echo "success";
+            }
+            die;
     }
     
 }

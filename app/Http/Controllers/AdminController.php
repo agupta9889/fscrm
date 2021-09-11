@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use DB;
 use Session;
-use Mail; 
+use Mail;
 use View;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,21 +30,21 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function login() 
+    public function login()
     {
         if(Auth::check()) {
             return redirect('dashboard');
         }
         return view('auth.login');
     }
-    
-    // [ Load Dashboard Page ] 
-    public function dashboard(Request $request) 
+
+    // [ Load Dashboard Page ]
+    public function dashboard(Request $request)
     {
         $from= date($request->startDate." 00:00:00");
-        
+
         $to= date($request->endDate)." 23:59:59";
-        
+
         if(Auth::check()) {
             $user = auth()->user();
             if($user->role === 'Coaching Manager')
@@ -52,21 +52,20 @@ class AdminController extends Controller
                 return redirect('assignednumber');
             }
             else{
-                $data['integration'] = integration::all();    
+                $data['integration'] = integration::all();
                 $data['rotatorD'] = Rotator::paginate(5);
                 $data['activecount'] = Phonesetting::where('status', '0')->count();
                 $data['inactivecount'] = Phonesetting::where('status', '1')->count();
                 $data['totalReportActCount'] = Salephone::distinct('email')->whereDate('created_at', Carbon::today())->count();
-                //$data['totalReportActCount'] = Salephone::distinct('email')->whereBetween('created_at', [$from, $to])->count();
-                
+
                 return view('dashboard', $data);
             }
         }
-        
+
         return redirect::to("auth.login")->withSuccess('Oopps! You do not have access');
     }
 
-    public function filterByDate(Request $request) 
+    public function filterByDate(Request $request)
     {
         $from= date($request->startDate." 00:00:00");
         $to= date($request->endDate)." 23:59:59";
@@ -75,7 +74,7 @@ class AdminController extends Controller
         $temp = Salephone::select('rotator_id', DB::raw('0 as total'))->groupBy('rotator_id')->whereNotBetween('created_at', [$from, $to])->get();
         //return $temp;
         $actualData = Salephone::select('rotator_id',DB::raw('count(*) as total'))->distinct('email')->whereBetween('created_at', [$from, $to])->groupBy('rotator_id')->get();
-        
+
         foreach($temp as $t){
             if(!$actualData->contains('rotator_id',$t->rotator_id)){
                 $actualData->push($t);
@@ -102,10 +101,8 @@ class AdminController extends Controller
 
         $data['reportLeads'] = $actualData;
         $data['totalReportLeadsObj'] = $obj;
-        
-        //return $data['reportLeads'];
         return $data;
-    
+
     }
 
 
@@ -123,15 +120,15 @@ class AdminController extends Controller
 
     }
 
-    // [ Load Add Registration Page ] 
-    public function addRegistration() 
-    {   
-        $role = Role::pluck('name','name')->all();    
+    // [ Load Add Registration Page ]
+    public function addRegistration()
+    {
+        $role = Role::pluck('name','name')->all();
         return view('adduser', compact('role'));
     }
 
-    // [ Insert User Details Page ] 
-    public function registration(Request $request) 
+    // [ Insert User Details Page ]
+    public function registration(Request $request)
     {
         $fname = $request->input('first_name');
         $lname = $request->input('last_name');
@@ -142,20 +139,20 @@ class AdminController extends Controller
         $data = array('fname'=>$fname, 'lname'=>$lname, 'email'=>$email, 'role'=>$role, 'phone'=>$assign_number, 'password'=>$pass);
         $user = User::create($data);
         $user->assignRole($request->input('role'));
-        Session::flash('message', 'Registered Successfully!'); 
+        Session::flash('message', 'Registered Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('adduser');
     }
 
     // [ Get User Details Page ]
-    public function userDetails() 
+    public function userDetails()
     {
         $userD = DB::table('users')->paginate(10);
         return view('userlist', ['userD'=>$userD]);
     }
 
-    // [ Update User Details Page ] 
-    public function updShowUser($id) 
+    // [ Update User Details Page ]
+    public function updShowUser($id)
     {
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
@@ -163,8 +160,8 @@ class AdminController extends Controller
         return view('edituser',compact('user','roles','userRole'));
     }
 
-    // [ Update User Details Page ] 
-    public function updateUserRecord(Request $request) 
+    // [ Update User Details Page ]
+    public function updateUserRecord(Request $request)
     {
         $updateID = $request->updateID;
         $data['fname'] = $request->first_name;
@@ -177,11 +174,11 @@ class AdminController extends Controller
             $data['phone'] = NULL;
         }
         $user = User::find($updateID);
-        
+
         if($user->update($data))
         {
-            $update['password'] = Hash::make($request->input('password'));  
-            if(!empty($request->password)) 
+            $update['password'] = Hash::make($request->input('password'));
+            if(!empty($request->password))
             {
                 DB::table('users')->where('id',$updateID)->update($update);
             }
@@ -190,50 +187,50 @@ class AdminController extends Controller
         DB::table('model_has_roles')->where('model_id',$updateID)->delete();
 
         $user->assignRole($request->input('role'));
-        Session::flash('message', 'User Record Updated Successfully!'); 
+        Session::flash('message', 'User Record Updated Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('userlist');
     }
 
-    // [ Delete User Row Page ] 
-    public function destroy($id) 
+    // [ Delete User Row Page ]
+    public function destroy($id)
     {
         DB::delete('delete from users where id = ?',[$id]);
-        Session::flash('message', 'Record deleted successfully!'); 
+        Session::flash('message', 'Record deleted successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('userlist');
     }
 
-    // [ Load Add Rotator Page ] 
-    public function addRotator() 
+    // [ Load Add Rotator Page ]
+    public function addRotator()
     {
         return view('addrotator');
     }
-    // [ Insert Rotator Page ] 
+    // [ Insert Rotator Page ]
     public function insertRotator(Request $request)
     {
         $data['rotatorname'] = $request->rotatorname;
         $data['mode'] = $request->mode;
         $data['test_number'] = $request->test_number;
         DB::table('rotators')->insert($data);
-        Session::flash('message', 'Rotaor Added successfully!'); 
+        Session::flash('message', 'Rotaor Added successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // [ Update Phone Settings Page ] 
-    public function rotatorDataEdit(Request $request) 
+    // [ Update Phone Settings Page ]
+    public function rotatorDataEdit(Request $request)
     {
         $updateID = $request->id;
         $data['rotatorname'] = $request->rotatorname;
         $data['status'] = $request->status;
         $data['test_number'] = $request->test_number;
-        
+
         DB::table('rotators')->where('id',$updateID)->update($data);
-        Session::flash('message', 'Rotator Record Updated Successfully!'); 
+        Session::flash('message', 'Rotator Record Updated Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // [ Add Phones Page ] 
+    // [ Add Phones Page ]
     public function addPhone(Request $request)
     {
         $rotator_id = $request->rotator_id;
@@ -251,22 +248,22 @@ class AdminController extends Controller
         $data['max_limit_leads'] = $request->max_limit_leads;
         $data['test_number'] = $request->test_number;
         $data['current_selected'] = '0';
-        
+
         DB::table('phone_settings')->insert($data);
-        Session::flash('message', 'Phone Record Added Successfully!'); 
+        Session::flash('message', 'Phone Record Added Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
-        
+
     }
-    // [ Update Phone Settings Page ] 
-    public function editphone(Request $request) 
+    // [ Update Phone Settings Page ]
+    public function editphone(Request $request)
     {
         $now = Carbon::now();
         $updateID = $request->id;
         $phoneSetting = Phonesetting::findOrFail($updateID);
         $today_leads = Salephone::where('phone_setting_id',$updateID)->whereDate('created_at', date('Y-m-d'))->count();
         $week_leads = Salephone::where('phone_setting_id',$updateID)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $total_leads = Salephone::where('phone_setting_id',$updateID)->count(); 
+        $total_leads = Salephone::where('phone_setting_id',$updateID)->count();
 
         $phoneSetting->floor_label = $request->floor_label;
         $phoneSetting->phone_number = $request->phone_number;
@@ -309,35 +306,35 @@ class AdminController extends Controller
             }
             $phoneSetting->save();
         }
-       
-        Session::flash('message', 'Phone Record Updated Successfully!'); 
+
+        Session::flash('message', 'Phone Record Updated Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // [ Delete Phone Records Section ] 
-    public function deletePhoneRecord($id,$rotatorID) 
-    { 
+    // [ Delete Phone Records Section ]
+    public function deletePhoneRecord($id,$rotatorID)
+    {
         DB::delete('delete from phone_settings where id = ?',[$id]);
         DB::delete('delete from sale_phones where phone_setting_id = ?',[$id]);
 
         $newSel = Phonesetting::where('rotator_id', $rotatorID)->where('status','0')->whereNull('test_number')->first();
         $newSel->current_selected = '0';
         $newSel->save();
-        
-        Session::flash('message', 'Phone Record Deleted Successfully!'); 
+
+        Session::flash('message', 'Phone Record Deleted Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // [ Delete Rotator Row Section ] 
-    public function deleteRotatorRecord($id) 
+    // [ Delete Rotator Row Section ]
+    public function deleteRotatorRecord($id)
     {
         DB::delete('delete from rotators where id = ?',[$id]);
         DB::delete('delete from phone_settings where rotator_id = ?',[$id]);
-        Session::flash('message', 'Rotator Record Deleted Successfully!'); 
+        Session::flash('message', 'Rotator Record Deleted Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
     }
-    // [ Get Unexported Lead Page ] 
+    // [ Get Unexported Lead Page ]
     public function unexpLead($id)
     {
         $data['exportCount'] = Phonesetting::select('export_count')->where('id', $id)->first();
@@ -346,18 +343,18 @@ class AdminController extends Controller
         $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
         return view('unexportedlead', $data);
     }
-    // [ Get Exports Lead Page ] 
+    // [ Get Exports Lead Page ]
     public function exportsLead($id)
-    {   
+    {
         $getRotatorArray = Phonesetting::select('rotator_id')->where('id', $id)->first('rotator_id');
         $data['expleads'] = Export::where('phone_setting_id', $id)->where('rotator_id',$getRotatorArray->rotator_id)->get();
         foreach($data['expleads'] as $rows) {
-            
+
             $getSaleNo = Salephone::where('id', $rows->sale_phone_id)->first();
             $rows->sale_number = $getSaleNo->sales_number;
         }
         return view('exportlead', $data);
-    
+
     }
     // [ Get Report Lead Page ]
     public function leadReport($id)
@@ -369,25 +366,25 @@ class AdminController extends Controller
         $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->where('rotator_id', $data['rotatorIDs']->rotator_id)->whereDate('created_at', Carbon::today())->get();
         $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->where('rotator_id', $data['rotatorIDs']->rotator_id)->whereDate('created_at', Carbon::today())->count();
         return view('report', $data);
-       
+
     }
 
-    // [ Assigned Number Page ] 
+    // [ Assigned Number Page ]
     public function assignedNumber()
     {
         $user = auth()->user();
         $data['phone'] = $user->phone;
         $data['assignedID'] = Phonesetting::select('id','phone_number','rotator_id','status','export_count')->where('phone_number', $user->phone)->paginate(10);
         foreach($data['assignedID'] as $rows) {
-            $getRotatorName = Rotator::where('id',$rows->rotator_id)->first(); 
+            $getRotatorName = Rotator::where('id',$rows->rotator_id)->first();
             $rows->rotator_id = $getRotatorName->rotatorname;
-            
+
         }
-        
+
         $data1['assignee_users'] = Assignuser::where('user_assignee',$user->id)->get();
         foreach($data1['assignee_users'] as $rows1) {
             $getRotatorName = Rotator::where('id',$rows1->rotator_id)->first();
-            $getExportcount = Phonesetting::where('integration_id',$rows1->integration_id)->first(); 
+            $getExportcount = Phonesetting::where('integration_id',$rows1->integration_id)->first();
             //echo "<pre>";
             //print_r($getExportcount); die;
             $rows1->export_count = $getExportcount->export_count;
@@ -395,17 +392,17 @@ class AdminController extends Controller
             $rows1->status = $getExportcount->status;
             $rows1->rotator_id = $getRotatorName->rotatorname;
             $rows1->username = integration::getUsername($rows1->integration_id);
-              
-        } 
-         
+
+        }
+
         return view('assignednumber', $data, $data1);
     }
-    // [ Get API Integration Page ] 
+    // [ Get API Integration Page ]
     public function integration()
     {
         return view('addintegration');
     }
-    // [ Add API Integration Page ] 
+    // [ Add API Integration Page ]
     public function addRegIntegration(Request $request)
     {
         $data['name'] = $request->name;
@@ -413,18 +410,18 @@ class AdminController extends Controller
         $data['api_key'] = $request->api_key;
         $data['rotator_id'] = $request->rotator_id;
         DB::table('integrations')->insert($data);
-        Session::flash('message', 'Integration Added successfully!'); 
+        Session::flash('message', 'Integration Added successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('addintegration');
     }
-    // [ Get API Integration Page ] 
+    // [ Get API Integration Page ]
     public function integrationDoc()
     {
         $data['integrationUser'] = DB::table('integrations')->get();
         $data['coachingmanager'] = DB::table('users')->where('role', 'Coaching Manager')->get();
         return view('integrationdoc', $data);
     }
-    // [ Update API Integration Page ] 
+    // [ Update API Integration Page ]
     public function updateIntegrationDoc(Request $request)
     {
         $updateID = $request->updatedID;
@@ -442,33 +439,33 @@ class AdminController extends Controller
             $assignee['user_assignee'] = $rows;
             DB::table('assignee_users')->insert($assignee);
         }
-        Session::flash('message', 'Record Updated Successfully!'); 
+        Session::flash('message', 'Record Updated Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
-        
+
     }
-    // [ Delete API Integration Page ] 
-    public function deleteIntegrationUser($id) 
+    // [ Delete API Integration Page ]
+    public function deleteIntegrationUser($id)
     {
         DB::delete('delete from integrations where id = ?',[$id]);
-        Session::flash('message', 'Record Deleted Successfully!'); 
+        Session::flash('message', 'Record Deleted Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('integrationdoc');
     }
-    // [ Export Count ] 
+    // [ Export Count ]
     public function updateExportCount(Request $request)
     {
         $getExportCount = Phonesetting::select('export_count')->where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
         $updateData['export_count'] = $getExportCount->export_count+1;
         Phonesetting::where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($updateData);
-        $removeUpdates['remove_data'] = 1; 
+        $removeUpdates['remove_data'] = 1;
         if(Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates)){
-           
+
             $getRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->get();
             foreach($getRows as $rows){
                  $salephoneIdsArray[] = $rows->id;
             }
-           
+
             $allIdsArrya = implode(",", $salephoneIdsArray);
             $getSingleRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
             $exports['sale_phone_id'] = $getSingleRows->id;
@@ -477,62 +474,86 @@ class AdminController extends Controller
             $exports['leads_count'] = count($salephoneIdsArray);
             $exports['total_leads_id'] = $allIdsArrya;
             Export::insert($exports);
-            
+
         }
-        
+
     }
     // [ Excel Download on Export Section]
     public function csvexport($id) {
-        
+
         return Excel::download(new UsersExport($id), 'Leads.xlsx');
     }
     // [ Cron Script Section]
     public function cronScript() {
-        
-        // $week_leads = Phonesetting::select('max_weekly_leads')->where('test_number',NULL)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->get();
-        // foreach($week_leads as $rows) {
-        //    echo $rows;
-        // }  die;
 
-        $result = Phonesetting::select('id','rotator_id','max_limit_leads')->where('test_number',NULL)->get(); 
-        foreach($result as $rows) {
-           
+        //Weekly Cron Start
+        $weeklimitlead = Phonesetting::select('id','rotator_id','max_weekly_leads')->where('test_number',NULL)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->get();
+        foreach($weeklimitlead as $week) {
+
+            $getCount = Salephone::where('phone_setting_id',$week->id)->where('rotator_id',$week->rotator_id)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+
+            if($week->max_weekly_leads > $getCount){
+                // echo "IDs:".$week->id."1Max-Week-limit:".$week->max_weekly_leads." Selephone Count:".$getCount."<br>";
+                $statusUpdate['status'] = '0';
+                DB::table('phone_settings')->where('id',$week->id)->update($statusUpdate);
+                $this->updateCurrentSelectedWeekLimit();
+            }
+        }
+
+        //Max Cron Start
+        $maxlimitlead = Phonesetting::select('id','rotator_id','max_limit_leads')->where('test_number',NULL)->get();
+        foreach($maxlimitlead as $rows) {
+
               $getRows = Salephone::where('phone_setting_id',$rows->id)->where('rotator_id',$rows->rotator_id)->count();
-             
+
               if($rows->max_limit_leads > $getRows){
                 //echo "IDs.".$rows->id."1Max-limit".$rows->max_limit_leads." Selephone Count".$getRows."<br>";
-                  //$statusUpdate['status'] = '0';
-                  DB::table('phone_settings')->where('id',$rows->id)->update(array('status'=>'0'));
-                  $this->updateCurrentSelected();
-              } 
-        } 
-  
+                  $statusUpdate['status'] = '0';
+                  DB::table('phone_settings')->where('id',$rows->id)->update($statusUpdate);
+                  $this->updateCurrentSelectedMaxLimit();
+              }
+        }
+
     }
 
+    // Weekly Current Selection
+    public function updateCurrentSelectedWeekLimit(){
 
-    public function updateCurrentSelected(){
-        $result = Phonesetting::select('id','rotator_id','max_limit_leads')->where('test_number',NULL)->get(); 
-        foreach($result as $abc){ 
-            $rotatorID[$abc->id] = $abc->rotator_id;
-        }   
+        $weeklimitlead = Phonesetting::select('id','rotator_id','max_weekly_leads')->where('test_number',NULL)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->get();
+
+        foreach($weeklimitlead as $weeks){
+           $rotatorIDW[$weeks->id] = $weeks->rotator_id;
+        }
+        $getRotatorIdsW = array_unique($rotatorIDW);
+
+        foreach($getRotatorIdsW as $key => $row){
+            $update['current_selected'] = '1';
+            DB::table('phone_settings')->where('rotator_id',$row)->update($update);
+
+            $updateCurr['current_selected'] = '0';
+            DB::table('phone_settings')->where('id',$key)->update($updateCurr);
+            echo "Weekly Current Selection Success";
+        }
+
+    }
+
+    // Max Current Selection
+    public function updateCurrentSelectedMaxLimit(){
+
+        $maxlimitlead = Phonesetting::select('id','rotator_id','max_limit_leads')->where('test_number',NULL)->get();
+        foreach($maxlimitlead as $max){
+            $rotatorID[$max->id] = $max->rotator_id;
+        }
         $getRotatorIds = array_unique($rotatorID);
-        // DB::enableQueryLog();
-        // $update['current_selected'] = 1;
-        // DB::table('phone_settings')->where('id',2)->update($update);
-        // //$dd = DB::table('phone_settings')->where('rotator_id',1)->update($update); 
-        // dd(DB::getQueryLog());
-        // die;
-
 
         foreach($getRotatorIds as $key => $row){
-             $update['current_selected'] = '1';
-             $dd = DB::table('phone_settings')->where('rotator_id',$row)->update($update);
-             
-              $updateCurr['current_selected'] = '0';
-              DB::table('phone_settings')->where('id',$key)->update($updateCurr);
-              echo "success";
-            }
-            die;
+            $update['current_selected'] = '1';
+            DB::table('phone_settings')->where('rotator_id',$row)->update($update);
+
+            $updateCurr['current_selected'] = '0';
+            DB::table('phone_settings')->where('id',$key)->update($updateCurr);
+            echo "Max Current Selection Success";
+        }
     }
-    
+
 }

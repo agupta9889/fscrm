@@ -15,7 +15,7 @@ class APIController extends Controller
     //
     public function salePhones(Request $request)
     {
-        
+
         $api_key = 'fsc188fsc734fsc106fsc';
         $rotator_id = $request->rotator_id;
         $email= $request->email;
@@ -25,21 +25,21 @@ class APIController extends Controller
         $lead_id = "";
         $sales_number = ""; $result = "";
         $now = \Carbon::now();
-        
+
         if($api_key === $key)
         {
             $Rotator = Phonesetting::where('rotator_id', $rotator_id)->count();
-            
+
             if(!$Rotator)
             {
                 return ["response_code"=> 404, "response_message"=>"Invalid Rotator"];
             }
-            
+
             if(!$email)
             {
                 return ["response_code"=>400, "response_message"=>"Email Is Required"];
             }
-            
+
 
 
             $activephone = Phonesetting::select('phone_settings.*','integrations.email')->leftJoin('integrations', function($join){$join->on('phone_settings.integration_id','=','integrations.id');})->where('phone_settings.rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
@@ -58,12 +58,12 @@ class APIController extends Controller
                     $sales_number=$activephone->email;
                 }
                 //$sales_number = $activephone->phone_number;
-                $sales_number_status = $activephone->status; 
-                $todaylimit = $activephone->max_daily_leads; 
-                $weeklimit = $activephone->max_daily_leads; 
-                $maxlimit = $activephone->max_daily_leads; 
+                $sales_number_status = $activephone->status;
+                $todaylimit = $activephone->max_daily_leads;
+                $weeklimit = $activephone->max_daily_leads;
+                $maxlimit = $activephone->max_daily_leads;
                 $flag = false;
-				
+
 				$today_leads = Salephone::where('phone_setting_id',$activephone->id)->whereDate('created_at', date('Y-m-d'))->count();
                 $week_leads = Salephone::where('phone_setting_id',$activephone->id)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
                 $total_leads = Salephone::where('phone_setting_id',$activephone->id)->count();
@@ -87,7 +87,7 @@ class APIController extends Controller
                             }else{
                                 $data->sales_number=$activephone->email;
                             }
-                            
+
                             $data->first_name=$request->first_name;
                             $data->last_name=$request->last_name;
                             $data->state=$request->state;
@@ -108,23 +108,29 @@ class APIController extends Controller
                                     $activephonecount->first()->save();
                                }
                                fwrite($myfile, "line 110");
+
                                 $activephone->current_selected = '1';
-                                //$activephone->status = '1';
+
+                               if(($activephone->max_limit_leads-$total_leads == 1) || ($activephone->max_weekly_leads-$week_leads == 1) || ($activephone->max_daily_leads-$today_leads == 1)){
+                                    $activephone->status = '1';
+                                    fwrite($myfile, "line 116");
+                               }
+
                             }else{
-                                fwrite($myfile, "line 114");
+                                fwrite($myfile, "line 120");
                                 $activephone->current_selected = '0';
                             }
 
                             $activephone->save();
-                            
-                            DB::commit(); 
+
+                            DB::commit();
                         }Catch(Exception $e){
                             fwrite($myfile, "Exception");
                             DB::rollback();
                             dd($e);
                         }
                     }else{
-                        fwrite($myfile, "line 127");
+                        fwrite($myfile, "line 133");
                         $activephone->current_selected = '1';
                         $activephone->save();
                     }
@@ -156,7 +162,7 @@ class APIController extends Controller
                         }else{
                             $data->sales_number=$activephone->email;
                         }
-                        
+
                         $data->first_name=$request->first_name;
                         $data->last_name=$request->last_name;
                         $data->state=$request->state;
@@ -167,16 +173,16 @@ class APIController extends Controller
                         $lead_id = mt_rand( 1000000000, 9999999999 );
                         $data->lead_id=$lead_id;
                         $result = $data->save();
-                        
+
                         if(count($activephonecount) > 0){
-                            
+
                             $activephonecount->first()->current_selected = '0';
                             $activephonecount->first()->save();
                             $activephone->current_selected = '1';
                         }else{
                             $activephone->current_selected = '0';
                         }
-                        
+
                         if((($activephone->max_daily_leads - $today_leads) == 1) || (($activephone->max_weekly_leads - $week_leads) == 1) || (($activephone->max_limit_leads - $total_leads) == 1)){
                             $activephone->current_selected = '1';
                             $activephone->status = '1';
@@ -185,14 +191,14 @@ class APIController extends Controller
 
                         $activephone->save();
                         fwrite($myfile, "line 186");
-                        DB::commit(); 
+                        DB::commit();
                     }Catch(Exception $e){
                         fwrite($myfile, "line 189");
                         fwrite($myfile,$e->getMessage());
                         DB::rollback();
                         dd($e);
                     }
-					
+
 				}
 				fclose($myfile);
             }else{
@@ -203,7 +209,7 @@ class APIController extends Controller
                 return ["response_code"=> 200,"response_message"=>"success","lead_id"=>$lead_id,"sales_number"=>$sales_number,"accepted"=>true];
             }
             else{
-               
+
                 return ["response_code"=> 401, "response_message"=>"Invalid Credentials"];
             }
         }

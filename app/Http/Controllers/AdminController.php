@@ -233,9 +233,9 @@ class AdminController extends Controller
     // [ Add Phones Page ]
     public function addPhone(Request $request)
     {
-        $rotator_id = $request->rotator_id;
-        $current_selected['current_selected'] = '1';
-        DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
+         $rotator_id = $request->rotator_id;
+        // $current_selected['current_selected'] = '1';
+        // DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
 
         $data['rotator_id'] = $rotator_id;
         $data['phone_type'] = $request->phone_type;
@@ -247,7 +247,22 @@ class AdminController extends Controller
         $data['max_weekly_leads'] = $request->max_weekly_leads;
         $data['max_limit_leads'] = $request->max_limit_leads;
         $data['test_number'] = $request->test_number;
-        $data['current_selected'] = '0';
+        //$data['current_selected'] = '0';
+        if(!empty($request->test_number) || !empty($request->status)){
+            $data['current_selected'] = '1';
+        } else {
+            $isFlag = DB::table('phone_settings')->where('rotator_id',$rotator_id)->where('current_selected',0)->count();
+            if(!$isFlag) {
+                $current_selected['current_selected'] = '1';
+                DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
+                $data['current_selected'] = '0';
+            } else {
+                $data['current_selected'] = '1';
+            }
+        }
+        // echo "<pre>";
+        // print_r($data);
+        // die;
 
         DB::table('phone_settings')->insert($data);
         Session::flash('message', 'Phone Record Added Successfully!');
@@ -278,9 +293,18 @@ class AdminController extends Controller
             $phoneSetting->status = $request->status;
             $phoneSetting->current_selected = $request->status;
             $phoneSetting->save();
-            $newSel = Phonesetting::where('rotator_id', $phoneSetting->rotator_id)->where('status','0')->whereNull('test_number')->first();
-            $newSel->current_selected = '0';
-            $newSel->save();
+
+            $isFlag = DB::table('phone_settings')->where('rotator_id',$phoneSetting->rotator_id)->whereNull('test_number')->count();
+            if($isFlag > 1) {
+                $newSel = Phonesetting::where('rotator_id', $phoneSetting->rotator_id)->where('status','0')->whereNull('test_number')->first();
+                $newSel->current_selected = '0';
+                $newSel->save();
+            }
+
+            // $newSel = Phonesetting::where('rotator_id', $phoneSetting->rotator_id)->where('status','0')->whereNull('test_number')->first();
+            // $newSel->current_selected = '0';
+            // $newSel->save();
+
         }else{
             if(($phoneSetting->max_daily_leads > $today_leads && $phoneSetting->max_weekly_leads > $week_leads && $phoneSetting->max_limit_leads > $total_leads) || ($request->max_daily_leads > $today_leads && $request->max_weekly_leads > $week_leads && $request->max_limit_leads > $total_leads) || ($request->max_daily_leads == 0 && $request->max_weekly_leads > $week_leads && $request->max_limit_leads > $total_leads) || ($request->max_weekly_leads == 0 && $request->max_limit_leads > $total_leads) || ($request->max_limit_leads == 0))
             {
@@ -317,9 +341,15 @@ class AdminController extends Controller
         DB::delete('delete from phone_settings where id = ?',[$id]);
         DB::delete('delete from sale_phones where phone_setting_id = ?',[$id]);
 
-        $newSel = Phonesetting::where('rotator_id', $rotatorID)->where('status','0')->whereNull('test_number')->first();
-        $newSel->current_selected = '0';
-        $newSel->save();
+        $isFlag = DB::table('phone_settings')->where('rotator_id',$rotatorID)->whereNull('test_number')->count();
+            if($isFlag > 1) {
+                if(!Phonesetting::where('rotator_id', $rotatorID)->where('current_selected','0')->count()){
+                    $newSel = Phonesetting::where('rotator_id', $rotatorID)->where('status','0')->whereNull('test_number')->first();
+                    $newSel->current_selected = '0';
+                    $newSel->save();
+                }
+            }
+
 
         Session::flash('message', 'Phone Record Deleted Successfully!');
         Session::flash('alert-class', 'alert-success');

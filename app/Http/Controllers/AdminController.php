@@ -64,7 +64,7 @@ class AdminController extends Controller
 
         return redirect::to("auth.login")->withSuccess('Oopps! You do not have access');
     }
-
+    // [ Filter Data ]
     public function filterByDate(Request $request)
     {
         $from= date($request->startDate." 00:00:00");
@@ -488,23 +488,22 @@ class AdminController extends Controller
         $getExportCount = Phonesetting::select('export_count')->where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
         $updateData['export_count'] = $getExportCount->export_count+1;
         Phonesetting::where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($updateData);
-        $removeUpdates['remove_data'] = 1;
-        if(Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates)){
 
-            $getRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->get();
-            foreach($getRows as $rows){
-                 $salephoneIdsArray[] = $rows->id;
-            }
+        $getRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->where('remove_data',0)->get();
+        foreach($getRows as $rows){
+                $salephoneIdsArray[] = $rows->id;
+        }
 
-            $allIdsArrya = implode(",", $salephoneIdsArray);
-            $getSingleRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
-            $exports['sale_phone_id'] = $getSingleRows->id;
-            $exports['phone_setting_id'] = $getSingleRows->phone_setting_id;
-            $exports['rotator_id'] = $getSingleRows->rotator_id;
-            $exports['leads_count'] = count($salephoneIdsArray);
-            $exports['total_leads_id'] = $allIdsArrya;
-            Export::insert($exports);
-
+        $allIdsArrya = implode(",", $salephoneIdsArray);
+        $getSingleRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
+        $exports['sale_phone_id'] = $getSingleRows->id;
+        $exports['phone_setting_id'] = $getSingleRows->phone_setting_id;
+        $exports['rotator_id'] = $getSingleRows->rotator_id;
+        $exports['leads_count'] = count($salephoneIdsArray);
+        $exports['total_leads_id'] = $allIdsArrya;
+        if(Export::insert($exports)){
+            $removeUpdates['remove_data'] = 1;
+            Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
         }
 
     }

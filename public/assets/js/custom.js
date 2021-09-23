@@ -9,7 +9,7 @@ function copyToClipboard(element) {
 }
 //-- Add User Role Selection --
 $("select.crmrole").change(function(){
-    
+
     var selectedRole = $(this).children("option:selected").val();
     //alert("You have selected the role - " + selectedRole);
     if(selectedRole === 'Coaching Manager' ){
@@ -18,7 +18,7 @@ $("select.crmrole").change(function(){
     else{
       $('#textInput').hide();
     }
-    
+
 });
 
 
@@ -33,8 +33,8 @@ function onButtonClick1(){
 }
 //--Popover show--
   $(document).ready(function(){
-    
-      $('[data-toggle="popover"]').popover();   
+
+      $('[data-toggle="popover"]').popover();
       placement : 'top'
   });
 //--Rotator ID get--
@@ -58,11 +58,11 @@ $(function() {
 
     var start = moment().subtract(0, 'days');
     var end = moment();
-    
+
     $('#reportrange span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
     $('#id_start_date').val(start.format('YYYY-MM-DD'));
     $('#id_end_date').val(end.format('YYYY-MM-DD'));
-    
+
     function cb(start, end) {
         $('#reportrange span').html(start.format('Y-MM-DD') + ' - ' + end.format('Y-MM-DD'));
         $('#id_start_date').val(start.format('YYYY-MM-DD'));
@@ -83,7 +83,7 @@ $(function() {
           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, cb);
-    
+
     //cb(start, end);
 
     function filterByDate() {
@@ -105,11 +105,11 @@ $(function() {
                    //console.log(data.totalReportActCount);
                    $('#accepted').html(data.totalReportActCount);
                    $('.todayLeads').html(0);
-                   
+
                     for(let i=0; i < data.reportLeads.length; i++){
                         //console.log("ID:"+ data.reportLeads[i].rotator_id + "total : " +data.reportLeads[i].total);
                         $('#rotatorLeadCount'+data.reportLeads[i].rotator_id).html(data.reportLeads[i].total + ' <label class="text-success">'+ data.reportLeads[i].total +' / <label class="text-danger"> 0' );
-                        
+
                         for(let j=0; j < data.totalReportLeadsObj[i].length; j++){
                             //console.log('.totalReportLeads'+data.reportLeads[i].rotator_id+j+ " : "+ data.totalReportLeadsObj[i][j]);
                             $('.totalReportLeads'+data.reportLeads[i].rotator_id+j).html(data.totalReportLeadsObj[i][j]);
@@ -133,9 +133,9 @@ $(function() {
                 } else {
                     //msg = "Error:" + xhr.status + " " + xhr.responseText;
                 }
-               
+
             }
-        }); 
+        });
     }
     function reportFilterByDate() {
         var sDate = $('#id_start_date').val();
@@ -170,36 +170,36 @@ $(function() {
                 } else {
                     //msg = "Error:" + xhr.status + " " + xhr.responseText;
                 }
-               
+
             }
-        }); 
+        });
     }
-   
+
 });
 
 
 
-// Data Table UnExport 
+// Data Table UnExport
 $(document).ready(function() {
     $('#exampleUnexp').DataTable({
         dom: 'Bfrtip',
-        "order": [[ 4, "asc" ]], 
+        "order": [[ 4, "asc" ]],
         buttons: {
           buttons: [
-            { 
+            {
                 extend: 'excel', text: 'Export', className: 'getExportCount',
                 filename: function () { return "Leads";}
             }
             ]
         }
-        
+
     });
 
-     
+
     $(".getExportCount").click(function(){
         var exportID = $("#export_count").val();
         var rotatorID = $("#rotatorID").val();
-
+        window.location.reload();
         $.ajax({
             url:  "/updateExportCount",
             type: "post",
@@ -209,25 +209,26 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function (data) {
-                  
+
                 //console.log(data);
-                   
+
+
             },
             error: function (xhr, exception, thrownError) {
-               
+
             }
-        }); 
+        });
     });
 });
 
-// Data Table Report 
+// Data Table Report
 $(document).ready(function() {
     $('#exampleReport').DataTable({
         dom: 'Bfrtip',
-        "order": [[ 4, "asc" ]], 
+        "order": [[ 4, "asc" ]],
         buttons: {
           buttons: [
-            { 
+            {
                 extend: 'excel', text: 'Export', className: 'getExportCount',
                 filename: function () { return "Leads";}
             }

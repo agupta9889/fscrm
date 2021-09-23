@@ -1,6 +1,6 @@
 @include('layouts.header')
       <!-- partial -->
-      <div class="main-panel">        
+      <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
             <div class="col-md-1 grid-margin stretch-card"></div>
@@ -16,7 +16,7 @@
                       @endif
                       @foreach($integrationUser as $user)
                         <tr>
-                          <td data-toggle="collapse" data-target="#table-{{$user->id}}" class="accordion-toggle"> 
+                          <td data-toggle="collapse" data-target="#table-{{$user->id}}" class="accordion-toggle">
                             <span class="badge badge-info">
                               <i class="ti-eye"></i>
                             </span></td>
@@ -25,7 +25,7 @@
                         </tr>
                         <tr>
                           <td colspan="12" class="hiddenRow">
-                            <div class="accordian-body collapse" id="table-{{$user->id}}"> 
+                            <div class="accordian-body collapse" id="table-{{$user->id}}">
                               <table class="table table-striped" id="phoneTable">
                                 <tbody>
                                   <tr>
@@ -53,7 +53,7 @@
                                             <input type="text" name="rotator_id" value="{{$user->rotator_id}}" class="form-control" placeholder="Offer/Rotator Id" required>
                                           </div>
                                           <a href="deleteintegration/{{$user->id}}" type="submit" class="form-group btn btn-danger" onclick="return confirm('Are you sure?')">Delete
-                                          </a> 
+                                          </a>
                                         </div>
                                         <div class="col-sm-6">
                                           <br/>
@@ -61,7 +61,7 @@
                                             <div class="form-group">
                                               <label for="exampleInputUsername1">Users with role "account manager"</label>
                                               <br>
-                                              
+
                                               @foreach($coachingmanager as $row)
                                               <?php $array= explode(',',$user->user_assign_id);
                                               //print_r($user->user_assign_id);
@@ -80,7 +80,7 @@
                                   </tr>
                                 </tbody>
                               </table>
-                            </div> 
+                            </div>
                           </td>
                         </tr>
                         @endforeach
@@ -128,7 +128,7 @@ background:#ffffe8; ">;
 <span style="color:#800080; background:#ffffe8; ">}</span><span style="color:#000000; background:#ffffe8; "></span>
 <span style="color:#696969; background:#ffffe8; ">// echo $fields_string;</span><span style="color:#000000; background:#ffffe8; "></span>
 <span style="color:#400000; background:#ffffe8; ">rtrim</span><span style="color:#808030; background:#ffffe8; ">(</span><span style="color:#797997; background:#ffffe8; ">$fields_string</span><span style="color:#808030; background:#ffffe8; ">,</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#0000e6; background:#ffffe8; ">'&amp;'</span><span style="color:#808030; background:#ffffe8; ">)</span><span style="color:#800080; background:#ffffe8; ">;</span><span style="color:#000000; background:#ffffe8; "></span>
-<span style="color:#797997; background:#ffffe8; ">$url</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#808030; background:#ffffe8; ">=</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#0000e6; background:#ffffe8; ">'https://testcaresort.com/floorsolutioncrm/api/sales_phones'</span><span style="color:#800080; background:#ffffe8; ">;</span><span style="color:#000000; background:#ffffe8; "></span>
+<span style="color:#797997; background:#ffffe8; ">$url</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#808030; background:#ffffe8; ">=</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#0000e6; background:#ffffe8; ">'https://floorsolutioncrm.com/api/sales_phones'</span><span style="color:#800080; background:#ffffe8; ">;</span><span style="color:#000000; background:#ffffe8; "></span>
 <span style="color:#696969; background:#ffffe8; ">//open connection</span><span style="color:#000000; background:#ffffe8; "></span>
 <span style="color:#797997; background:#ffffe8; ">$ch</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#808030; background:#ffffe8; ">=</span><span style="color:#000000; background:#ffffe8; "> </span><span style="color:#400000; background:#ffffe8; ">curl_init</span><span style="color:#808030; background:#ffffe8; ">(</span><span style="color:#808030; background:#ffffe8; ">)</span><span style="color:#800080; background:#ffffe8; ">;</span><span style="color:#000000; background:#ffffe8; "></span>
 <span style="color:#696969; background:#ffffe8; ">//set the url, number of POST vars, POST data</span><span style="color:#000000; background:#ffffe8; "></span>

@@ -234,8 +234,6 @@ class AdminController extends Controller
     public function addPhone(Request $request)
     {
          $rotator_id = $request->rotator_id;
-        // $current_selected['current_selected'] = '1';
-        // DB::table('phone_settings')->where('rotator_id',$rotator_id)->update($current_selected);
 
         $data['rotator_id'] = $rotator_id;
         $data['phone_type'] = $request->phone_type;
@@ -260,11 +258,9 @@ class AdminController extends Controller
                 $data['current_selected'] = '1';
             }
         }
-        // echo "<pre>";
-        // print_r($data);
-        // die;
-
-        DB::table('phone_settings')->insert($data);
+        //dd($data);
+        //DB::table('phone_settings')->insert($data);
+        Phonesetting::create($data);
         Session::flash('message', 'Phone Record Added Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
@@ -367,17 +363,19 @@ class AdminController extends Controller
     // [ Get Unexported Lead Page ]
     public function unexpLead($id)
     {
-        $data['exportCount'] = Phonesetting::select('export_count')->where('id', $id)->first();
-        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
-        $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
-        $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $id)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
+        $pid = base64_decode($id); // decode the Phone Setting id
+        $data['exportCount'] = Phonesetting::select('export_count')->where('id', $pid)->first();
+        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $pid)->first();
+        $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $pid)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
+        $data['unexpID'] = Salephone::DISTINCT('email')->WHERE('phone_setting_id', $pid)->where('rotator_id', $data['rotatorIDs']->rotator_id)->first();
         return view('unexportedlead', $data);
     }
     // [ Get Exports Lead Page ]
     public function exportsLead($id)
     {
-        $getRotatorArray = Phonesetting::select('rotator_id')->where('id', $id)->first('rotator_id');
-        $data['expleads'] = Export::where('phone_setting_id', $id)->where('rotator_id',$getRotatorArray->rotator_id)->get();
+        $pid = base64_decode($id); // decode the Phone Setting id
+        $getRotatorArray = Phonesetting::select('rotator_id')->where('id', $pid)->first('rotator_id');
+        $data['expleads'] = Export::where('phone_setting_id', $pid)->where('rotator_id',$getRotatorArray->rotator_id)->orderBy("created_at", "desc")->get();
         foreach($data['expleads'] as $rows) {
 
             $getSaleNo = Salephone::where('id', $rows->sale_phone_id)->first();

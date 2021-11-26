@@ -7,12 +7,14 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 use App\Models\Salephone;
 
 
 class Export extends Model
 {
     use HasFactory;
+
     protected $table = 'exports';
 
     public static function getExportDetails($ids){
@@ -27,15 +29,15 @@ class Export extends Model
             foreach($getsaleRows as $row){
                  $data['name'] = $row['first_name']." ".$row['last_name'];
                  $data['email_id'] = $row['email'];
-            }   
+            }
         }
-       
+
         die;
-        
+
         print_r($data); die;
        // print_r($hj); die;
         //return $getsaleRows;
 
     }
-    
+
 }

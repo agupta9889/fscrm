@@ -191,7 +191,8 @@ $(document).ready(function() {
                 filename: function () { return "Leads";}
             }
             ]
-        }
+        },
+        paging: false
 
     });
 
@@ -233,7 +234,8 @@ $(document).ready(function() {
                 filename: function () { return "Leads";}
             }
           ]
-     }
+     },
+	 paging: false
     });
 });
 

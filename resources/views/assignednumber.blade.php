@@ -6,13 +6,13 @@
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-    
+
                   <h4 class="card-title">Assigned Numbers {{$phone}}</h4>
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead>
                           <tr>
-                          
+
                               <th>Phone Number</th>
                               <th>Offer</th>
                               <th>Unexported</th>
@@ -23,16 +23,18 @@
                       <tbody>
 
                     <?php if(!empty($assignedID) && !empty($assignee_users)) {?>
-                      
+
                       @foreach($assignedID as $rowdata)
                           <tr>
+                                <?php
+                                    $pid = base64_encode($rowdata->id);  // encode the Phone Setting id
+                                ?>
                               <td> {{ $rowdata->phone_number }}</td>
-                          
                               <td> {{ $rowdata->rotator_id }}</td>
                               <?php $Unexportedcount1 = \App\Models\Salephone::getUnexportedCountData($rowdata->id); ?>
                               <td>
                               <?php if(!empty($Unexportedcount1)){ ?>
-                              <a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">{{ $Unexportedcount1 }}</a></td>
+                              <a href="{{ URL::to('unexportedlead') }}/{{ $pid }}">{{ $Unexportedcount1 }}</a></td>
                               <?php } else {?>
                                 <a href="javascript:void(0);" onclick="notfound();">{{ $Unexportedcount1 }}</a>
                               <?php } ?>
@@ -42,21 +44,24 @@
                               <?php } else { ?>
                                <label class="badge badge-danger">Paused</label>
                                 <?php  } ?>
-                              </td>  
-                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata->id }}">{{ $rowdata->export_count }}</a></td>
+                              </td>
+
+                              <td><a href="{{ URL::to('exportlead') }}/{{ $pid }}">{{ $rowdata->export_count }}</a></td>
                           </tr>
                         @endforeach
 
-                        
+
                         @foreach($assignee_users as $rowdata1)
                           <tr>
+                                <?php
+                                    $pid = base64_encode($rowdata1->id);  // encode the Phone Setting id
+                                ?>
                               <td> {{ $rowdata1->username }}</td>
-                          
                               <td> {{ $rowdata1->rotator_id }}</td>
                               <?php $Unexportedcount2 = \App\Models\Salephone::getUnexportedCountData($rowdata1->id); ?>
                               <td>
                                 <?php if(!empty($Unexportedcount2)) { ?>
-                                <a href="{{ URL::to('unexportedlead') }}/{{ $rowdata1->id }}">{{ $Unexportedcount2 }}</a></td>
+                                <a href="{{ URL::to('unexportedlead') }}/{{ $pid }}">{{ $Unexportedcount2 }}</a></td>
                                 <?php } else { ?>
                                   <a href="javascript:void(0);" onclick="notfound();">{{ $Unexportedcount2 }}</a>
                               <?php } ?>
@@ -66,8 +71,8 @@
                               <?php } else { ?>
                                <label class="badge badge-danger">Paused</label>
                                 <?php  } ?>
-                              </td>  
-                              <td><a href="{{ URL::to('exportlead') }}/{{ $rowdata1->id }}">{{ $rowdata1->export_count }}</a></td>
+                              </td>
+                              <td><a href="{{ URL::to('exportlead') }}/{{ $pid }}">{{ $rowdata1->export_count }}</a></td>
                           </tr>
                           @endforeach
                          <?php } else { ?>
@@ -91,4 +96,4 @@
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-        @include('layouts.footer')         
+        @include('layouts.footer')

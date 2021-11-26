@@ -81,7 +81,7 @@
                      <h4 class="card-title">Rotators</h4>
                   </div>
                   <div class="col-md-6">
-                    <span data-toggle="modal" data-target="#rotatorModal" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
+                    <span data-toggle="modal" data-target="#rotatorModal" class="btn btn-outline-success btn-icon-text" style="float:right;">
                     Add Rotator <i class="ti-control-forward"></i>
                     </span>
                 </div>
@@ -123,7 +123,7 @@
                           <td>0 <label class="text-success">0</label> / <label class="text-danger">0</label></td>
                           @else
                           <td id="rotatorLeadCount{{$rotator->id}}">{{ $tmp->reportleadcount($rotator->id) }} <label class="text-success">{{ $tmp->reportleadcount($rotator->id) }}</label> / <label class="text-danger">0</label></td>
-                          
+
                           @endif
                           <td>
                             <?php if($rotator->status ==0){?>
@@ -131,7 +131,7 @@
                             <?php } else { ?>
                             <label class="badge badge-danger">Paused</label>
                             <?php  } ?>
-                          </td>   
+                          </td>
                           <td>{{ $rotator->test_number }}</td>
                           <td>
                             <span onClick="rotatorId({{ $rotator->id }})" class="badge badge-success">
@@ -139,7 +139,7 @@
                             </span>
                             <span class="rotatorsetting badge badge-warning" attrid="{{ $rotator->id  }}" attrname="{{ $rotator->rotatorname }}" attstatus="{{ $rotator->status }}" attrtestnumber="{{ $rotator->test_number }}">
                               <i class="ti-pencil-alt" data-toggle="modal" data-target="#RotatorSettingseModal"></i>
-                            </span> 
+                            </span>
                             <a href='deleterotator/{{ $rotator->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')">
                               <i class="ti-trash" data-toggle="tooltip" title="Delete Rotator"></i>
                             </a>
@@ -147,24 +147,24 @@
                         </tr>
                         <tr>
                           <td colspan="12" class="hiddenRow">
-                            <div class="accordian-body collapse" id="table-<?php echo $rotator->id;?>"> 
+                            <div class="accordian-body collapse" id="table-<?php echo $rotator->id;?>">
                             <table class="table table-striped" id="phoneTable">
                               <thead>
                                 <tr class="info">
                                   <th></th>
                                   <th>#</th>
                                   <th>Phone Number</th>
-                                  <th>Today's Leads</th>		
+                                  <th>Today's Leads</th>
                                   <th>Max Daily</th>
-                                  <th>This Week</th>	
-                                  <th>Max Weekly</th>	
-                                  <th>Report Total</th>	
-                                  <th>Max Limit</th>	
-                                  <th>Leads Left</th>	
-                                  <th>Active</th>	
+                                  <th>This Week</th>
+                                  <th>Max Weekly</th>
+                                  <th>Report Total</th>
+                                  <th>Max Limit</th>
+                                  <th>Leads Left</th>
+                                  <th>Active</th>
                                   <th>Label</th>
-                                  <th>Exports</th>		
-                                  <th>Action</th>	
+                                  <th>Exports</th>
+                                  <th>Action</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -179,14 +179,14 @@
                                   </td>
                                   <td>{{ $i}}</td>
                                   @if($rowdata->phone_type === '0')
-                                  <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number}} 
+                                  <td class={{  $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->phone_number}}
                                   <br/>
                                     <?php if( $rowdata->test_number === 1231231234) { ?>
                                       <span class="badge badge-warning">Test</span>
                                     <?php }?>
                                   </td>
                                   @else
-                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->getIntegrationName->name }} 
+                                  <td class={{ $rowdata->current_selected === '0' ? 'active' : '' }} > {{ $rowdata->getIntegrationName->name }}
                                   <br/>
                                     <a href="{{ URL::to('integrationdoc') }}" class="badge badge-info">api</a>
                                     <?php if( $rowdata->test_number === 1231231234) { ?>
@@ -194,7 +194,7 @@
                                     <?php }?>
                                   </td>
                                   @endif
-                                  
+
                                   @php
                                     $phoneemailCond = array($rowdata->phone_number);
                                     if(isset($rowdata->getIntegrationName->email)){
@@ -206,14 +206,14 @@
                                   @endphp
                                   <td class="todayLeads"> {{$todaysLeads}}</td>
                                   <td>{{ $rowdata->max_daily_leads }}</td>
-                                  @php 
+                                  @php
                                     $now = Carbon::now();
                                     $week =  \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
                                     $weekLeads =  $week->count();
                                   @endphp
                                   <td>{{ $weekLeads }}</td>
                                   <td>{{ $rowdata->max_weekly_leads }}</td>
-                                  @php 
+                                  @php
                                     $totalRepLead = \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->count();
                                     $total = \App\Models\Salephone::whereIn('sales_number',$phoneemailCond)->where('rotator_id',$rowdata->rotator_id)->whereDate('created_at',Carbon::today())->get();
                                     $totalReportLeads = $total->count();
@@ -229,24 +229,27 @@
                                   <?php } ?>
                                   </td>
                                   <td>{{ $rowdata->floor_label }}</td>
-                                  
+
                                   <td>
                                     <?php if(!empty($totalRepLead)){ ?>
-                                    <a href="{{ URL::to('unexportedlead') }}/{{ $rowdata->id }}">{{ $rowdata->export_count }}</a>
+                                        <?php
+                                            $pid = base64_encode($rowdata->id);  // encode the Phone Setting id
+                                        ?>
+                                    <a href="{{ URL::to('unexportedlead') }}/{{ $pid }}">{{ $rowdata->export_count }}</a>
                                     <?php } else {?>
                                       <a href="javascript:void(0);" onclick="notfound();">{{ $rowdata->export_count }}</a>
                                     <?php } ?>
                                   </td>
-                                  
+
                                   <td>
-                                    <?php if(!empty($totalRepLead)) { ?> 
+                                    <?php if(!empty($totalRepLead)) { ?>
                                     <a href="{{ URL::to('report') }}/{{ $rowdata->id }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
-                                    </a> 
+                                    </a>
                                     <?php } else { ?>
                                     <a href="javascript:void(0);" onclick="notfound();" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
-                                    </a> 
+                                    </a>
                                       <?php } ?>
                                     <a href="deletephone/{{ $rowdata->id }}/{{$rowdata->rotator_id}}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
                                       <i class="ti-trash"></i>
@@ -255,7 +258,7 @@
                                 </tr>
                                 <tr>
                                   <td colspan="12" class="hiddenRow">
-                                    <div class=" row accordian-body collapse" id="table2-{{ $rowdata->id }}"> 
+                                    <div class=" row accordian-body collapse" id="table2-{{ $rowdata->id }}">
                                     <div class="col-sm-2"></div>
                                     <div class="col-sm-6">
                                       <form class="forms-sample" method="post" action="{{ 'rotatorlist' }}/{{ $rowdata->id }}">
@@ -280,7 +283,7 @@
                                                 <select class="form-control" name="status" id="exampleFormControlSelect2">
                                                   <option value="0" <?php if($rowdata->status == 0){ ?> selected <?php } ?> >Active</option>
                                                   <option value="1" <?php if($rowdata->status == 1){ ?> selected <?php } ?> >Paused</option>
-                                                </select>  
+                                                </select>
                                               </div>
                                             </div>
                                           </div>
@@ -334,20 +337,20 @@
                                               </div>
                                             </div>
                                           </div>
-                                        </div>  
+                                        </div>
                                         <div class="modal-footer">
                                           <input type="submit" class="btn btn-primary" value="Update">
                                         </div>
                                       </form>
                                     </dive>
-                                    </div> 
+                                    </div>
                                     <div class="col-sm-4"></div>
                                   </td>
                                 </tr>
                                 @endforeach
                               </tbody>
                             </table>
-                            </div> 
+                            </div>
                           </td>
                         </tr>
                         @empty
@@ -367,7 +370,7 @@
                 </div>
               </div>
             </div>
-          </div>       
+          </div>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
 
@@ -390,11 +393,11 @@
             <input type="hidden" name="mode" value="sequential" class="form-control" id="exampleInputUsername1">
             <input type="hidden" name="test_number" value="1231231234"  class="form-control" id="exampleInputUsername1">
           </div>
-        </div>  
+        </div>
         <div class="modal-footer">
           <input type="submit" class="btn btn-primary" value="Submit">
         </div>
-      </form> 
+      </form>
     </div>
   </div>
 </div>
@@ -413,7 +416,7 @@
         </div>
         <div class="modal-body">
           <input type="hidden" name="rotator_id" id="phone">
-          
+
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Phone Type</label>
             <div class="col-sm-5">
@@ -459,14 +462,14 @@
               <select class="form-control" name="status" id="exampleFormControlSelect2">
                 <option value="0">Active</option>
                 <option value="1">Paused</option>
-              </select>  
+              </select>
             </div>
             </div>
           </div>
           <div class="form-group row">
             <div class="col-sm-4">
               <div class="form-group">
-              <label style="font-size:12px;">Max Daily Leads 
+              <label style="font-size:12px;">Max Daily Leads
                 <span class="badge badge-pill badge-primary badge-size">
                   <i class="ti-info" data-toggle="popover" data-placement="top" title="Max Daily Leads:"  data-content="Total amount of leads allocated to this number for the day (MST). After quota is reached no more leads are added. 0 means unlimited."></i>
                 </span>
@@ -500,11 +503,11 @@
               <input type="checkbox" name="test_number" value="1231231234" class="form-check-input">Test Number
             <i class="input-helper"></i></label>
           </div>
-        </div>  
+        </div>
         <div class="modal-footer">
           <input type="submit" class="btn btn-primary" value="Submit">
         </div>
-      </form> 
+      </form>
     </div>
   </div>
 </div>
@@ -531,17 +534,17 @@
               <select name="status" class="form-control rotatorstatus" id="exampleFormControlSelect2">
                 <option value="0">Active</option>
                 <option value="1">Paused</option>
-              </select>  
+              </select>
           </div>
           <div class="form-group">
             <label for="exampleInputUsername1">Lead Test Match</label>
             <input type="text" name="test_number" class="form-control testmatch" id="exampleInputUsername1">
           </div>
-        </div>  
+        </div>
         <div class="modal-footer">
           <input type="submit" class="btn btn-primary" value="Update">
         </div>
-      </form> 
+      </form>
     </div>
   </div>
 </div>

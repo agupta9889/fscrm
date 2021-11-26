@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Phonesetting;
 
 
+
 class Rotator extends Model
 {
     use HasFactory;
+
+
 
     public function getrotatorList()
     {
@@ -19,9 +22,9 @@ class Rotator extends Model
     public function getrotatorName($id)
     {
         return $this->where('id', $id)->first();
-        
+
     }
 
-    
-    
+
+
 }

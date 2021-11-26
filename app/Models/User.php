@@ -12,6 +12,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -21,12 +22,14 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use HasRoles;
 
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
+
         'fname',
         'lname',
         'email',
@@ -41,6 +44,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
+
         'password',
         'remember_token',
         'two_factor_recovery_codes',
@@ -65,7 +69,7 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
     public static function getUserNameById($user_id) {
-    
+
         $query = DB::table('users')
                             ->where('users.id',$user_id)
                             ->select('users.id', 'users.name', 'users.email');
@@ -75,9 +79,9 @@ class User extends Authenticatable
         return $response;
     }
 
-    
+
     public function getassignUser()
     {
       return $this->hasMany('App\Models\Assignuser','user_assignee','id');
-    } 
+    }
 }

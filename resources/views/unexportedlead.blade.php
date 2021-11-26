@@ -8,7 +8,10 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-6">
-                      <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $unexpID->phone_setting_id}}">(<?php echo $exportCount->export_count;?> Exports)</a></h4>
+                        <?php
+                            $pid = base64_encode($unexpID->phone_setting_id);  // encode the Phone Setting id
+                        ?>
+                      <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $pid}}">(<?php echo $exportCount->export_count;?> Exports)</a></h4>
                     </div>
                   </div>
                   <div class="table-responsive">
@@ -40,7 +43,7 @@
                         @endforelse
 			                </tbody>
                     </table>
-                    
+
                   </div>
                 </div>
               </div>

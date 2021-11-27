@@ -22,6 +22,7 @@ use App\Models\Integration;
 use App\Models\Assignuser;
 use App\Models\Export;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Crypt;
 
 class AdminController extends Controller
 {
@@ -363,7 +364,7 @@ class AdminController extends Controller
     // [ Get Unexported Lead Page ]
     public function unexpLead($id)
     {
-        $pid = base64_decode($id); // decode the Phone Setting id
+        $pid= Crypt::decryptString($id); // decode the Phone Setting id
         $data['exportCount'] = Phonesetting::select('export_count')->where('id', $pid)->first();
         $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $pid)->first();
         $data['unexpleads'] = Salephone::DISTINCT('email')->where('phone_setting_id', $pid)->where('rotator_id', $data['rotatorIDs']->rotator_id)->where('remove_data',0)->get();
@@ -373,7 +374,7 @@ class AdminController extends Controller
     // [ Get Exports Lead Page ]
     public function exportsLead($id)
     {
-        $pid = base64_decode($id); // decode the Phone Setting id
+        $pid= Crypt::decryptString($id); // decode the Phone Setting id
         $getRotatorArray = Phonesetting::select('rotator_id')->where('id', $pid)->first('rotator_id');
         $data['expleads'] = Export::where('phone_setting_id', $pid)->where('rotator_id',$getRotatorArray->rotator_id)->orderBy("created_at", "desc")->get();
         foreach($data['expleads'] as $rows) {

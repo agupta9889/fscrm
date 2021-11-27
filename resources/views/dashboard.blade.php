@@ -233,7 +233,7 @@
                                   <td>
                                     <?php if(!empty($totalRepLead)){ ?>
                                         <?php
-                                            $pid = base64_encode($rowdata->id);  // encode the Phone Setting id
+                                            $pid = Crypt::encryptString($rowdata->id); // encode the Phone Setting id
                                         ?>
                                     <a href="{{ URL::to('unexportedlead') }}/{{ $pid }}">{{ $rowdata->export_count }}</a>
                                     <?php } else {?>

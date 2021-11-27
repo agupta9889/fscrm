@@ -27,7 +27,7 @@
                       @foreach($assignedID as $rowdata)
                           <tr>
                                 <?php
-                                    $pid = base64_encode($rowdata->id);  // encode the Phone Setting id
+                                    $pid = Crypt::encryptString($rowdata->id);  // encode the Phone Setting id
                                 ?>
                               <td> {{ $rowdata->phone_number }}</td>
                               <td> {{ $rowdata->rotator_id }}</td>
@@ -54,7 +54,7 @@
                         @foreach($assignee_users as $rowdata1)
                           <tr>
                                 <?php
-                                    $pid = base64_encode($rowdata1->id);  // encode the Phone Setting id
+                                    $pid = Crypt::encryptString($rowdata1->id);  // encode the Phone Setting id
                                 ?>
                               <td> {{ $rowdata1->username }}</td>
                               <td> {{ $rowdata1->rotator_id }}</td>

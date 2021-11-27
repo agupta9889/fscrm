@@ -9,7 +9,7 @@
                   <div class="row">
                     <div class="col-md-6">
                         <?php
-                            $pid = base64_encode($unexpID->phone_setting_id);  // encode the Phone Setting id
+                            $pid = Crypt::encryptString($unexpID->phone_setting_id); // encode the Phone Setting id
                         ?>
                       <h4 class="card-title">Unexported Leads <a href="{{ URL::to('exportlead')}}/{{ $pid}}">(<?php echo $exportCount->export_count;?> Exports)</a></h4>
                     </div>

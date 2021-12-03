@@ -484,17 +484,19 @@ class AdminController extends Controller
     // [ Export Count ]
     public function updateExportCount(Request $request)
     {
-        $getExportCount = Phonesetting::select('export_count')->where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
-        $updateData['export_count'] = $getExportCount->export_count+1;
-        Phonesetting::where('id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($updateData);
+        $pid= Crypt::decryptString($request->exportID); // decode the Phone Setting id
 
-        $getRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->where('remove_data',0)->get();
+        $getExportCount = Phonesetting::select('export_count')->where('id',$pid)->where('rotator_id',$request->rotatorID)->first();
+        $updateData['export_count'] = $getExportCount->export_count+1;
+        Phonesetting::where('id',$pid)->where('rotator_id',$request->rotatorID)->update($updateData);
+
+        $getRows = Salephone::where('phone_setting_id',$pid)->where('rotator_id',$request->rotatorID)->where('remove_data',0)->get();
         foreach($getRows as $rows){
                 $salephoneIdsArray[] = $rows->id;
         }
 
         $allIdsArrya = implode(",", $salephoneIdsArray);
-        $getSingleRows = Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->first();
+        $getSingleRows = Salephone::where('phone_setting_id',$pid)->where('rotator_id',$request->rotatorID)->first();
         $exports['sale_phone_id'] = $getSingleRows->id;
         $exports['phone_setting_id'] = $getSingleRows->phone_setting_id;
         $exports['rotator_id'] = $getSingleRows->rotator_id;
@@ -502,7 +504,7 @@ class AdminController extends Controller
         $exports['total_leads_id'] = $allIdsArrya;
         if(Export::insert($exports)){
             $removeUpdates['remove_data'] = 1;
-            Salephone::where('phone_setting_id',$request->exportID)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
+            Salephone::where('phone_setting_id',$pid)->where('rotator_id',$request->rotatorID)->update($removeUpdates);
         }
 
     }

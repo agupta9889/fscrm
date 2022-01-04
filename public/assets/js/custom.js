@@ -183,7 +183,7 @@ $(function() {
 $(document).ready(function() {
     $('#exampleUnexp').DataTable({
         dom: 'Bfrtip',
-        "order": [[ 4, "asc" ]],
+        "order": [[ 6, "asc" ]],
         buttons: {
           buttons: [
             {
@@ -226,7 +226,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('#exampleReport').DataTable({
         dom: 'Bfrtip',
-        "order": [[ 4, "asc" ]],
+        "order": [[ 6, "asc" ]],
         buttons: {
           buttons: [
             {

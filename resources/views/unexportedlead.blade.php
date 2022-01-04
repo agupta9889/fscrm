@@ -23,6 +23,8 @@
                           <th class="nosort" data-orderable="false">Name</th>
                           <th data-orderable="false">Email</th>
                           <th data-orderable="false">Phone</th>
+                          <th data-orderable="false">ZIP</th>
+                          <th class="nosort" data-orderable="false">Country</th>
                           <th data-orderable="false">Sales Floor Number</th>
                           <th data-orderable="false">Date Created</th>
                         </tr>
@@ -33,6 +35,8 @@
                           <td>{{ $unexpleadData->first_name }} {{ $unexpleadData->last_name }}</td>
                           <td>{{ $unexpleadData->email }}</td>
                           <td>{{ $unexpleadData->phone }}</td>
+                          <td>{{ $unexpleadData->zip }}</td>
+                          <td>{{ $unexpleadData->country }}</td>
                           <td><label class="badge badge-success"><i class="ti-check"></i></label> <br/>{{ $unexpleadData->sales_number }}</td>
                           <td>{{ $unexpleadData->created_at }}</td>
                         </tr>

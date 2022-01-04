@@ -69,6 +69,8 @@
                             <th class="nosort" data-orderable="false">Name</th>
                             <th data-orderable="false">Email </th>
                             <th data-orderable="false">Phone</th>
+                            <th data-orderable="false">ZIP</th>
+                            <th data-orderable="false">Country</th>
                             <th data-orderable="false">Sales Floor Number</th>
                             <th data-orderable="false">Date Created</th>
                           </tr>
@@ -79,6 +81,8 @@
                             <td>{{ $reportData->first_name }} {{ $reportData->last_name }}</td>
                             <td>{{ $reportData->email }}</td>
                             <td>{{ $reportData->phone }}</td>
+                            <td>{{ $reportData->zip }}</td>
+                            <td>{{ $reportData->country }}</td>
                             <td><label class="badge badge-success"><i class="ti-check"></i></label> <br/>{{ $reportData->sales_number }}</td>
                             <td>{{ $reportData->created_at }}</td>
                           </tr>
@@ -97,7 +101,7 @@
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-@include('layouts.footer')        
-    
+@include('layouts.footer')
+
 <script>
 </script>

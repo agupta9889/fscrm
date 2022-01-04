@@ -32,7 +32,7 @@
                         @endforelse
 			                </tbody>
                     </table>
-                   
+
                   </div>
                 </div>
               </div>
@@ -41,4 +41,4 @@
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-        @include('layouts.footer')         
+        @include('layouts.footer')

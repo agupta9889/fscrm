@@ -23,16 +23,16 @@ class UsersExport implements FromArray, ShouldAutoSize
     public function array(): array
     {
         $data=array(
-            array('Name','Email', 'Phone', 'Sales Floor Number', 'Date Created')
+            array('Name','Email', 'Phone', 'ZIP', 'Country', 'Sales Floor Number', 'Date Created')
         );
          $getExportDetails = Export::where('id',$this->ids)->first();
          $exportsArrya = explode(",",$getExportDetails->total_leads_id);
          foreach($exportsArrya as $rows){
              $getsaleRows = Salephone::where('id',$rows)->get();
             foreach($getsaleRows as $row){
-               
-                  array_push($data,[$row->first_name." ".$row->last_name, $row->email, $row->phone, $row->sales_number, $row->created_at]);
-             }   
+
+                  array_push($data,[$row->first_name." ".$row->last_name, $row->email, $row->phone, $row->zip, $row->country, $row->sales_number, $row->created_at]);
+             }
          }
          return $data;
     }

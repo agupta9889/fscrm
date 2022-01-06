@@ -140,7 +140,10 @@
                             <span class="rotatorsetting badge badge-warning" attrid="{{ $rotator->id  }}" attrname="{{ $rotator->rotatorname }}" attstatus="{{ $rotator->status }}" attrtestnumber="{{ $rotator->test_number }}">
                               <i class="ti-pencil-alt" data-toggle="modal" data-target="#RotatorSettingseModal"></i>
                             </span>
-                            <a href='deleterotator/{{ $rotator->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')">
+                            <?php
+                                $rotid = Crypt::encryptString($rotator->id); // encode the Rotator id
+                            ?>
+                            <a href='deleterotator/{{ $rotid }}' class="badge badge-danger" onclick="return confirm('Are you sure?')">
                               <i class="ti-trash" data-toggle="tooltip" title="Delete Rotator"></i>
                             </a>
                           </td>
@@ -243,7 +246,10 @@
 
                                   <td>
                                     <?php if(!empty($totalRepLead)) { ?>
-                                    <a href="{{ URL::to('report') }}/{{ $rowdata->id }}" class="badge badge-warning">
+                                        <?php
+                                            $pid = Crypt::encryptString($rowdata->id); // encode the Phone Setting id
+                                        ?>
+                                    <a href="{{ URL::to('report') }}/{{ $pid }}" class="badge badge-warning">
                                     <i class="ti-bar-chart"></i>
                                     </a>
                                     <?php } else { ?>
@@ -251,7 +257,10 @@
                                     <i class="ti-bar-chart"></i>
                                     </a>
                                       <?php } ?>
-                                    <a href="deletephone/{{ $rowdata->id }}/{{$rowdata->rotator_id}}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
+                                        <?php
+                                            $rotid = Crypt::encryptString($rowdata->rotator_id); // encode the Rotator id
+                                        ?>
+                                    <a href="deletephone/{{ $pid }}/{{$rotid}}" class="badge badge-danger" onclick="return confirm('Are you sure?')">
                                       <i class="ti-trash"></i>
                                     </a>
                                   </td>

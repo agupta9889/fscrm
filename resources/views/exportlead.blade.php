@@ -20,10 +20,13 @@
                       <tbody>
                       @forelse($expleads as $expdata)
                         <tr>
-                          <td>{{ $expdata->created_at }}</td>
-                          <td>{{ $expdata->sale_number }}</td>
-                          <td>{{ $expdata->leads_count }}</td>
-                          <td><a href="{{ URL::to('csvexport') }}/{{ $expdata->id }}"><i class="ti-download"></i> Download</a></td>
+                            <td>{{ $expdata->created_at }}</td>
+                            <td>{{ $expdata->sale_number }}</td>
+                            <td>{{ $expdata->leads_count }}</td>
+                            <?php
+                                $pid = Crypt::encryptString($expdata->id); // encode the Phone Setting id
+                            ?>
+                          <td><a href="{{ URL::to('csvexport') }}/{{ $pid }}"><i class="ti-download"></i> Download</a></td>
                         </tr>
                         @empty
                         <tr>

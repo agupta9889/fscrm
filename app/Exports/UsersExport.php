@@ -8,6 +8,7 @@ use App\Models\Salephone;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Illuminate\Support\Facades\Crypt;
 
 class UsersExport implements FromArray, ShouldAutoSize
 {
@@ -22,10 +23,11 @@ class UsersExport implements FromArray, ShouldAutoSize
 
     public function array(): array
     {
+        $pid= Crypt::decryptString($this->ids); // decode the Phone Setting id
         $data=array(
             array('Name','Email', 'Phone', 'ZIP', 'Country', 'Sales Floor Number', 'Date Created')
         );
-         $getExportDetails = Export::where('id',$this->ids)->first();
+         $getExportDetails = Export::where('id',$pid)->first();
          $exportsArrya = explode(",",$getExportDetails->total_leads_id);
          foreach($exportsArrya as $rows){
              $getsaleRows = Salephone::where('id',$rows)->get();

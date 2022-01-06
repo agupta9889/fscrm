@@ -3,7 +3,7 @@
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
-            
+
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -36,8 +36,11 @@
                           </td>
                           <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                           <td>
-                            <a href='edituser/{{$user->id}}' class="badge badge-warning"><i class="ti-pencil" data-toggle="tooltip" title="Edit User"></i></a> 
-                            <a href='delete/{{ $user->id }}' class="badge badge-danger" onclick="return confirm('Are you sure?')"><i class="ti-trash" data-toggle="tooltip" title="Delete User"></i></a>
+                            <?php
+                                $uid = Crypt::encryptString($user->id); // encode the User id
+                            ?>
+                            <a href='edituser/{{$uid}}' class="badge badge-warning"><i class="ti-pencil" data-toggle="tooltip" title="Edit User"></i></a>
+                            <a href='delete/{{ $uid }}' class="badge badge-danger" onclick="return confirm('Are you sure?')"><i class="ti-trash" data-toggle="tooltip" title="Delete User"></i></a>
                           </td>
                           </td>
                         </tr>
@@ -60,7 +63,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
 @include('layouts.footer')

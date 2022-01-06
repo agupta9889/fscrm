@@ -112,7 +112,8 @@ class AdminController extends Controller
         //echo "fds"; die;
         $from= date($request->startDate." 00:00:00");
         $to= date($request->endDate)." 23:59:59";
-        $phoneSettingID =  $request->phoneID;
+        $phoneSettingID= Crypt::decryptString($request->phoneID); // decode the Phone Setting id
+        //$phoneSettingID =  $request->phoneID;
         $data['totalReportAct'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->get();
         $data['totalReportActCount'] = Salephone::distinct('email')->where('phone_setting_id', $phoneSettingID)->whereBetween('created_at', [$from, $to])->count();
         $exportnumber = Phonesetting::where('id', $phoneSettingID )->first();
@@ -155,7 +156,8 @@ class AdminController extends Controller
     // [ Update User Details Page ]
     public function updShowUser($id)
     {
-        $user = User::find($id);
+        $uid= Crypt::decryptString($id); // decode the user id
+        $user = User::find($uid);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
         return view('edituser',compact('user','roles','userRole'));
@@ -164,6 +166,7 @@ class AdminController extends Controller
     // [ Update User Details Page ]
     public function updateUserRecord(Request $request)
     {
+        //$pid= Crypt::decryptString($id); // decode the Phone Setting id
         $updateID = $request->updateID;
         $data['fname'] = $request->first_name;
         $data['lname'] = $request->last_name;
@@ -196,7 +199,8 @@ class AdminController extends Controller
     // [ Delete User Row Page ]
     public function destroy($id)
     {
-        DB::delete('delete from users where id = ?',[$id]);
+        $uid= Crypt::decryptString($id); // decode the User id
+        DB::delete('delete from users where id = ?',[$uid]);
         Session::flash('message', 'Record deleted successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('userlist');
@@ -335,13 +339,15 @@ class AdminController extends Controller
     // [ Delete Phone Records Section ]
     public function deletePhoneRecord($id,$rotatorID)
     {
-        DB::delete('delete from phone_settings where id = ?',[$id]);
-        DB::delete('delete from sale_phones where phone_setting_id = ?',[$id]);
+        $pid= Crypt::decryptString($id); // decode the Rotator id
+        $rotid= Crypt::decryptString($rotatorID); // decode the Rotator id
+        DB::delete('delete from phone_settings where id = ?',[$pid]);
+        DB::delete('delete from sale_phones where phone_setting_id = ?',[$pid]);
 
-        $isFlag = DB::table('phone_settings')->where('rotator_id',$rotatorID)->whereNull('test_number')->count();
+        $isFlag = DB::table('phone_settings')->where('rotator_id',$rotid)->whereNull('test_number')->count();
             if($isFlag > 1) {
-                if(!Phonesetting::where('rotator_id', $rotatorID)->where('current_selected','0')->count()){
-                    $newSel = Phonesetting::where('rotator_id', $rotatorID)->where('status','0')->whereNull('test_number')->first();
+                if(!Phonesetting::where('rotator_id', $rotid)->where('current_selected','0')->count()){
+                    $newSel = Phonesetting::where('rotator_id', $rotid)->where('status','0')->whereNull('test_number')->first();
                     $newSel->current_selected = '0';
                     $newSel->save();
                 }
@@ -355,8 +361,9 @@ class AdminController extends Controller
     // [ Delete Rotator Row Section ]
     public function deleteRotatorRecord($id)
     {
-        DB::delete('delete from rotators where id = ?',[$id]);
-        DB::delete('delete from phone_settings where rotator_id = ?',[$id]);
+        $rotid= Crypt::decryptString($id); // decode the Phone Setting id
+        DB::delete('delete from rotators where id = ?',[$rotid]);
+        DB::delete('delete from phone_settings where rotator_id = ?',[$rotid]);
         Session::flash('message', 'Rotator Record Deleted Successfully!');
         Session::flash('alert-class', 'alert-success');
         return redirect('dashboard');
@@ -388,10 +395,11 @@ class AdminController extends Controller
     // [ Get Report Lead Page ]
     public function leadReport($id)
     {
-        $getsale = Salephone::where('phone_setting_id', $id)->first();
+        $pid= Crypt::decryptString($id); // decode the Phone Setting id
+        $getsale = Salephone::where('phone_setting_id', $pid)->first();
         $data['getsalenumber'] = $getsale->sales_number;
-        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $id)->first();
-        $data['exportcount'] = Phonesetting::where('id', $id)->first();
+        $data['rotatorIDs'] = Salephone::select('rotator_id')->where('phone_setting_id', $pid)->first();
+        $data['exportcount'] = Phonesetting::where('id', $pid)->first();
         $data['reportleads'] = Salephone::salephonereportlist($getsale->sales_number)->where('rotator_id', $data['rotatorIDs']->rotator_id)->whereDate('created_at', Carbon::today())->get();
         $data['totalCount'] = Salephone::salephonereportlist($getsale->sales_number)->where('rotator_id', $data['rotatorIDs']->rotator_id)->whereDate('created_at', Carbon::today())->count();
         return view('report', $data);

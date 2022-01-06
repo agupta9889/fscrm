@@ -12,7 +12,7 @@
                   </div>
                   <div class="col-md-6">
                     @can('role-create')
-                      <a href="{{ route('roles.create') }}" class="btn btn-outline-success btn-icon-text" style="float:right;"> 
+                      <a href="{{ route('roles.create') }}" class="btn btn-outline-success btn-icon-text" style="float:right;">
                       Create New Role <i class="ti-control-forward"></i>
                       </a>
                     @endcan
@@ -43,12 +43,15 @@
                             <td>{{ ++$i }}</td>
                             <td>{{ $role->name }}</td>
                             <td>
-                                <a class="btn btn-info" href="{{ route('roles.show',$role->id) }}">Show</a>
+                            <?php
+                                $rid = Crypt::encryptString($role->id); // encode the User id
+                            ?>
+                                <a class="btn btn-info" href="{{ route('roles.show', $rid) }}">Show</a>
                                 @can('role-edit')
-                                <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Edit</a>
+                                <a class="btn btn-primary" href="{{ route('roles.edit', $rid) }}">Edit</a>
                                 @endcan
                                 @can('role-delete')
-                                {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
+                                {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $rid],'style'=>'display:inline']) !!}
                                     {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
                                 {!! Form::close() !!}
                                 @endcan
@@ -57,7 +60,7 @@
                         @endforeach
                       </tbody>
                     </table>
-                    
+
                   </div>
                 </div>
               </div>

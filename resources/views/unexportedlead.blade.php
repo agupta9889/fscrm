@@ -24,7 +24,7 @@
                           <th data-orderable="false">Email</th>
                           <th data-orderable="false">Phone</th>
                           <th data-orderable="false">ZIP</th>
-                          <th class="nosort" data-orderable="false">Country</th>
+                          <th data-orderable="false">Country</th>
                           <th data-orderable="false">Sales Floor Number</th>
                           <th data-orderable="false">Date Created</th>
                         </tr>

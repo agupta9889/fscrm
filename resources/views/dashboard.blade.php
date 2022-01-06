@@ -258,6 +258,7 @@
                                     </a>
                                       <?php } ?>
                                         <?php
+                                            $pid = Crypt::encryptString($rowdata->id); // encode the Phone Setting id
                                             $rotid = Crypt::encryptString($rowdata->rotator_id); // encode the Rotator id
                                         ?>
                                     <a href="deletephone/{{ $pid }}/{{$rotid}}" class="badge badge-danger" onclick="return confirm('Are you sure?')">

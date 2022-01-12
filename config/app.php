@@ -235,6 +235,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'Carbon' => Illuminate\Support\Carbon::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Curl' => Ixudra\Curl\Facades\Curl::class,
 
     ],
 

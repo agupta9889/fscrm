@@ -27,7 +27,7 @@ Route::get('/clear', function() {
 Route::get('/cronscript', 'AdminController@cronScript');
 
 Route::group(['middleware' => 'auth'], function () {
-   
+
    Route::get('/dashboard', 'AdminController@dashboard');
    Route::get('/adduser', 'AdminController@addRegistration');
    Route::post('/adduser', 'AdminController@registration');
@@ -56,6 +56,6 @@ Route::group(['middleware' => 'auth'], function () {
    Route::post('/reportfilterdata', 'AdminController@reportfilterdata');
    Route::get('/csvexport/{id}', 'AdminController@csvexport');
    Route::resource('roles', RoleController::class);
+   Route::get('/insert-lead', 'AdminController@execute');
 
-   
 });

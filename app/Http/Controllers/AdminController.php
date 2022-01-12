@@ -23,6 +23,7 @@ use App\Models\Assignuser;
 use App\Models\Export;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Crypt;
+use Ixudra\Curl\Facades\Curl;
 
 class AdminController extends Controller
 {
@@ -32,12 +33,12 @@ class AdminController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function login()
-    {
-        if(Auth::check()) {
-            return redirect('dashboard');
+        {
+            if(Auth::check()) {
+                return redirect('dashboard');
+            }
+            return view('auth.login');
         }
-        return view('auth.login');
-    }
 
     // [ Load Dashboard Page ]
     public function dashboard(Request $request)
@@ -594,4 +595,148 @@ class AdminController extends Controller
         }
     }
 
+    public function generateRefreshToken(){
+       // echo "refreshToken";
+        $post = [
+            'code' => '1000.f79d5603106e5f30b93a588e9a01ad82.cdf08389ddc033b5dc578562b1c80411',
+            'redirect_uri' => 'http://floorsolutioncrm.com/',
+            'client_id' => '1000.SOFYWIE91FI2H78OQDN7T2XMUHBUBL',
+            'client_secret' => '40b4ecce5902fcb6c325ee4bb58a9d65d9c3e7f32f',
+            'grant_type' => 'authorization_code'
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
+        curl_setopt($ch, CURLOTP_POST, 1);
+        curl_setopt($ch, CURLOTP_POSTFIELDS, http_build_query($post));
+        curl_setopt($ch, CURLOTP_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOTP_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOTP_HTTPHEADER, array('content-type:application/x-www-form-urlencoded'));
+
+        $response = curl_exec($ch);
+        $response = json_encode($response);
+        var_dump($response);
+    }
+
+    public function generateAccessToken(){
+        //echo "accessToken";
+        $post = [
+            'refresh_token' => '1000.42888be2da05988486d04afb1948d9f9.b5c9f85594bbbbbcd2f9e878f32d9c34',
+            'client_id' => '1000.SOFYWIE91FI2H78OQDN7T2XMUHBUBL',
+            'client_secret' => '40b4ecce5902fcb6c325ee4bb58a9d65d9c3e7f32f',
+            'grant_type' => 'refresh_token'
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
+        curl_setopt($ch, CURLOTP_POST, 1);
+        curl_setopt($ch, CURLOTP_POSTFIELDS, http_build_query($post));
+        curl_setopt($ch, CURLOTP_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOTP_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOTP_HTTPHEADER, array('content-type:application/x-www-form-urlencoded'));
+
+        $response = curl_exec($ch);
+        $response = json_decode($response);
+
+        var_dump($response);
+    }
+
+    public function insertLead(){
+       // echo "insertlead";
+       $access_token = '1000.b8adc62c3a4428f33203f9b6b0b5ddd8.69466410f8be0be8535880370452071e';
+       $post_data = [
+           'data' =>
+            [
+                [
+                    "Company" => "Zylker",
+                    "Last_Name" => "Daly",
+                    "First_Name"=> "Paul",
+                    "Email"=> "p.daly@zylker.com",
+                    "State"=> "Texas"
+                ]
+            ],
+
+            'triger' => [
+                "approval",
+                "workflow",
+                "blueprint"
+                ]
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://www.zohoapis.com/crm/v2/Leads");
+        curl_setopt($ch, CURLOTP_POST, 1);
+        curl_setopt($ch, CURLOTP_POSTFIELDS, json_encode($post_data));
+        curl_setopt($ch, CURLOTP_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOTP_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOTP_HTTPHEADER, array(
+            'Authorization:Zoho-oauthtoken'.$access_token,
+            'Content-type:application/x-www-form-urlencoded'
+        ));
+
+        $response = curl_exec($ch);
+        $response = json_decode($response);
+
+        return $response;
+
+    }
+
+    public function execute(){
+        $curl_pointer = curl_init();
+
+        $curl_options = array();
+        $url = "https://www.zohoapis.com/crm/v2/Leads";
+
+        $curl_options[CURLOPT_URL] =$url;
+        $curl_options[CURLOPT_RETURNTRANSFER] = true;
+        $curl_options[CURLOPT_HEADER] = 1;
+        $curl_options[CURLOPT_CUSTOMREQUEST] = "POST";
+        $requestBody = array();
+        $recordArray = array();
+        $recordObject = array();
+        $recordObject["Company"]="Floor Solution CRM";
+        $recordObject["First_Name"]="Ramu";
+        $recordObject["Last_Name"]="Gupta";
+        $recordObject["Email"]="ramu@gmail.com";
+        $recordObject["Phone"]="9889286603";
+        $recordObject["Postal_Code"]="122001";
+        $recordObject["City"]="Gurgaon";
+        $recordObject["State"]="HR";
+        $recordObject["Country"]="India";
+        $recordObject["Mobile"]="9988776603";
+
+        $recordArray[] = $recordObject;
+        $requestBody["data"] =$recordArray;
+        $curl_options[CURLOPT_POSTFIELDS]= json_encode($requestBody);
+        $headersArray = array();
+
+        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " . "1000.49670bc8cf27d5f8caa3b21cd9862cd3.aa817572f4fe6bb58859662dc81d9a6a";
+
+        $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
+
+        curl_setopt_array($curl_pointer, $curl_options);
+
+        $result = curl_exec($curl_pointer);
+        $responseInfo = curl_getinfo($curl_pointer);
+        curl_close($curl_pointer);
+        list ($headers, $content) = explode("\r\n\r\n", $result, 2);
+        if(strpos($headers," 100 Continue")!==false){
+            list( $headers, $content) = explode( "\r\n\r\n", $content , 2);
+        }
+        $headerArray = (explode("\r\n", $headers, 50));
+        $headerMap = array();
+        foreach ($headerArray as $key) {
+            if (strpos($key, ":") != false) {
+                $firstHalf = substr($key, 0, strpos($key, ":"));
+                $secondHalf = substr($key, strpos($key, ":") + 1);
+                $headerMap[$firstHalf] = trim($secondHalf);
+            }
+        }
+        $jsonResponse = json_decode($content, true);
+        if ($jsonResponse == null && $responseInfo['http_code'] != 204) {
+            list ($headers, $content) = explode("\r\n\r\n", $content, 2);
+            $jsonResponse = json_decode($content, true);
+        }
+        var_dump($headerMap);
+        var_dump($jsonResponse);
+        var_dump($responseInfo['http_code']);
+    }
 }

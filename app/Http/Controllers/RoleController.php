@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
-use Illuminate\Support\Facades\Crypt;
 
 class RoleController extends Controller
 {
@@ -56,7 +55,6 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //dd( $request->input('name'));
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
             'permission' => 'required',
@@ -76,11 +74,9 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-
-        $rid= Crypt::decryptString($id); // decode the Roles id
-        $role = Role::find($rid);
+        $role = Role::find($id);
         $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
-            ->where("role_has_permissions.role_id",$rid)
+            ->where("role_has_permissions.role_id",$id)
             ->get();
 
         return view('roles.show',compact('role','rolePermissions'));
@@ -94,10 +90,9 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $rid= Crypt::decryptString($id); // decode the Roles id
-        $role = Role::find($rid);
+        $role = Role::find($id);
         $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$rid)
+        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
             ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
             ->all();
 
@@ -137,8 +132,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        $rid= Crypt::decryptString($id); // decode the Roles id
-        DB::table("roles")->where('id',$rid)->delete();
+        DB::table("roles")->where('id',$id)->delete();
         return redirect()->route('roles.index')
                         ->with('success','Role deleted successfully');
     }

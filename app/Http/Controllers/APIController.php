@@ -40,8 +40,6 @@ class APIController extends Controller
                 return ["response_code"=>400, "response_message"=>"Email Is Required"];
             }
 
-
-
             $activephone = Phonesetting::select('phone_settings.*','integrations.email')->leftJoin('integrations', function($join){$join->on('phone_settings.integration_id','=','integrations.id');})->where('phone_settings.rotator_id', $rotator_id)->where('status', $status)->where('current_selected', '0')->orderBy('updated_at', 'desc')->first();
             //dd($activephone);
             //return $activephone;
@@ -97,6 +95,7 @@ class APIController extends Controller
                             $data->country=$request->country;
                             $lead_id = mt_rand( 1000000000, 9999999999 );
                             $data->lead_id=$lead_id;
+                            $this->execute($data);
                             $result = $data->save();
                             fwrite($myfile, "line 101");
                             if((count($activephonecount) > 0) || ((($activephone->max_limit_leads > 0) && ($activephone->max_limit_leads-$total_leads == 1))))
@@ -172,6 +171,7 @@ class APIController extends Controller
                         $data->country=$request->country;
                         $lead_id = mt_rand( 1000000000, 9999999999 );
                         $data->lead_id=$lead_id;
+                        $this->execute($data);
                         $result = $data->save();
 
                         if(count($activephonecount) > 0){
@@ -216,5 +216,70 @@ class APIController extends Controller
         else{
             return ["response_code"=> 404, "response_message"=>"Invalid Api Key"];
         }
+    }
+
+    public function execute($data){
+    //    print_r($data);
+        // die;
+
+        $curl_pointer = curl_init();
+
+        $curl_options = array();
+        $url = "https://www.zohoapis.com/crm/v2/Leads";
+
+        $curl_options[CURLOPT_URL] =$url;
+        $curl_options[CURLOPT_RETURNTRANSFER] = true;
+        $curl_options[CURLOPT_HEADER] = 1;
+        $curl_options[CURLOPT_CUSTOMREQUEST] = "POST";
+        $requestBody = array();
+        $recordArray = array();
+        $recordObject = array();
+        $recordObject["Company"]="Floor Solution CRM";
+        $recordObject["First_Name"]=$data->first_name;
+        $recordObject["Last_Name"]=$data->last_name;
+        $recordObject["Email"]=$data->email;
+        $recordObject["Phone"]=$data->sales_number;
+        $recordObject["Mobile"]=$data->phone;
+        $recordObject["Street"]=$data->address;
+        $recordObject["City"]=$data->city;
+        $recordObject["Zip_Code"]=$data->zip;
+        $recordObject["State"]=$data->state;
+        $recordObject["Country"]=$data->country;
+
+        $recordArray[] = $recordObject;
+        $requestBody["data"] =$recordArray;
+        $curl_options[CURLOPT_POSTFIELDS]= json_encode($requestBody);
+        $headersArray = array();
+
+        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " . "1000.49670bc8cf27d5f8caa3b21cd9862cd3.aa817572f4fe6bb58859662dc81d9a6a";
+
+        $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
+
+        curl_setopt_array($curl_pointer, $curl_options);
+
+        $result = curl_exec($curl_pointer);
+        $responseInfo = curl_getinfo($curl_pointer);
+        curl_close($curl_pointer);
+        list ($headers, $content) = explode("\r\n\r\n", $result, 2);
+        if(strpos($headers," 100 Continue")!==false){
+            list( $headers, $content) = explode( "\r\n\r\n", $content , 2);
+        }
+        $headerArray = (explode("\r\n", $headers, 50));
+        $headerMap = array();
+        foreach ($headerArray as $key) {
+            if (strpos($key, ":") != false) {
+                $firstHalf = substr($key, 0, strpos($key, ":"));
+                $secondHalf = substr($key, strpos($key, ":") + 1);
+                $headerMap[$firstHalf] = trim($secondHalf);
+            }
+        }
+        $jsonResponse = json_decode($content, true);
+        if ($jsonResponse == null && $responseInfo['http_code'] != 204) {
+            list ($headers, $content) = explode("\r\n\r\n", $content, 2);
+            $jsonResponse = json_decode($content, true);
+        }
+        // var_dump($headerMap);
+        // var_dump($jsonResponse);
+        // var_dump($responseInfo['http_code']);
     }
 }

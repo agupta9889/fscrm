@@ -20,4 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('sale_phones',[APIController::class,'salePhones']);
+Route::post('insert-lead',[APIController::class,'execute']);
+
 

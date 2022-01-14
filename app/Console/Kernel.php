@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('App\Http\Controllers\APIController@generateAccessToken')->everyfiftyMinutes();
         $schedule->call('App\Http\Controllers\AdminController@cronScript')->everyMinute();
     }
 

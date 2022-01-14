@@ -20,6 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('sale_phones',[APIController::class,'salePhones']);
+Route::get('refresh-token',[APIController::class,'generateRefreshToken']);
+Route::get('access-token',[APIController::class,'generateAccessToken']);
 Route::post('insert-lead',[APIController::class,'execute']);
-
-

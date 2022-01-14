@@ -95,8 +95,9 @@ class APIController extends Controller
                             $data->country=$request->country;
                             $lead_id = mt_rand( 1000000000, 9999999999 );
                             $data->lead_id=$lead_id;
-                            $this->execute($data);
+
                             $result = $data->save();
+                            $this->execute($data);  // Lead Insert in ZOHO CRM
                             fwrite($myfile, "line 101");
                             if((count($activephonecount) > 0) || ((($activephone->max_limit_leads > 0) && ($activephone->max_limit_leads-$total_leads == 1))))
                             {
@@ -171,9 +172,9 @@ class APIController extends Controller
                         $data->country=$request->country;
                         $lead_id = mt_rand( 1000000000, 9999999999 );
                         $data->lead_id=$lead_id;
-                        $this->execute($data);
-                        $result = $data->save();
 
+                        $result = $data->save();
+                        $this->execute($data); // Lead Insert in ZOHO CRM
                         if(count($activephonecount) > 0){
 
                             $activephonecount->first()->current_selected = '0';
@@ -218,10 +219,61 @@ class APIController extends Controller
         }
     }
 
-    public function execute($data){
-    //    print_r($data);
-        // die;
+    public function generateRefreshToken(){
+        // echo "refreshToken";
+         $post = [
+             'code' => '1000.c4c142a6be265fc5c83e0561c8d235aa.e7b9138e32145ea8522bf24819111bb5',
+             'redirect_uri' => 'http://floorsolutioncrm.com/',
+             'client_id' => '1000.SOFYWIE91FI2H78OQDN7T2XMUHBUBL',
+             'client_secret' => '40b4ecce5902fcb6c325ee4bb58a9d65d9c3e7f32f',
+             'grant_type' => 'authorization_code'
+         ];
 
+         $curl_pointer = curl_init();
+         $url = "https://accounts.zoho.com/oauth/v2/token";
+         $curl_options[CURLOPT_URL] = $url;
+         $curl_options[CURLOPT_POST] = 1;
+         $curl_options[CURLOPT_POSTFIELDS]= http_build_query($post);
+         $curl_options[CURLOPT_RETURNTRANSFER] = true;
+         $curl_options[CURLOPT_SSL_VERIFYPEER] = 0;
+         $curl_options[CURLOPT_HTTPHEADER] = $url;
+         $headersArray = array('content-type:application/x-www-form-urlencoded');
+         $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
+         curl_setopt_array($curl_pointer, $curl_options);
+         $result = curl_exec($curl_pointer);
+         curl_close($curl_pointer);
+         $responseInfo = json_encode($result);
+         echo "<pre>";
+         print_r($responseInfo);
+
+     }
+
+     public function generateAccessToken(){
+         //echo "accessToken";
+         $post = [
+             'refresh_token' => '1000.66cb8afafeb2f9d5d8019e4d627e370b.94a45e8cd64bfd3315399bb53e059252',
+             'client_id' => '1000.SOFYWIE91FI2H78OQDN7T2XMUHBUBL',
+             'client_secret' => '40b4ecce5902fcb6c325ee4bb58a9d65d9c3e7f32f',
+             'grant_type' => 'refresh_token'
+         ];
+         $ch = curl_init();
+         curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
+         curl_setopt($ch, CURLOPT_POST, 1);
+         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+         curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type:application/x-www-form-urlencoded'));
+
+         $response = curl_exec($ch);
+         $response = json_decode($response);
+         // echo "<pre>";
+         // print_r($response->access_token);
+         return $response->access_token;
+     }
+
+    public function execute($data){
+
+        $access_token = $this->generateAccessToken();
         $curl_pointer = curl_init();
 
         $curl_options = array();
@@ -234,7 +286,21 @@ class APIController extends Controller
         $requestBody = array();
         $recordArray = array();
         $recordObject = array();
+
         $recordObject["Company"]="Floor Solution CRM";
+        if($data->rotator_id == '11'){
+            $recordObject["Designation"]="My Commission Bootcamp";
+        }
+        else if ($data->rotator_id == '12'){
+            $recordObject["Designation"]="Auto Income Sites";
+        }
+        else if ($data->rotator_id == '13') {
+            $recordObject["Designation"] = "My Web Cash System";
+        }
+        else if($data->rotator_id == '14'){
+            $recordObject["Designation"]="My Profit Payday";
+        }
+
         $recordObject["First_Name"]=$data->first_name;
         $recordObject["Last_Name"]=$data->last_name;
         $recordObject["Email"]=$data->email;
@@ -251,7 +317,7 @@ class APIController extends Controller
         $curl_options[CURLOPT_POSTFIELDS]= json_encode($requestBody);
         $headersArray = array();
 
-        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " . "1000.49670bc8cf27d5f8caa3b21cd9862cd3.aa817572f4fe6bb58859662dc81d9a6a";
+        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " . $access_token;
 
         $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
 

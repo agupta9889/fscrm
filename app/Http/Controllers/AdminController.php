@@ -598,88 +598,60 @@ class AdminController extends Controller
     public function generateRefreshToken(){
        // echo "refreshToken";
         $post = [
-            'code' => '1000.f79d5603106e5f30b93a588e9a01ad82.cdf08389ddc033b5dc578562b1c80411',
+            'code' => '1000.c4c142a6be265fc5c83e0561c8d235aa.e7b9138e32145ea8522bf24819111bb5',
             'redirect_uri' => 'http://floorsolutioncrm.com/',
             'client_id' => '1000.SOFYWIE91FI2H78OQDN7T2XMUHBUBL',
             'client_secret' => '40b4ecce5902fcb6c325ee4bb58a9d65d9c3e7f32f',
             'grant_type' => 'authorization_code'
         ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
-        curl_setopt($ch, CURLOTP_POST, 1);
-        curl_setopt($ch, CURLOTP_POSTFIELDS, http_build_query($post));
-        curl_setopt($ch, CURLOTP_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOTP_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOTP_HTTPHEADER, array('content-type:application/x-www-form-urlencoded'));
 
-        $response = curl_exec($ch);
-        $response = json_encode($response);
-        var_dump($response);
+        $curl_pointer = curl_init();
+        $url = "https://accounts.zoho.com/oauth/v2/token";
+        $curl_options[CURLOPT_URL] = $url;
+        $curl_options[CURLOPT_POST] = 1;
+        $curl_options[CURLOPT_POSTFIELDS]= http_build_query($post);
+        $curl_options[CURLOPT_RETURNTRANSFER] = true;
+        $curl_options[CURLOPT_SSL_VERIFYPEER] = 0;
+        $curl_options[CURLOPT_HTTPHEADER] = $url;
+        $headersArray = array('content-type:application/x-www-form-urlencoded');
+        $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
+        curl_setopt_array($curl_pointer, $curl_options);
+        $result = curl_exec($curl_pointer);
+        curl_close($curl_pointer);
+        $responseInfo = json_encode($result);
+        echo "<pre>";
+        print_r($responseInfo);
+
     }
 
     public function generateAccessToken(){
         //echo "accessToken";
         $post = [
-            'refresh_token' => '1000.42888be2da05988486d04afb1948d9f9.b5c9f85594bbbbbcd2f9e878f32d9c34',
+            'refresh_token' => '1000.66cb8afafeb2f9d5d8019e4d627e370b.94a45e8cd64bfd3315399bb53e059252',
             'client_id' => '1000.SOFYWIE91FI2H78OQDN7T2XMUHBUBL',
             'client_secret' => '40b4ecce5902fcb6c325ee4bb58a9d65d9c3e7f32f',
             'grant_type' => 'refresh_token'
         ];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
-        curl_setopt($ch, CURLOTP_POST, 1);
-        curl_setopt($ch, CURLOTP_POSTFIELDS, http_build_query($post));
-        curl_setopt($ch, CURLOTP_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOTP_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOTP_HTTPHEADER, array('content-type:application/x-www-form-urlencoded'));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('content-type:application/x-www-form-urlencoded'));
 
         $response = curl_exec($ch);
         $response = json_decode($response);
-
-        var_dump($response);
-    }
-
-    public function insertLead(){
-       // echo "insertlead";
-       $access_token = '1000.b8adc62c3a4428f33203f9b6b0b5ddd8.69466410f8be0be8535880370452071e';
-       $post_data = [
-           'data' =>
-            [
-                [
-                    "Company" => "Zylker",
-                    "Last_Name" => "Daly",
-                    "First_Name"=> "Paul",
-                    "Email"=> "p.daly@zylker.com",
-                    "State"=> "Texas"
-                ]
-            ],
-
-            'triger' => [
-                "approval",
-                "workflow",
-                "blueprint"
-                ]
-        ];
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://www.zohoapis.com/crm/v2/Leads");
-        curl_setopt($ch, CURLOTP_POST, 1);
-        curl_setopt($ch, CURLOTP_POSTFIELDS, json_encode($post_data));
-        curl_setopt($ch, CURLOTP_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOTP_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOTP_HTTPHEADER, array(
-            'Authorization:Zoho-oauthtoken'.$access_token,
-            'Content-type:application/x-www-form-urlencoded'
-        ));
-
-        $response = curl_exec($ch);
-        $response = json_decode($response);
-
-        return $response;
-
+        // echo "<pre>";
+        // print_r($response->access_token);
+        return $response->access_token;
     }
 
     public function execute(){
+
+        $access_token = $this->generateAccessToken();
+        //echo $access_token;
+        //die;
         $curl_pointer = curl_init();
 
         $curl_options = array();
@@ -708,7 +680,7 @@ class AdminController extends Controller
         $curl_options[CURLOPT_POSTFIELDS]= json_encode($requestBody);
         $headersArray = array();
 
-        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " . "1000.49670bc8cf27d5f8caa3b21cd9862cd3.aa817572f4fe6bb58859662dc81d9a6a";
+        $headersArray[] = "Authorization". ":" . "Zoho-oauthtoken " . $access_token;
 
         $curl_options[CURLOPT_HTTPHEADER]=$headersArray;
 

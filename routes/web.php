@@ -56,6 +56,8 @@ Route::group(['middleware' => 'auth'], function () {
    Route::post('/reportfilterdata', 'AdminController@reportfilterdata');
    Route::get('/csvexport/{id}', 'AdminController@csvexport');
    Route::resource('roles', RoleController::class);
-   Route::get('/insert-lead', 'AdminController@execute');
+//    Route::get('/refresh-token', 'AdminController@generateRefreshToken');
+//    Route::get('/access-token', 'AdminController@generateAccessToken');
+//    Route::get('/insert-lead', 'AdminController@execute');
 
 });
